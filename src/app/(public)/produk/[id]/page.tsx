@@ -152,7 +152,7 @@ export default async function ProductDetailPage({
                   </Link>
                 </div>
                 <p className="text-xs text-gray-400 text-center mt-4 flex justify-center items-center gap-1.5">
-                  <span>🔒</span> Pembayaran aman via Midtrans
+                  <span>🔒</span> Pembayaran aman via Transfer Bank
                 </p>
               </div>
 

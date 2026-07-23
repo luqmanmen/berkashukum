@@ -19,6 +19,7 @@ function CheckoutContent() {
 
   const [directProduct, setDirectProduct] = useState<ProductInfo | null>(null);
   const [loading, setLoading] = useState(false);
+  const [successData, setSuccessData] = useState<any>(null);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -81,30 +82,8 @@ function CheckoutContent() {
 
       if (!res.ok) throw new Error(data.error || "Checkout gagal");
 
-      // Open Midtrans payment popup
-      if (typeof window !== "undefined" && (window as any).snap) {
-        (window as any).snap.pay(data.token, {
-          onSuccess: (result: any) => {
-            clearCart();
-            router.push(`/sukses?orderId=${data.orderId}`);
-          },
-          onPending: (result: any) => {
-            clearCart();
-            router.push(`/sukses?orderId=${data.orderId}&status=pending`);
-          },
-          onError: (result: any) => {
-            alert("Pembayaran gagal. Silakan coba lagi.");
-          },
-          onClose: () => {
-            // user closed popup, do nothing
-          },
-        });
-      } else {
-        // Fallback: redirect to Midtrans URL
-        if (data.redirectUrl) {
-          window.location.href = data.redirectUrl;
-        }
-      }
+      setSuccessData(data);
+      clearCart();
     } catch (err: any) {
       alert(err.message || "Terjadi kesalahan. Silakan coba lagi.");
     } finally {
@@ -112,17 +91,41 @@ function CheckoutContent() {
     }
   };
 
+  if (successData) {
+    return (
+      <section className="pt-32 pb-20 min-h-screen bg-cream flex items-center justify-center">
+        <div className="max-w-md w-full mx-auto px-4 text-center">
+          <div className="bg-white border border-gray-100 rounded-sm p-8 shadow-sm">
+            <div className="text-5xl mb-4">✅</div>
+            <h1 className="font-serif text-2xl font-bold text-navy mb-2">Pesanan Berhasil Dibuat</h1>
+            <p className="text-gray-500 text-sm mb-6">Order ID: <span className="font-semibold text-navy">{successData.orderId}</span></p>
+
+            <div className="bg-cream p-4 rounded-sm mb-6 border border-gray-200 text-left">
+              <p className="text-sm text-gray-500 mb-1">Silakan transfer TEPAT sejumlah:</p>
+              <div className="text-3xl font-bold text-gold mb-4">Rp {successData.finalAmount?.toLocaleString("id-ID")}</div>
+              
+              <div className="text-sm space-y-2">
+                <p className="text-gray-500">Ke Rekening Bank:</p>
+                <div className="font-semibold text-navy text-lg">BCA 1234567890</div>
+                <div className="text-gray-600">a.n. Luqman Arif</div>
+              </div>
+            </div>
+
+            <p className="text-xs text-red-500 font-semibold mb-6">
+              PENTING: Transfer sesuai nominal di atas HINGGA 3 DIGIT TERAKHIR agar pembayaran terverifikasi otomatis.
+            </p>
+
+            <Link href="/" className="btn-gold px-8 py-3.5 rounded-sm font-bold text-sm block w-full text-center">
+              Selesai & Kembali ke Beranda
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <>
-      {/* Midtrans Snap.js */}
-      <script
-        src={
-          process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true"
-            ? "https://app.midtrans.com/snap/snap.js"
-            : "https://app.sandbox.midtrans.com/snap/snap.js"
-        }
-        data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || ""}
-      />
 
       <section className="pt-28 pb-16 min-h-screen bg-cream">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -206,10 +209,10 @@ function CheckoutContent() {
                   disabled={loading}
                   className="btn-gold w-full py-4 rounded-sm font-bold text-sm tracking-wide disabled:opacity-60"
                 >
-                  {loading ? "Memproses..." : "Bayar Sekarang →"}
+                  {loading ? "Memproses..." : "Buat Pesanan →"}
                 </button>
                 <p className="text-xs text-center text-gray-400">
-                  🔒 Pembayaran aman diproses oleh Midtrans. Data Anda dilindungi.
+                  🔒 Data Anda dilindungi. Pembayaran dilakukan via transfer bank.
                 </p>
               </form>
             </div>
@@ -238,7 +241,7 @@ function CheckoutContent() {
                 <div className="mt-5 pt-5 border-t border-gray-100 space-y-2">
                   <div className="text-xs text-gray-500 font-semibold mb-2">Metode Pembayaran Tersedia:</div>
                   <div className="flex flex-wrap gap-2">
-                    {["BCA", "Mandiri", "BNI", "GoPay", "OVO", "QRIS", "CC"].map((m) => (
+                    {["Transfer Bank BCA"].map((m) => (
                       <span key={m} className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">{m}</span>
                     ))}
                   </div>

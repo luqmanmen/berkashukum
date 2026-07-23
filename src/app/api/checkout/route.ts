@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { nanoid } from "nanoid";
-import MidtransClient from "midtrans-client";
-
-const snap = new MidtransClient.Snap({
-  isProduction: process.env.MIDTRANS_IS_PRODUCTION === "true",
-  serverKey: process.env.MIDTRANS_SERVER_KEY || "",
-  clientKey: process.env.MIDTRANS_CLIENT_KEY || "",
-});
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,11 +14,15 @@ export async function POST(req: NextRequest) {
     // Generate unique Order ID (tiket style)
     const orderId = `LX-${nanoid(8).toUpperCase()}`;
 
+    // Generate 3 digit unique code (1-999) for Moota automatic verification
+    const uniqueCode = Math.floor(Math.random() * 999) + 1;
+    const finalAmount = totalAmount + uniqueCode;
+
     // Create order in DB
     const order = await prisma.order.create({
       data: {
         id: orderId,
-        totalAmount,
+        totalAmount: finalAmount,
         status: "PENDING",
         buyerName,
         buyerEmail,
@@ -40,37 +37,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Create Midtrans transaction
-    const transactionDetails = {
-      transaction_details: {
-        order_id: orderId,
-        gross_amount: totalAmount,
-      },
-      item_details: items.map((item: any) => ({
-        id: item.id,
-        price: item.price,
-        quantity: item.quantity,
-        name: item.name.slice(0, 50),
-      })),
-      customer_details: {
-        first_name: buyerName,
-        email: buyerEmail,
-        phone: buyerPhone,
-      },
-    };
-
-    const transaction = await snap.createTransaction(transactionDetails);
-
-    // Save payment token
-    await prisma.order.update({
-      where: { id: orderId },
-      data: { paymentId: transaction.token },
-    });
-
     return NextResponse.json({
       orderId,
-      token: transaction.token,
-      redirectUrl: transaction.redirect_url,
+      finalAmount,
+      message: "Pesanan berhasil dibuat. Silakan transfer sesuai nominal unik."
     });
   } catch (error: any) {
     console.error("Checkout error:", error);

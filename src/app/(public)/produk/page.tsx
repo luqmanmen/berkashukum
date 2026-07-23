@@ -55,7 +55,7 @@ export default async function ProductsPage({
           <div className="flex flex-wrap items-center justify-center gap-6 text-navy-dark text-sm font-semibold">
             <span>✅ Download Instan</span>
             <span>✅ Dibuat oleh Pengacara Berlisensi</span>
-            <span>✅ Pembayaran Aman via Midtrans</span>
+            <span>✅ Pembayaran Aman via Transfer Bank</span>
             <span>✅ Garansi Kepuasan</span>
           </div>
         </div>

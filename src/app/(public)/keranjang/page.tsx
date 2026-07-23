@@ -121,7 +121,7 @@ export default function CartPage() {
                 ← Lanjut Belanja
               </Link>
               <div className="mt-4 pt-4 border-t border-gray-100 text-center">
-                <p className="text-xs text-gray-400">🔒 Pembayaran aman via Midtrans</p>
+                <p className="text-xs text-gray-400">🔒 Pembayaran aman via Transfer Bank (Otomatis)</p>
               </div>
             </div>
           </div>
