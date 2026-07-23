@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+:root {
+  --navy: #0a1628;
+  --navy-dark: #060d1a;
+  --navy-mid: #112240;
+  --navy-light: #1e3a5f;
+  --gold: #c9a84c;
+  --gold-light: #e2c07a;
+  --gold-dark: #a07830;
+  --cream: #faf7f2;
+  --white: #ffffff;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  color: #1a1a2e;
+}
+
+/* Typography */
+.font-serif {
+  font-family: var(--font-playfair), Georgia, serif;
+}
+
+.font-inter {
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Gold gradient text */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #c9a84c 0%, #e8d08a 50%, #c9a84c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Navy background */
+.bg-navy { background-color: var(--navy); }
+.bg-navy-dark { background-color: var(--navy-dark); }
+.bg-navy-mid { background-color: var(--navy-mid); }
+.bg-navy-light { background-color: var(--navy-light); }
+.bg-gold { background-color: var(--gold); }
+.bg-cream { background-color: var(--cream); }
+
+.text-gold { color: var(--gold); }
+.text-gold-light { color: var(--gold-light); }
+.text-navy { color: var(--navy); }
+
+.border-gold { border-color: var(--gold); }
+
+/* Gold divider */
+.gold-divider {
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold-light), var(--gold-dark));
+  border-radius: 2px;
+}
+
+/* Hero gradient overlay */
+.hero-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(6, 13, 26, 0.92) 0%,
+    rgba(10, 22, 40, 0.85) 50%,
+    rgba(17, 34, 64, 0.80) 100%
+  );
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Gold button */
+.btn-gold {
+  background: linear-gradient(135deg, #a07830 0%, #c9a84c 50%, #e2c07a 100%);
+  color: var(--navy-dark);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(201, 168, 76, 0.5);
+  background: linear-gradient(135deg, #c9a84c 0%, #e2c07a 50%, #c9a84c 100%);
+}
+
+/* Navy button */
+.btn-navy {
+  background-color: var(--navy);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-navy:hover {
+  background-color: var(--navy-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(10, 22, 40, 0.4);
+}
+
+/* Service card */
+.service-card {
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  transition: all 0.3s ease;
+}
+
+.service-card:hover {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, var(--navy-mid), var(--navy-light));
+}
+
+/* Section spacing */
+.section-padding {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+/* Decorative line */
+.section-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.section-subtitle::before,
+.section-subtitle::after {
+  content: '';
+  flex: 1;
+  max-width: 60px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.5;
+}
+
+/* Testimonial card */
+.testimonial-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--navy-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold-dark);
+  border-radius: 3px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Navbar */
+.navbar-blur {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(6, 13, 26, 0.85);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+}
