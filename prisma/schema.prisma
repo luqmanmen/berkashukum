@@ -113,3 +113,13 @@ model TeamMember {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  label     String
+  value     String   @db.Text
+  category  String   @default("GENERAL") // e.g. "HOME", "ABOUT", "CONTACT"
+  type      String   @default("TEXT") // e.g. "TEXT", "TEXTAREA", "IMAGE"
+  updatedAt DateTime @updatedAt
+}
