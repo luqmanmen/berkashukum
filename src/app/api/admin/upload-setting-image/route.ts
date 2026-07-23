@@ -3,11 +3,6 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -28,6 +23,11 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
     const { error } = await supabase.storage
       .from("images")
       .upload(fileName, buffer, {
@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
     const { data: urlData } = supabase.storage
       .from("images")
       .getPublicUrl(fileName);
+
 
     return NextResponse.json({ url: urlData.publicUrl });
   } catch (error: any) {
