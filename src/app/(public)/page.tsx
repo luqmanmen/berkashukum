@@ -13,11 +13,14 @@ async function getSiteSettings() {
   }
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const settings = await getSiteSettings();
 
   const heroTitle = settings["home_hero_title"] || "Solusi Hukum Tepat untuk Masalah Kompleks.";
-  const heroSubtitle = settings["home_hero_subtitle"] || "Dr. Satria Wibowo, S.H., M.H., Ph.D. mendedikasikan lebih dari 15 tahun keahlian di bidang kepailitan, hukum bisnis, dan perlindungan aset perusahaan.";
+  const ownerName = settings["site_owner_name"] || "Dr. Satria Wibowo, S.H., M.H., Ph.D.";
+  const heroSubtitle = settings["home_hero_subtitle"] || `${ownerName} mendedikasikan lebih dari 15 tahun keahlian di bidang kepailitan, hukum bisnis, dan perlindungan aset perusahaan.`;
   const heroImage = settings["home_hero_image"] && settings["home_hero_image"] !== "none" ? settings["home_hero_image"] : null;
 
   return (
@@ -163,7 +166,7 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { text: "Dr. Satria memberikan pandangan yang sangat jernih dalam kasus kepailitan perusahaan kami. Sangat profesional.", author: "Bpk. Hendra", role: "CEO Perusahaan Manufaktur" },
+              { text: `${ownerName} memberikan pandangan yang sangat jernih dalam kasus kepailitan perusahaan kami. Sangat profesional.`, author: "Bpk. Hendra", role: "CEO Perusahaan Manufaktur" },
               { text: "Template kontrak kerjanya sangat detail dan menyelamatkan bisnis startup saya dari celah hukum.", author: "Andi Wijaya", role: "Founder Tech Startup" },
               { text: "Sesi konsultasinya sangat berharga. Penjelasan hukum yang rumit menjadi sangat mudah dipahami.", author: "Ibu Ratna", role: "Pemilik Bisnis Retail" }
             ].map((t, i) => (

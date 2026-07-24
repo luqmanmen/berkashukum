@@ -1,7 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function TentangPage() {
+import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
+export default async function TentangPage() {
+  let ownerName = "Dr. Satria Wibowo, S.H., M.H., Ph.D.";
+  let ownerShortName = "Dr. Satria";
+  try {
+    const settings = await prisma.siteSetting.findMany({
+      where: { key: { in: ["site_owner_name"] } }
+    });
+    settings.forEach(s => {
+      if (s.key === "site_owner_name") {
+        ownerName = s.value;
+        ownerShortName = ownerName.split(",")[0];
+      }
+    });
+  } catch(e) {}
+
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,7 +43,7 @@ export default function TentangPage() {
               {/* Text Content */}
               <div className="w-full md:w-2/3 space-y-6">
                 <div>
-                  <h2 className="font-serif text-3xl font-bold text-navy">Dr. Satria Wibowo, S.H., M.H., Ph.D.</h2>
+                  <h2 className="font-serif text-3xl font-bold text-navy">{ownerName}</h2>
                   <p className="text-gold font-bold uppercase tracking-widest text-xs mt-2">
                     Kurator Kepailitan & Konsultan Hukum Bisnis
                   </p>
@@ -33,7 +51,7 @@ export default function TentangPage() {
                 
                 <div className="prose prose-sm text-gray-600">
                   <p>
-                    Dengan pengalaman praktis dan akademis lebih dari 15 tahun, Dr. Satria mendedikasikan karirnya pada penyelesaian sengketa bisnis kompleks, restrukturisasi perusahaan, dan kepailitan.
+                    Dengan pengalaman praktis dan akademis lebih dari 15 tahun, {ownerShortName} mendedikasikan karirnya pada penyelesaian sengketa bisnis kompleks, restrukturisasi perusahaan, dan kepailitan.
                   </p>
                   <p>
                     Beliau percaya bahwa hukum tidak hanya tentang memenangkan perdebatan di pengadilan, tetapi tentang menyusun strategi mitigasi risiko yang mengamankan masa depan bisnis Anda. Karena itulah, selain menjadi konsultan pribadi, beliau merancang template dokumen hukum yang bisa diakses oleh UMKM dan startup dengan budget minim.

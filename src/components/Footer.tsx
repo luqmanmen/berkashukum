@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function Footer() {
+export default function Footer({ ownerName = "Dr. Satria Wibowo" }: { ownerName?: string }) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -16,7 +16,7 @@ export default function Footer() {
               </div>
               <div>
                 <div className="font-serif text-xl font-bold text-white leading-tight">
-                  Dr. Satria Wibowo
+                  {ownerName}
                 </div>
                 <div className="text-[10px] text-gold-light tracking-widest uppercase">
                   Pakar Hukum & Kurator
@@ -83,7 +83,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-xs text-center md:text-left">
-            &copy; {currentYear} Dr. Satria Wibowo, S.H., M.H., Ph.D. Seluruh Hak Dilindungi.
+            &copy; {currentYear} {ownerName} Seluruh Hak Dilindungi.
           </p>
           <div className="flex gap-6 text-xs text-gray-500">
             <Link href="#" className="hover:text-gold transition-colors">Kebijakan Privasi</Link>

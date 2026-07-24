@@ -4,6 +4,8 @@ import Image from "next/image";
 import AddToCartButton from "@/components/AddToCartButton";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProductDetailPage({
   params,
 }: {
@@ -11,6 +13,18 @@ export default async function ProductDetailPage({
 }) {
   const { id } = await params;
   const product = await prisma.product.findUnique({ where: { id } });
+
+  let ownerName = "Dr. Satria Wibowo";
+  let ownerInitials = "SW";
+  try {
+    const setting = await prisma.siteSetting.findUnique({ where: { key: "site_owner_name" } });
+    if (setting) {
+      ownerName = setting.value;
+      const parts = ownerName.replace(/Dr\.\s*|S\.H\.|M\.H\.|Ph\.D\.|,/g, "").trim().split(" ");
+      ownerInitials = parts.length > 1 ? parts[0][0] + parts[1][0] : parts[0].substring(0, 2);
+      ownerInitials = ownerInitials.toUpperCase();
+    }
+  } catch(e) {}
 
   if (!product || product.status !== "PUBLISHED") {
     notFound();
@@ -127,10 +141,10 @@ export default async function ProductDetailPage({
                 {/* Author Info */}
                 <div className="flex items-center gap-3 mb-8 pt-6 border-t border-gray-100">
                   <div className="w-10 h-10 bg-gold rounded-full flex items-center justify-center text-navy font-bold text-sm">
-                    SW
+                    {ownerInitials}
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-navy">Dr. Satria Wibowo</div>
+                    <div className="text-sm font-bold text-navy">{ownerName}</div>
                     <div className="text-xs text-gray-500">Pakar Hukum & Kurator Kepailitan</div>
                   </div>
                 </div>

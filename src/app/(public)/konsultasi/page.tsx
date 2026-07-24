@@ -1,9 +1,22 @@
 import Script from "next/script";
 
-export const metadata = {
-  title: "Konsultasi Hukum | Dr. Satria Wibowo",
-  description: "Jadwalkan sesi konsultasi hukum 1-on-1 dengan Dr. Satria Wibowo, pakar hukum bisnis dan kurator kepailitan.",
-};
+import { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { prisma } = await import("@/lib/prisma");
+  let ownerName = "Dr. Satria Wibowo";
+  try {
+    const setting = await prisma.siteSetting.findUnique({ where: { key: "site_owner_name" } });
+    if (setting) ownerName = setting.value;
+  } catch (e) {}
+  
+  return {
+    title: `Konsultasi Hukum | ${ownerName}`,
+    description: `Jadwalkan sesi konsultasi hukum 1-on-1 dengan ${ownerName}, pakar hukum bisnis dan kurator kepailitan.`,
+  };
+}
+
+export const dynamic = "force-dynamic";
 
 export default function KonsultasiPage() {
   return (

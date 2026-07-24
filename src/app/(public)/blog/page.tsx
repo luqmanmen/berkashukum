@@ -2,10 +2,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
-export const metadata: Metadata = {
-  title: "Blog & Publikasi | Dr. Satria Wibowo",
-  description: "Artikel dan edukasi hukum terkini dari Dr. Satria Wibowo. Dapatkan insight seputar hukum bisnis, kepailitan, dan korporasi.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  let ownerName = "Dr. Satria Wibowo";
+  try {
+    const setting = await prisma.siteSetting.findUnique({ where: { key: "site_owner_name" } });
+    if (setting) ownerName = setting.value;
+  } catch (e) {}
+  
+  return {
+    title: `Blog & Publikasi | ${ownerName}`,
+    description: `Artikel dan edukasi hukum terkini dari ${ownerName}. Dapatkan insight seputar hukum bisnis, kepailitan, dan korporasi.`,
+  };
+}
+
+export const dynamic = "force-dynamic";
 
 export default async function BlogPage() {
   const articles = await prisma.article.findMany({
@@ -27,7 +37,7 @@ export default async function BlogPage() {
           <h1 className="font-serif text-5xl sm:text-6xl font-bold text-white mb-5">Blog & Publikasi</h1>
           <div className="gold-divider mx-auto mb-5" />
           <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            Insight, opini hukum, dan analisis studi kasus terbaru dari Dr. Satria Wibowo.
+            Insight, opini hukum, dan analisis studi kasus terbaru.
           </p>
         </div>
       </section>
@@ -75,7 +85,7 @@ export default async function BlogPage() {
                         <div className="w-7 h-7 rounded-full bg-navy flex items-center justify-center">
                           <span className="text-gold text-xs font-bold">SW</span>
                         </div>
-                        <span className="text-xs text-gray-500">{article.author?.name || "Dr. Satria Wibowo"}</span>
+                        <span className="text-xs text-gray-500">{article.author?.name || "Admin"}</span>
                       </div>
                       <Link href={`/blog/${article.slug}`} className="text-gold text-sm font-semibold hover:text-gold-light transition-colors">
                         Baca →

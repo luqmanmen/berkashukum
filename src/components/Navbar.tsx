@@ -5,7 +5,7 @@ import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function Navbar() {
+export default function Navbar({ ownerName = "Dr. Satria Wibowo" }: { ownerName?: string }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
@@ -38,7 +38,7 @@ export default function Navbar() {
             </div>
             <div>
               <div className="font-serif text-xl font-bold text-white leading-tight">
-                Dr. Satria Wibowo
+                {ownerName}
               </div>
               <div className="text-[10px] text-gold-light tracking-widest uppercase">
                 Pakar Hukum & Kurator

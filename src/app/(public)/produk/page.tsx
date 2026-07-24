@@ -14,6 +14,8 @@ const categoryIcons: Record<string, string> = {
   "Konsultasi": "💬",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function ProductsPage({
   searchParams,
 }: {
@@ -21,6 +23,12 @@ export default async function ProductsPage({
 }) {
   const params = await searchParams;
   const selectedCategory = params.category || "Semua";
+
+  let ownerName = "Dr. Satria Wibowo";
+  try {
+    const setting = await prisma.siteSetting.findUnique({ where: { key: "site_owner_name" } });
+    if (setting) ownerName = setting.value;
+  } catch(e) {}
 
   const products = await prisma.product.findMany({
     where: {
@@ -43,7 +51,7 @@ export default async function ProductsPage({
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-white mb-4">Template Dokumen Hukum</h1>
             <div className="gold-divider mx-auto mb-6" />
             <p className="text-gray-300 max-w-2xl mx-auto">
-              Draf kontrak dan dokumen hukum berkualitas tinggi yang disusun langsung oleh Dr. Satria Wibowo. Solusi hemat untuk legalitas bisnis Anda.
+              Draf kontrak dan dokumen hukum berkualitas tinggi yang disusun langsung oleh {ownerName}. Solusi hemat untuk legalitas bisnis Anda.
             </p>
           </div>
         </div>
