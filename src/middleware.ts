@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const isAuthPage = pathname === "/admin/login";
+  const isAuthPage = pathname.startsWith("/admin/login");
 
   // If user is logged in and tries to access login page, redirect to dashboard
   if (isAuthPage) {
