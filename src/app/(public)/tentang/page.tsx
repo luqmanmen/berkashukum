@@ -6,13 +6,15 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export default async function TentangPage() {
-  let ownerName = "Dr. Satria Wibowo, S.H., M.H., Ph.D.";
-  let ownerShortName = "Dr. Satria";
+  let ownerName = "Berkas Hukum Corporate";
+  let ownerShortName = "Berkas Hukum Corporate";
   let heroImage: string | null = null;
+  let aboutSubtitle = "BADAN HUKUM, KONSULTAN LEGAL & LEGAL AUDIT SEJAK 2016";
+  let aboutDesc = "Sejak didirikan pada tahun 2016, Berkas Hukum Corporate telah mendedikasikan layanannya secara profesional pada penyelesaian sengketa bisnis kompleks, legal audit, restrukturisasi perusahaan, dan kepailitan.\n\nKami percaya bahwa hukum tidak hanya tentang memenangkan perdebatan di pengadilan, tetapi tentang menyusun strategi mitigasi risiko yang mengamankan masa depan bisnis Anda secara terstruktur. Karena itulah, selain menyediakan layanan konsultasi korporat premium, kami juga merancang sistem penyediaan dokumen hukum berkualitas tinggi yang dapat diakses oleh UMKM dan startup dengan efisien dan andal.";
 
   try {
     const settings = await prisma.siteSetting.findMany({
-      where: { key: { in: ["site_owner_name", "home_hero_image"] } }
+      where: { key: { in: ["site_owner_name", "home_hero_image", "about_subtitle", "about_description"] } }
     });
     settings.forEach(s => {
       if (s.key === "site_owner_name") {
@@ -21,6 +23,12 @@ export default async function TentangPage() {
       }
       if (s.key === "home_hero_image" && s.value && s.value !== "none") {
         heroImage = s.value;
+      }
+      if (s.key === "about_subtitle") {
+        aboutSubtitle = s.value;
+      }
+      if (s.key === "about_description") {
+        aboutDesc = s.value;
       }
     });
   } catch(e) {}
@@ -60,17 +68,14 @@ export default async function TentangPage() {
                 <div>
                   <h2 className="font-serif text-3xl font-bold text-navy">{ownerName}</h2>
                   <p className="text-gold font-bold uppercase tracking-widest text-xs mt-2">
-                    Kurator Kepailitan & Konsultan Hukum Bisnis
+                    {aboutSubtitle}
                   </p>
                 </div>
                 
                 <div className="prose prose-sm text-gray-600">
-                  <p>
-                    Dengan pengalaman praktis dan akademis lebih dari 15 tahun, {ownerShortName} mendedikasikan karirnya pada penyelesaian sengketa bisnis kompleks, restrukturisasi perusahaan, dan kepailitan.
-                  </p>
-                  <p>
-                    Beliau percaya bahwa hukum tidak hanya tentang memenangkan perdebatan di pengadilan, tetapi tentang menyusun strategi mitigasi risiko yang mengamankan masa depan bisnis Anda. Karena itulah, selain menjadi konsultan pribadi, beliau merancang template dokumen hukum yang bisa diakses oleh UMKM dan startup dengan budget minim.
-                  </p>
+                  {aboutDesc.split('\n').map((paragraph, i) => (
+                    paragraph.trim() ? <p key={i}>{paragraph}</p> : <br key={i} />
+                  ))}
                 </div>
 
                 <div className="pt-4 flex flex-wrap gap-3">

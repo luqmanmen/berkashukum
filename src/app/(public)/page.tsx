@@ -94,10 +94,10 @@ export default async function Home() {
       <section className="bg-gold py-10 relative z-20 -mt-10 mx-4 sm:mx-6 lg:mx-8 rounded-sm shadow-xl max-w-5xl xl:mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center px-4">
           {[
-            { num: "15+", label: "Tahun Pengalaman" },
+            { num: "2016", label: "Tahun Berdiri" },
             { num: "120+", label: "Kasus Diselesaikan" },
-            { num: "S3", label: "Doktor Ilmu Hukum" },
-            { num: "Lisensi", label: "Kurator Resmi" },
+            { num: "Tim Ahli", label: "Spesialis Hukum" },
+            { num: "Lisensi", label: "Badan Hukum Resmi" },
           ].map((stat, i) => (
             <div key={i} className="border-r border-navy-dark/10 last:border-0">
               <div className="font-serif text-3xl sm:text-4xl font-bold text-navy-dark mb-1">{stat.num}</div>

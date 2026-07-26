@@ -105,6 +105,12 @@ export default async function AdminPesananPage() {
                           </a>
                         </div>
                       )}
+                      {order.downloadCode && (
+                        <div className="mt-2 text-[10px]">
+                          <span className="text-gray-500 block">Kode Download:</span>
+                          <span className="font-mono font-bold text-navy bg-navy/10 px-1 py-0.5 rounded">{order.downloadCode}</span>
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-right">
                       {order.status === "PENDING" && (

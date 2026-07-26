@@ -96,12 +96,43 @@ export async function sendDownloadCodeEmail(
           <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
           <p style="font-size: 13px; color: #888; line-height: 1.6;">
             Jika ada kendala, silakan hubungi kami di 
-            <a href="mailto:contact@berkashukum.com" style="color: ${GOLD};">contact@berkashukum.com</a>.
+            <a href="mailto:luqmanarifsby@gmail.com" style="color: ${GOLD};">luqmanarifsby@gmail.com</a>.
           </p>
+
+          <!-- Signature Block -->
+          <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 40px; border-top: 1px dashed #e2e8f0; padding-top: 24px; width: 100%;">
+            <tr>
+              <td width="80" valign="top" style="padding-right: 16px;">
+                <img src="${APP_URL}/images/logo2.png" alt="Luqman Arif" width="80" height="80" style="border-radius: 50%; object-fit: cover; border: 2px solid ${GOLD}; display: block;" />
+              </td>
+              <td valign="top">
+                <h3 style="margin: 0 0 4px 0; color: ${NAVY}; font-size: 18px; letter-spacing: 0.5px;">Luqman Arif S.I.Kom</h3>
+                <p style="margin: 0 0 8px 0; color: ${GOLD}; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                  Advokat &bull; Kurator &bull; Spesialis Legal Audit
+                </p>
+                <table cellpadding="0" cellspacing="0" border="0" style="font-size: 12px; color: #555; line-height: 1.6;">
+                  <tr>
+                    <td width="20" style="color: ${NAVY}; font-weight: bold;">WA</td>
+                    <td>: <a href="https://wa.me/6282334196500" style="color: #555; text-decoration: none;">+62 823-3419-6500</a></td>
+                  </tr>
+                  <tr>
+                    <td style="color: ${NAVY}; font-weight: bold;">EM</td>
+                    <td>: <a href="mailto:luqmanarifsby@gmail.com" style="color: #555; text-decoration: none;">luqmanarifsby@gmail.com</a></td>
+                  </tr>
+                  <tr>
+                    <td style="color: ${NAVY}; font-weight: bold;">WEB</td>
+                    <td>: <a href="${APP_URL}" style="color: ${GOLD}; text-decoration: none;">www.berkashukum.com</a></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+          <!-- End Signature -->
+
         </div>
 
         <div style="background-color: #f7f8fa; padding: 16px 30px; text-align: center; font-size: 12px; color: #aaa; border-top: 1px solid #e2e8f0;">
-          © ${new Date().getFullYear()} Berkas Hukum Corporate. Seluruh hak cipta dilindungi.
+          © ${new Date().getFullYear()} Luqman Arif S.I.Kom. Seluruh hak cipta dilindungi.
         </div>
       </div>
     `,
