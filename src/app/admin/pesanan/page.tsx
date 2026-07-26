@@ -2,7 +2,22 @@ import { prisma } from "@/lib/prisma";
 import UpdateStatusButton from "./UpdateStatusButton";
 
 export default async function AdminPesananPage() {
+  const now = new Date();
+  
   const orders = await prisma.order.findMany({
+    where: {
+      OR: [
+        { status: "PAID" },
+        { paymentProof: { not: null } },
+        { 
+          status: "PENDING",
+          OR: [
+            { expiresAt: null },
+            { expiresAt: { gt: now } }
+          ]
+        }
+      ]
+    },
     orderBy: { createdAt: "desc" },
     include: {
       items: {
@@ -27,7 +42,7 @@ export default async function AdminPesananPage() {
                 <th className="px-6 py-4 font-semibold">Pembeli</th>
                 <th className="px-6 py-4 font-semibold">Produk</th>
                 <th className="px-6 py-4 font-semibold">Total</th>
-                <th className="px-6 py-4 font-semibold">Status</th>
+                <th className="px-6 py-4 font-semibold">Status & Bukti</th>
                 <th className="px-6 py-4 font-semibold text-right">Aksi</th>
               </tr>
             </thead>
@@ -78,6 +93,18 @@ export default async function AdminPesananPage() {
                       >
                         {order.status}
                       </span>
+                      {order.paymentProof && (
+                        <div className="mt-2">
+                          <a 
+                            href={order.paymentProof} 
+                            target="_blank" 
+                            rel="noreferrer"
+                            className="text-xs text-blue-600 hover:underline font-semibold"
+                          >
+                            📄 Lihat Bukti
+                          </a>
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-right">
                       {order.status === "PENDING" && (

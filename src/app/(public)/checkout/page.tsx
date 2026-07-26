@@ -4,6 +4,7 @@ import { useCart } from "@/hooks/useCart";
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { BANKS } from "@/lib/banks";
 
 interface ProductInfo {
   id: string;
@@ -25,7 +26,19 @@ function CheckoutContent() {
     email: "",
     phone: "",
     notes: "",
+    paymentMethod: "TRANSFER",
+    bankName: "BCA",
   });
+
+  // Restore saved form data (when user clicks "GANTI" from payment page)
+  useEffect(() => {
+    try {
+      const savedForm = sessionStorage.getItem("checkout_form");
+      if (savedForm) {
+        setForm(JSON.parse(savedForm));
+      }
+    } catch {}
+  }, []);
 
   useEffect(() => {
     if (directProductId) {
@@ -36,11 +49,23 @@ function CheckoutContent() {
     }
   }, [directProductId]);
 
-  // Items to checkout: direct product OR cart
+  // Items to checkout: direct product OR cart OR saved session (for "ganti metode" flow)
   const checkoutItems = directProduct
     ? [{ id: directProduct.id, name: directProduct.name, price: directProduct.price, quantity: 1 }]
-    : items;
-  const checkoutTotal = directProduct ? directProduct.price : totalPrice;
+    : items.length > 0 ? items : (() => {
+        try {
+          if (typeof window === "undefined") return [];
+          const raw = sessionStorage.getItem("checkout_items");
+          return raw ? JSON.parse(raw) : [];
+        } catch { return []; }
+      })();
+  const checkoutTotal = directProduct ? directProduct.price : items.length > 0 ? totalPrice : (() => {
+    try {
+      if (typeof window === "undefined") return 0;
+      const raw = sessionStorage.getItem("checkout_total");
+      return raw ? Number(raw) : 0;
+    } catch { return 0; }
+  })();
 
   if (checkoutItems.length === 0) {
     return (
@@ -65,25 +90,34 @@ function CheckoutContent() {
     setLoading(true);
 
     try {
+      const payload = {
+        items: checkoutItems,
+        totalAmount: checkoutTotal,
+        buyerName: form.name,
+        buyerEmail: form.email,
+        buyerPhone: form.phone,
+        notes: form.notes,
+        paymentMethod: form.paymentMethod,
+        bankName: form.paymentMethod === "TRANSFER" ? form.bankName : null,
+      };
+
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: checkoutItems,
-          totalAmount: checkoutTotal,
-          buyerName: form.name,
-          buyerEmail: form.email,
-          buyerPhone: form.phone,
-          notes: form.notes,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error || "Checkout gagal");
 
-      setSuccessData(data);
+      // Simpan data ke sessionStorage agar bisa dikembalikan jika user klik "GANTI"
+      sessionStorage.setItem("checkout_form", JSON.stringify(form));
+      sessionStorage.setItem("checkout_items", JSON.stringify(checkoutItems));
+      sessionStorage.setItem("checkout_total", String(checkoutTotal));
+
       clearCart();
+      router.push(`/pembayaran/${data.orderId}`);
     } catch (err: any) {
       alert(err.message || "Terjadi kesalahan. Silakan coba lagi.");
     } finally {
@@ -91,46 +125,18 @@ function CheckoutContent() {
     }
   };
 
-  if (successData) {
-    return (
-      <section className="pt-32 pb-20 min-h-screen bg-cream flex items-center justify-center">
-        <div className="max-w-md w-full mx-auto px-4 text-center">
-          <div className="bg-white border border-gray-100 rounded-sm p-8 shadow-sm">
-            <div className="text-5xl mb-4">✅</div>
-            <h1 className="font-serif text-2xl font-bold text-navy mb-2">Pesanan Berhasil Dibuat</h1>
-            <p className="text-gray-500 text-sm mb-6">Order ID: <span className="font-semibold text-navy">{successData.orderId}</span></p>
 
-            <div className="bg-cream p-4 rounded-sm mb-6 border border-gray-200 text-left">
-              <p className="text-sm text-gray-500 mb-1">Silakan transfer TEPAT sejumlah:</p>
-              <div className="text-3xl font-bold text-gold mb-4">Rp {successData.finalAmount?.toLocaleString("id-ID")}</div>
-              
-              <div className="text-sm space-y-2">
-                <p className="text-gray-500">Ke Rekening Bank:</p>
-                <div className="font-semibold text-navy text-lg">BCA 1234567890</div>
-                <div className="text-gray-600">a.n. Luqman Arif</div>
-              </div>
-            </div>
-
-            <p className="text-xs text-red-500 font-semibold mb-6">
-              PENTING: Transfer sesuai nominal di atas HINGGA 3 DIGIT TERAKHIR agar pembayaran terverifikasi otomatis.
-            </p>
-
-            <Link href="/" className="btn-gold px-8 py-3.5 rounded-sm font-bold text-sm block w-full text-center">
-              Selesai & Kembali ke Beranda
-            </Link>
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <>
 
-      <section className="pt-28 pb-16 min-h-screen bg-cream">
+      <section className="pt-10 pb-16 min-h-screen bg-cream">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
-            <h1 className="font-serif text-3xl font-bold text-navy">Checkout</h1>
+            <Link href="/produk" className="inline-flex items-center text-navy hover:text-gold transition-colors font-bold text-2xl font-serif mb-2">
+              <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" /></svg>
+              Checkout
+            </Link>
             <p className="text-gray-500 text-sm mt-1">Lengkapi data Anda untuk melanjutkan pembayaran</p>
           </div>
 
@@ -185,7 +191,7 @@ function CheckoutContent() {
                     value={form.phone}
                     onChange={handleChange}
                     placeholder="08xx-xxxx-xxxx"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-sm text-sm focus:outline-none focus:border-gold text-gray-800"
+                    className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl text-sm focus:outline-none focus:border-gold focus:ring-4 focus:ring-gold/20 hover:border-gray-300 transition-all duration-300 text-gray-800 bg-gray-50/50 focus:bg-white"
                   />
                 </div>
 
@@ -200,16 +206,110 @@ function CheckoutContent() {
                     onChange={handleChange}
                     rows={3}
                     placeholder="Catatan atau pertanyaan khusus..."
-                    className="w-full px-4 py-3 border border-gray-200 rounded-sm text-sm focus:outline-none focus:border-gold text-gray-800 resize-none"
+                    className="w-full px-4 py-3.5 border-2 border-gray-100 rounded-xl text-sm focus:outline-none focus:border-gold focus:ring-4 focus:ring-gold/20 hover:border-gray-300 transition-all duration-300 text-gray-800 bg-gray-50/50 focus:bg-white resize-none"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Metode Pembayaran <span className="text-red-500">*</span>
+                  </label>
+                  <div className="space-y-3">
+                    <label className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
+                      form.paymentMethod === "TRANSFER" 
+                        ? "border-gold bg-gold/5 shadow-md shadow-gold/10 -translate-y-0.5" 
+                        : "border-gray-100 hover:border-gray-300 hover:bg-gray-50/80 hover:-translate-y-0.5 hover:shadow-sm bg-white"
+                    }`}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="TRANSFER"
+                        checked={form.paymentMethod === "TRANSFER"}
+                        onChange={handleChange}
+                        className="w-4 h-4 text-gold border-gray-300 focus:ring-gold focus:ring-offset-2 transition-all"
+                      />
+                      <span className="ml-3 text-sm font-semibold text-gray-800 flex items-center">
+                        <span className="text-xl mr-2">🏦</span> Virtual Account DANA
+                      </span>
+                    </label>
+
+                    {form.paymentMethod === "TRANSFER" && (
+                      <div className="ml-7 mt-2 mb-4 p-3 border-l-2 border-gold bg-gray-50">
+                        <label className="block text-xs font-semibold text-gray-600 mb-3">Pilih Bank (DANA Virtual Account):</label>
+                        
+                        <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
+                          {BANKS.map((bank) => (
+                            <label
+                              key={bank.id}
+                              className={`flex items-center p-2.5 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
+                                form.bankName === bank.id
+                                  ? "border-blue-500 bg-blue-50/80 shadow-md shadow-blue-500/10 scale-[1.02]"
+                                  : "border-gray-100 bg-white hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm"
+                              }`}
+                            >
+                              <div className="w-14 h-7 flex items-center justify-center bg-white border border-gray-100 rounded-lg p-0.5 mr-3 flex-shrink-0 shadow-sm overflow-hidden">
+                                <img 
+                                  src={bank.logo} 
+                                  alt={bank.name} 
+                                  className={`max-w-full max-h-full object-contain ${bank.scale || ""}`}
+                                  onError={(e) => { 
+                                    (e.target as HTMLImageElement).style.display = 'none';
+                                    (e.target as HTMLImageElement).parentElement!.style.backgroundColor = bank.bgColor;
+                                  }}
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-sm font-semibold text-gray-800">{bank.name}</span>
+                                <span className="text-[10px] text-gray-400 ml-1.5">{bank.type === "VA" ? `Prefix: ${bank.prefix}` : "No HP Langsung"}</span>
+                              </div>
+                              <input
+                                type="radio"
+                                name="bankName"
+                                value={bank.id}
+                                checked={form.bankName === bank.id}
+                                onChange={(e) => setForm({ ...form, bankName: e.target.value })}
+                                className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 flex-shrink-0"
+                              />
+                            </label>
+                          ))}
+                        </div>
+                        
+                        <p className="text-[10px] text-gray-500 mt-3">
+                          Nomor Virtual Account akan tampil di halaman pembayaran.
+                        </p>
+                      </div>
+                    )}
+                    <label className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
+                      form.paymentMethod === "QRIS" 
+                        ? "border-gold bg-gold/5 shadow-md shadow-gold/10 -translate-y-0.5" 
+                        : "border-gray-100 hover:border-gray-300 hover:bg-gray-50/80 hover:-translate-y-0.5 hover:shadow-sm bg-white"
+                    }`}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="QRIS"
+                        checked={form.paymentMethod === "QRIS"}
+                        onChange={handleChange}
+                        className="w-4 h-4 text-gold border-gray-300 focus:ring-gold focus:ring-offset-2 transition-all"
+                      />
+                      <span className="ml-3 text-sm font-semibold text-gray-800 flex items-center gap-2">
+                        <img src="/images/qris.svg" alt="QRIS" className="h-5 object-contain" />
+                        QRIS
+                      </span>
+                    </label>
+                  </div>
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-gold w-full py-4 rounded-sm font-bold text-sm tracking-wide disabled:opacity-60"
+                  className="btn-gold w-full py-4 rounded-xl font-bold text-sm tracking-wide disabled:opacity-60 hover-glow active:scale-95 transition-all duration-300 relative overflow-hidden group"
                 >
-                  {loading ? "Memproses..." : "Buat Pesanan →"}
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    {loading ? "Memproses..." : "Buat Pesanan"}
+                    {!loading && <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>}
+                  </span>
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                 </button>
                 <p className="text-xs text-center text-gray-400">
                   🔒 Data Anda dilindungi. Pembayaran dilakukan via transfer bank.
@@ -222,7 +322,7 @@ function CheckoutContent() {
               <div className="bg-white border border-gray-100 rounded-sm p-6 shadow-sm sticky top-24">
                 <h2 className="font-serif font-bold text-navy text-lg mb-5">Ringkasan Pesanan</h2>
                 <div className="space-y-3 mb-5">
-                  {checkoutItems.map((item, i) => (
+                  {checkoutItems.map((item: any, i: number) => (
                     <div key={i} className="flex justify-between text-sm">
                       <span className="text-gray-500 truncate mr-2">{item.name} ×{item.quantity}</span>
                       <span className="text-navy font-medium whitespace-nowrap">
@@ -238,14 +338,7 @@ function CheckoutContent() {
                   </div>
                 </div>
 
-                <div className="mt-5 pt-5 border-t border-gray-100 space-y-2">
-                  <div className="text-xs text-gray-500 font-semibold mb-2">Metode Pembayaran Tersedia:</div>
-                  <div className="flex flex-wrap gap-2">
-                    {["Transfer Bank BCA"].map((m) => (
-                      <span key={m} className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">{m}</span>
-                    ))}
-                  </div>
-                </div>
+
               </div>
             </div>
           </div>

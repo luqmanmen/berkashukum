@@ -22,6 +22,70 @@ export default function Navbar({ ownerName = "Dr. Satria Wibowo" }: { ownerName?
     setIsOpen(false);
   }, [pathname]);
 
+  const isMinimalPage = pathname.startsWith("/checkout");
+  const isPaymentPage = pathname.startsWith("/pembayaran");
+  const isProductDetailPage = /^\/produk\/[^\/]+$/.test(pathname);
+  const isProductListPage = pathname === "/produk";
+
+  if (isPaymentPage || isMinimalPage || isProductListPage) {
+    return null;
+  }
+
+  if (isProductDetailPage) {
+    return (
+      <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="flex items-center justify-between h-14">
+            {/* Back */}
+            <button
+              onClick={() => window.history.back()}
+              className="flex items-center gap-2 text-[#0a1628] hover:text-[#c9a84c] transition-colors font-medium text-sm"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span className="hidden sm:inline">Kembali</span>
+            </button>
+
+            <span className="text-sm font-semibold text-[#0a1628] truncate max-w-[180px] mx-4">
+              Detail Produk
+            </span>
+
+            <div className="flex items-center gap-1">
+              {/* Share */}
+              <button
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({ title: document.title, url: window.location.href });
+                  } else {
+                    navigator.clipboard.writeText(window.location.href);
+                  }
+                }}
+                className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors text-[#0a1628]"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+              </button>
+              {/* Cart */}
+              <Link href="/cart" className="relative w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors text-[#0a1628]">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {totalItems > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-0.5">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+
   return (
     <header
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
@@ -33,15 +97,13 @@ export default function Navbar({ ownerName = "Dr. Satria Wibowo" }: { ownerName?
           
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-gold rounded-sm flex items-center justify-center">
-              <span className="text-navy-dark font-serif font-bold text-lg">S</span>
-            </div>
+            <img src="/images/logo-1.png" alt="Berkas Hukum Logo" className="h-10 sm:h-12 w-auto object-contain shrink-0" />
             <div>
               <div className="font-serif text-xl font-bold text-white leading-tight">
-                {ownerName}
+                Berkas Hukum Corporate
               </div>
-              <div className="text-[10px] text-gold-light tracking-widest uppercase">
-                Pakar Hukum & Kurator
+              <div className="text-[9px] text-gold-light tracking-wider uppercase mt-1">
+                Advokat &bull; Kurator &bull; Spesialis Legal Audit
               </div>
             </div>
           </Link>

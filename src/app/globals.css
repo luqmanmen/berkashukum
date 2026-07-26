@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --navy: #0a1628;
-  --navy-dark: #060d1a;
-  --navy-mid: #112240;
-  --navy-light: #1e3a5f;
-  --gold: #c9a84c;
-  --gold-light: #e2c07a;
-  --gold-dark: #a07830;
+  --navy: #12294f;
+  --navy-dark: #0b1a33;
+  --navy-mid: #173769;
+  --navy-light: #255198;
+  --gold: #cfa740;
+  --gold-light: #e4c776;
+  --gold-dark: #a58532;
   --cream: #faf7f2;
   --white: #ffffff;
 }
@@ -200,4 +200,60 @@ body {
   -webkit-backdrop-filter: blur(20px);
   background: rgba(6, 13, 26, 0.85);
   border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+}
+
+/* Modern CSS Enhancements */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.05);
+}
+
+.glass-panel-dark {
+  background: rgba(6, 13, 26, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.3);
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes gradient-x {
+  0%, 100% {
+    background-size: 200% 200%;
+    background-position: left center;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: right center;
+  }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 3s ease infinite;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(201, 168, 76, 0.4);
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

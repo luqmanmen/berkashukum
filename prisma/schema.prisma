@@ -31,31 +31,39 @@ model User {
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  description String
-  price       Float
-  image       String?
-  category    String?
-  digitalFile String?
-  status      String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
-  stock       Int?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(cuid())
+  name           String
+  description    String
+  price          Float
+  image          String?
+  category       String?
+  documentFormat String?  // e.g. "Microsoft Word (.docx)", "PDF (.pdf)", "Microsoft Excel (.xlsx)"
+  promoStatus    String?  // e.g. "Diskon 50%", "Promo Bundling", null = no promo
+  features       String?  // Stored as text, each line is a feature bullet point
+  digitalFile    String?
+  status         String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+  stock          Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   OrderItems OrderItem[]
 }
 
 model Order {
-  id          String   @id @default(cuid())
-  totalAmount Float
-  status      String   @default("PENDING") // PENDING, PAID, EXPIRED, REFUND
-  buyerName   String
-  buyerEmail  String
-  buyerPhone  String?
-  paymentId   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(cuid())
+  totalAmount   Float
+  status        String   @default("PENDING") // PENDING, PAID, EXPIRED, REFUND
+  buyerName     String
+  buyerEmail    String
+  buyerPhone    String?
+  paymentId     String?
+  paymentMethod String? // TRANSFER, QRIS
+  bankName      String? // e.g. BCA, BNI, BRI, MANDIRI
+  paymentProof  String?
+  expiresAt     DateTime?
+  downloadCode  String?  // Kode unik per order, di-generate saat admin approve
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   items OrderItem[]
 }

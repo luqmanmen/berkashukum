@@ -21,6 +21,7 @@ export default async function AdminLayout({
     { href: "/admin/artikel", label: "Artikel", icon: "📝" },
     { href: "/admin/halaman", label: "Halaman", icon: "🗂️" },
     { href: "/admin/pengguna", label: "Pengguna", icon: "👥" },
+    { href: "/admin/penyimpanan", label: "Penyimpanan", icon: "🗄️" },
     { href: "/admin/pengaturan", label: "Pengaturan", icon: "⚙️" },
   ];
 

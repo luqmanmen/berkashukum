@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { nanoid } from "nanoid";
 import { supabase } from "@/lib/supabase";
+import PriceInput from "@/components/admin/PriceInput";
+import FeatureInput from "@/components/admin/FeatureInput";
 
 export default function TambahProdukPage() {
   async function createProduct(formData: FormData) {
@@ -10,8 +12,11 @@ export default function TambahProdukPage() {
 
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
-    const price = parseInt(formData.get("price") as string);
+    const price = parseInt((formData.get("price") as string).replace(/\D/g, ""), 10);
     const category = formData.get("category") as string;
+    const documentFormat = formData.get("documentFormat") as string | null;
+    const promoStatus = (formData.get("promoStatus") as string) || null;
+    const features = formData.get("features") as string;
     const status = formData.get("status") as string;
 
     const id = `PROD-${nanoid(8).toUpperCase()}`;
@@ -24,11 +29,11 @@ export default function TambahProdukPage() {
       const fileName = `images/${id}.${ext}`;
       
       const { data, error } = await supabase.storage
-        .from("products")
+        .from("images")
         .upload(fileName, imageFile, { upsert: true });
         
       if (!error && data) {
-        const { data: publicUrlData } = supabase.storage.from("products").getPublicUrl(fileName);
+        const { data: publicUrlData } = supabase.storage.from("images").getPublicUrl(fileName);
         imageUrl = publicUrlData.publicUrl;
       }
     }
@@ -41,14 +46,14 @@ export default function TambahProdukPage() {
       const fileName = `files/${id}.${ext}`;
       
       const { data, error } = await supabase.storage
-        .from("products")
+        .from("images")
         .upload(fileName, digitalFile, { upsert: true });
         
       if (!error && data) {
         // Ideally this should be signed url generated at download time, 
         // but for simplicity we store the public URL or the path. 
         // We'll store the public URL here.
-        const { data: publicUrlData } = supabase.storage.from("products").getPublicUrl(fileName);
+        const { data: publicUrlData } = supabase.storage.from("images").getPublicUrl(fileName);
         digitalFileUrl = publicUrlData.publicUrl;
       }
     }
@@ -60,6 +65,9 @@ export default function TambahProdukPage() {
         description,
         price,
         category,
+        documentFormat: documentFormat || null,
+        promoStatus,
+        features: features || null,
         status,
         image: imageUrl,
         digitalFile: digitalFileUrl,
@@ -105,26 +113,58 @@ export default function TambahProdukPage() {
             </select>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Format Dokumen</label>
+              <select
+                name="documentFormat"
+                className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-900"
+              >
+                <option value="">-- Pilih Format --</option>
+                <option value="Microsoft Word (.docx)">Microsoft Word (.docx)</option>
+                <option value="PDF (.pdf)">PDF (.pdf)</option>
+                <option value="Microsoft Excel (.xlsx)">Microsoft Excel (.xlsx)</option>
+                <option value="ZIP (Bundel)">ZIP (Bundel)</option>
+                <option value="Online (Konsultasi)">Online (Konsultasi)</option>
+              </select>
+              <p className="text-xs text-gray-400 mt-1">Digunakan untuk filter halaman produk.</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Program Promo</label>
+              <select
+                name="promoStatus"
+                className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-900"
+              >
+                <option value="">-- Tidak Ada Promo --</option>
+                <option value="Diskon 50%">Diskon 50%</option>
+                <option value="Promo Bundling">Promo Bundling</option>
+                <option value="Harga Spesial">Harga Spesial</option>
+              </select>
+              <p className="text-xs text-gray-400 mt-1">Ditampilkan sebagai label promo di kartu produk.</p>
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Harga (Rp)</label>
-            <input
-              name="price"
-              type="number"
-              required
-              min="0"
-              placeholder="Contoh: 50000"
-              className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-900"
-            />
+            <PriceInput />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Deskripsi Lengkap</label>
-            <textarea
-              name="description"
-              required
-              rows={5}
-              placeholder="Jelaskan fitur dan detail produk Anda..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-900 resize-none"
+            <FeatureInput 
+              name="description" 
+              rows={5} 
+              placeholder="Jelaskan fitur dan detail produk Anda..." 
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Keunggulan Produk</label>
+            <FeatureInput 
+              name="features"
+              rows={4}
+              placeholder="Pisahkan dengan baris baru (Enter)&#10;Contoh:&#10;✅ Disusun berdasarkan UU terbaru&#10;⭐ Format Word mudah diedit"
             />
           </div>
 
@@ -150,7 +190,10 @@ export default function TambahProdukPage() {
                   accept=".pdf,.doc,.docx,.zip"
                   className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-semibold file:bg-[#0a1628] file:text-white hover:file:bg-[#112440] cursor-pointer"
                 />
-                <p className="text-xs text-gray-500 mt-1.5">File ini yang akan dikirim ke pembeli setelah pesanan lunas.</p>
+                <p className="text-xs text-gray-400 mt-1.5">
+                  File ini yang akan dikirim ke pembeli setelah pesanan lunas. <br/>
+                  <b>Catatan:</b> Jika berupa folder berisi banyak file, harap kompres menjadi format <b>.ZIP</b> atau <b>.RAR</b> terlebih dahulu.
+                </p>
               </div>
             </div>
           </div>

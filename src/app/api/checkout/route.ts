@@ -5,9 +5,9 @@ import { nanoid } from "nanoid";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { items, totalAmount, buyerName, buyerEmail, buyerPhone, notes } = body;
+    const { items, totalAmount, buyerName, buyerEmail, buyerPhone, notes, paymentMethod, bankName } = body;
 
-    if (!items?.length || !buyerName || !buyerEmail || !buyerPhone) {
+    if (!items?.length || !buyerName || !buyerEmail || !buyerPhone || !paymentMethod) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
     }
 
@@ -18,6 +18,10 @@ export async function POST(req: NextRequest) {
     const uniqueCode = Math.floor(Math.random() * 999) + 1;
     const finalAmount = totalAmount + uniqueCode;
 
+    // Set expiration 24 hours from now
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 24);
+
     // Create order in DB
     const order = await prisma.order.create({
       data: {
@@ -27,6 +31,9 @@ export async function POST(req: NextRequest) {
         buyerName,
         buyerEmail,
         buyerPhone,
+        paymentMethod,
+        bankName,
+        expiresAt,
         items: {
           create: items.map((item: any) => ({
             productId: item.id,
