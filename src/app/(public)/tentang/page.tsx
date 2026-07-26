@@ -8,17 +8,23 @@ export const dynamic = "force-dynamic";
 export default async function TentangPage() {
   let ownerName = "Dr. Satria Wibowo, S.H., M.H., Ph.D.";
   let ownerShortName = "Dr. Satria";
+  let heroImage: string | null = null;
+
   try {
     const settings = await prisma.siteSetting.findMany({
-      where: { key: { in: ["site_owner_name"] } }
+      where: { key: { in: ["site_owner_name", "home_hero_image"] } }
     });
     settings.forEach(s => {
       if (s.key === "site_owner_name") {
         ownerName = s.value;
         ownerShortName = ownerName.split(",")[0];
       }
+      if (s.key === "home_hero_image" && s.value && s.value !== "none") {
+        heroImage = s.value;
+      }
     });
   } catch(e) {}
+
 
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
@@ -34,11 +40,20 @@ export default async function TentangPage() {
               
               {/* Photo Area */}
               <div className="w-full md:w-1/3 flex justify-center">
-                <div className="w-48 h-48 bg-navy-mid rounded-full overflow-hidden border-4 border-gold shadow-lg flex items-end justify-center shrink-0">
-                  <div className="text-6xl text-white/20 mb-4">👤</div>
-                  {/* Gunakan next/image jika foto asli tersedia */}
+                <div className="w-48 h-48 bg-navy-mid rounded-full overflow-hidden border-4 border-gold shadow-lg flex items-end justify-center shrink-0 relative">
+                  {heroImage ? (
+                    <Image
+                      src={heroImage}
+                      alt={`Foto ${ownerName}`}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="text-6xl text-white/20 mb-4">👤</div>
+                  )}
                 </div>
               </div>
+
 
               {/* Text Content */}
               <div className="w-full md:w-2/3 space-y-6">

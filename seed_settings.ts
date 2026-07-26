@@ -32,6 +32,27 @@ async function main() {
       value: "Layanan konsultasi hukum profesional dan terpercaya.",
       category: "GENERAL",
       type: "TEXTAREA"
+    },
+    {
+      key: "home_hero_title",
+      label: "Judul Utama Beranda",
+      value: "Solusi Hukum Tepat untuk Masalah Kompleks.",
+      category: "HOME",
+      type: "TEXT"
+    },
+    {
+      key: "home_hero_subtitle",
+      label: "Deskripsi Beranda",
+      value: "Mendedikasikan lebih dari 15 tahun keahlian di bidang kepailitan, hukum bisnis, dan perlindungan aset perusahaan.",
+      category: "HOME",
+      type: "TEXTAREA"
+    },
+    {
+      key: "home_hero_image",
+      label: "Foto Profil Beranda",
+      value: "none",
+      category: "HOME",
+      type: "IMAGE"
     }
   ];
 
