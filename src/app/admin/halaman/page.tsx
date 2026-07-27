@@ -6,6 +6,7 @@ import Link from "next/link";
 const CATEGORY_LABELS: Record<string, string> = {
   HOME: "Beranda",
   ABOUT: "Tentang Kami",
+  PROMO: "Landing Page Iklan (Promo)",
   CONTACT: "Kontak",
   GENERAL: "Pengaturan Umum",
 };
@@ -23,8 +24,10 @@ export default function HalamanListPage() {
           // Extract unique categories from settings
           const uniqueCats = Array.from(new Set(data.map((s: any) => s.category))) as string[];
           
+          if (!uniqueCats.includes("PROMO")) uniqueCats.push("PROMO");
+
           // Sort to ensure HOME is first, then others, then GENERAL last
-          const sortOrder: Record<string, number> = { HOME: 1, ABOUT: 2, CONTACT: 3, GENERAL: 99 };
+          const sortOrder: Record<string, number> = { HOME: 1, ABOUT: 2, PROMO: 3, CONTACT: 4, GENERAL: 99 };
           uniqueCats.sort((a, b) => (sortOrder[a] || 50) - (sortOrder[b] || 50));
           
           setCategories(uniqueCats);

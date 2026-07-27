@@ -63,6 +63,31 @@ export default function CategoryEditorPage() {
       if (res.ok) {
         const data = await res.json();
         const catSettings = data.filter((s: SiteSetting) => s.category === categoryId);
+        
+        // Inject default PROMO settings if they don't exist yet
+        if (categoryId === "PROMO") {
+          const promoTitle = catSettings.find((s: SiteSetting) => s.key === "promo_hook_title");
+          if (!promoTitle) {
+            catSettings.push({
+              key: "promo_hook_title",
+              label: "Judul Hook Utama (Promo FB)",
+              value: "Pusing Ngurus Pengacara Mahal?",
+              category: "PROMO",
+              type: "TEXT"
+            });
+          }
+          const promoDesc = catSettings.find((s: SiteSetting) => s.key === "promo_hook_description");
+          if (!promoDesc) {
+            catSettings.push({
+              key: "promo_hook_description",
+              label: "Deskripsi Hook (Promo FB)",
+              value: "Kini Anda tidak perlu lagi menghabiskan puluhan juta rupiah hanya untuk mengurus dokumen legal bisnis. Berkas Hukum menghadirkan koleksi template kontrak dan akta setara kualitas firma hukum raksasa, siap pakai hanya dalam hitungan detik.",
+              category: "PROMO",
+              type: "TEXTAREA"
+            });
+          }
+        }
+
         setSettings(catSettings);
         const initial: Record<string, string> = {};
         catSettings.forEach((s: SiteSetting) => { initial[s.key] = s.value; });

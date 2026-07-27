@@ -20,6 +20,31 @@ export default async function PromoFBAdsPage() {
     }
   });
 
+  // Fetch dynamic hook texts
+  let hookTitle = "Pusing Ngurus <span class=\"text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-200\">Pengacara Mahal?</span>";
+  let hookDesc = "Kini Anda tidak perlu lagi menghabiskan puluhan juta rupiah hanya untuk mengurus dokumen legal bisnis. Berkas Hukum menghadirkan koleksi template kontrak dan akta setara kualitas firma hukum raksasa, siap pakai hanya dalam hitungan detik.";
+
+  try {
+    const settings = await prisma.siteSetting.findMany({
+      where: { key: { in: ["promo_hook_title", "promo_hook_description"] } }
+    });
+    settings.forEach(s => {
+      if (s.key === "promo_hook_title" && s.value) {
+        // Automatically make the last 2 words gradient gold if no HTML is provided
+        const words = s.value.split(" ");
+        if (words.length >= 2 && !s.value.includes("<span")) {
+          const lastTwo = words.splice(-2).join(" ");
+          hookTitle = `${words.join(" ")} <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-200">${lastTwo}</span>`;
+        } else {
+          hookTitle = s.value;
+        }
+      }
+      if (s.key === "promo_hook_description" && s.value) {
+        hookDesc = s.value;
+      }
+    });
+  } catch(e) {}
+
   return (
     <div className="min-h-screen bg-navy text-white font-inter flex flex-col relative overflow-hidden">
       {/* Decorative background blobs */}
@@ -51,11 +76,12 @@ export default async function PromoFBAdsPage() {
           <div className="inline-block px-4 py-1.5 rounded-full border border-gold/30 bg-gold/10 text-gold text-xs font-bold tracking-widest uppercase mb-2">
             Solusi Hukum Digital
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-serif leading-[1.15]">
-            Pusing Ngurus <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-200">Pengacara Mahal?</span>
-          </h1>
+          <h1 
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold font-serif leading-[1.15]" 
+            dangerouslySetInnerHTML={{ __html: hookTitle }}
+          />
           <p className="text-lg text-gray-300 leading-relaxed max-w-xl mx-auto lg:mx-0">
-            Kini Anda tidak perlu lagi menghabiskan puluhan juta rupiah hanya untuk mengurus dokumen legal bisnis. Berkas Hukum menghadirkan koleksi template kontrak dan akta setara kualitas firma hukum raksasa, siap pakai hanya dalam hitungan detik.
+            {hookDesc}
           </p>
           
           <div className="pt-4 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
