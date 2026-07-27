@@ -21,6 +21,7 @@ function CheckoutContent() {
   const [directProduct, setDirectProduct] = useState<ProductInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [isFetchingDirectProduct, setIsFetchingDirectProduct] = useState(!!directProductId);
+  const [isIncognito, setIsIncognito] = useState<boolean | null>(null);
   const [successData, setSuccessData] = useState<any>(null);
   const [form, setForm] = useState({
     name: "",
@@ -67,6 +68,17 @@ function CheckoutContent() {
     }
   }, [directProductId]);
 
+  useEffect(() => {
+    // Detect incognito mode to block spam
+    import("detectincognitojs").then(({ detectIncognito }) => {
+      detectIncognito().then((result) => {
+        setIsIncognito(result.isPrivate);
+      });
+    }).catch(err => {
+      console.warn("Could not load detectincognitojs", err);
+    });
+  }, []);
+
   // Items to checkout: direct product OR cart OR saved session (for "ganti metode" flow)
   const checkoutItems = directProduct
     ? [{ id: directProduct.id, name: directProduct.name, price: directProduct.price, quantity: 1 }]
@@ -85,12 +97,31 @@ function CheckoutContent() {
     } catch { return 0; }
   })();
 
-  if (isFetchingDirectProduct) {
+  if (isFetchingDirectProduct || isIncognito === null) {
     return (
       <section className="pt-32 pb-20 min-h-screen bg-cream flex items-center justify-center">
         <div className="text-gray-500 font-semibold flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-gray-200 border-t-gold rounded-full animate-spin"></div>
-          Memuat detail produk...
+          Memuat halaman...
+        </div>
+      </section>
+    );
+  }
+
+  if (isIncognito === true) {
+    return (
+      <section className="pt-32 pb-20 min-h-screen bg-cream flex items-center justify-center">
+        <div className="bg-white p-8 rounded-xl max-w-md w-full shadow-lg text-center mx-4 border-t-4 border-red-500">
+          <div className="text-6xl mb-4">🕵️‍♂️</div>
+          <h1 className="text-2xl font-bold font-serif text-navy mb-2">Akses Ditolak</h1>
+          <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+            Maaf, Anda tidak dapat melakukan pesanan dalam Mode Penyamaran (Incognito Mode). 
+            <br /><br />
+            Silakan gunakan tab atau jendela browser biasa (Normal Mode) untuk melanjutkan pesanan Anda dengan aman.
+          </p>
+          <Link href="/" className="btn-gold px-8 py-3 rounded-sm font-bold text-sm block w-full hover-glow">
+            Kembali ke Beranda
+          </Link>
         </div>
       </section>
     );
