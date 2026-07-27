@@ -14,7 +14,9 @@ const playfair = Playfair_Display({
   display: "swap",
 });
 
+import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
+import SmartLoader from "@/components/ui/SmartLoader";
 
 export async function generateMetadata(): Promise<Metadata> {
   let siteName = "Corporate Legal Partner";
@@ -35,6 +37,9 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${inter.variable} ${playfair.variable}`}>
       <body className="font-inter antialiased bg-white text-gray-900">
+        <Suspense fallback={null}>
+          <SmartLoader />
+        </Suspense>
         {children}
       </body>
     </html>
