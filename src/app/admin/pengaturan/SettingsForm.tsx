@@ -8,7 +8,10 @@ type AboutListItem = { id: string; title: string; subtitle: string };
 
 export default function SettingsForm({ initialData }: { initialData: Record<string, string> }) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"pembayaran" | "tentang">("pembayaran");
+  const [activeTab, setActiveTab] = useState<"pembayaran" | "tentang" | "sistem">("sistem");
+  
+  // System States
+  const [maintenanceMode, setMaintenanceMode] = useState(initialData["maintenance_mode"] === "true");
   
   // Payment States
   const [danaPhone, setDanaPhone] = useState(initialData["PAYMENT_DANA_PHONE"] || "");
@@ -64,6 +67,19 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
       await saveSetting("about_certifications", "Sertifikasi Resmi", JSON.stringify(certList), "ABOUT", "JSON");
       
       alert("Pengaturan Halaman Tentang berhasil disimpan");
+      router.refresh();
+    } catch (err: any) {
+      alert("Error: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveSystem = async () => {
+    setLoading(true);
+    try {
+      await saveSetting("maintenance_mode", "Mode Pemeliharaan", maintenanceMode ? "true" : "false", "SYSTEM", "BOOLEAN");
+      alert("Pengaturan Sistem berhasil disimpan");
       router.refresh();
     } catch (err: any) {
       alert("Error: " + err.message);
@@ -130,6 +146,14 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
           }`}
         >
           📄 Halaman Tentang
+        </button>
+        <button
+          onClick={() => setActiveTab("sistem")}
+          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors ${
+            activeTab === "sistem" ? "border-navy-dark text-navy-dark" : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+          }`}
+        >
+          ⚙️ Sistem
         </button>
       </div>
 
@@ -294,6 +318,44 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
               className="bg-navy-dark text-white px-6 py-2 rounded-sm text-sm font-semibold hover:bg-opacity-90 disabled:opacity-50 w-full md:w-auto"
             >
               {loading ? "Menyimpan..." : "Simpan Pengaturan Halaman Tentang"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "sistem" && (
+        <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-5 border border-gray-200 rounded-sm bg-gray-50">
+              <div>
+                <h3 className="text-base font-bold text-gray-900 font-serif">Mode Pemeliharaan (Maintenance)</h3>
+                <p className="text-sm text-gray-500 mt-1 max-w-md">
+                  Aktifkan ini untuk memblokir semua akses publik ke website dan mengarahkannya ke halaman pemeliharaan. Anda tetap dapat mengakses panel admin ini.
+                </p>
+              </div>
+              
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={maintenanceMode}
+                  onChange={(e) => setMaintenanceMode(e.target.checked)}
+                />
+                <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-red-500 shadow-inner"></div>
+                <span className={`ml-3 text-sm font-bold ${maintenanceMode ? 'text-red-500' : 'text-gray-500'}`}>
+                  {maintenanceMode ? 'AKTIF' : 'NONAKTIF'}
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-gray-200">
+            <button
+              onClick={handleSaveSystem}
+              disabled={loading}
+              className="bg-navy-dark text-white px-6 py-2 rounded-sm text-sm font-semibold hover:bg-opacity-90 disabled:opacity-50"
+            >
+              {loading ? "Menyimpan..." : "Simpan Pengaturan Sistem"}
             </button>
           </div>
         </div>
