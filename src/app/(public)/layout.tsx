@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ScrollToTop from "@/components/ScrollToTop";
 import { CartProvider } from "@/hooks/useCart";
 
 import { prisma } from "@/lib/prisma";
@@ -19,6 +20,7 @@ export default async function PublicLayout({
 
   return (
     <CartProvider>
+      <ScrollToTop />
       <Navbar ownerName={ownerName} />
       <main>{children}</main>
       <Footer ownerName={ownerName} />

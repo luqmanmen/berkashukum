@@ -81,7 +81,7 @@ export default function PenggunaClient({
         {currentUserRole === "SUPER_ADMIN" && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-[#0a1628] hover:bg-[#c9a84c] text-white hover:text-[#0a1628] px-4 py-2 rounded-sm text-sm font-semibold transition-colors flex items-center gap-2 shadow-sm"
+            className="bg-navy-dark hover:bg-gold text-white hover:text-navy-dark px-4 py-2 rounded-sm text-sm font-semibold transition-colors flex items-center gap-2 shadow-sm"
           >
             <span>👤</span> Tambah Admin Baru
           </button>
@@ -106,7 +106,7 @@ export default function PenggunaClient({
               {users.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 font-medium text-gray-900">
-                    {user.name || "-"} {user.id === currentUserId && <span className="text-xs text-[#c9a84c] ml-2 font-bold">(Anda)</span>}
+                    {user.name || "-"} {user.id === currentUserId && <span className="text-xs text-gold ml-2 font-bold">(Anda)</span>}
                   </td>
                   <td className="px-6 py-4 text-gray-600">
                     {user.email}
@@ -157,7 +157,7 @@ export default function PenggunaClient({
       {/* Modal Tambah Pengguna */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-md shadow-2xl w-full max-w-md overflow-hidden border-t-4 border-[#0a1628]">
+          <div className="bg-white rounded-md shadow-2xl w-full max-w-md overflow-hidden border-t-4 border-navy-dark">
             <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h3 className="text-lg font-bold text-gray-900 font-serif">Tambah Anggota Tim</h3>
               <button 
@@ -183,7 +183,7 @@ export default function PenggunaClient({
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-[#0a1628]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-navy-dark"
                     placeholder="Contoh: Budi Santoso"
                   />
                 </div>
@@ -195,7 +195,7 @@ export default function PenggunaClient({
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-[#0a1628]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-navy-dark"
                     placeholder="budi@berkashukum.com"
                   />
                 </div>
@@ -208,7 +208,7 @@ export default function PenggunaClient({
                     minLength={6}
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-[#0a1628]"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-navy-dark"
                     placeholder="Minimal 6 karakter"
                   />
                 </div>
@@ -218,7 +218,7 @@ export default function PenggunaClient({
                   <select
                     value={formData.role}
                     onChange={(e) => setFormData({...formData, role: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-[#0a1628] bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-navy-dark bg-white"
                   >
                     <option value="ADMIN">Admin (Kelola Pesanan & Produk)</option>
                     <option value="SUPER_ADMIN">Super Admin (Akses Penuh)</option>
@@ -237,7 +237,7 @@ export default function PenggunaClient({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-2 bg-[#0a1628] text-white rounded-sm hover:bg-[#c9a84c] text-sm font-semibold transition-colors shadow-sm disabled:opacity-50"
+                  className="px-6 py-2 bg-navy-dark text-white rounded-sm hover:bg-gold text-sm font-semibold transition-colors shadow-sm disabled:opacity-50"
                 >
                   {loading ? "Menyimpan..." : "Simpan Anggota"}
                 </button>

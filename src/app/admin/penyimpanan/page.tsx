@@ -33,7 +33,7 @@ export default async function PenyimpananPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900 font-serif">Penyimpanan (Storage)</h1>
         <div className="text-sm text-gray-500 bg-white px-4 py-2 rounded-sm border border-gray-200">
-          Total: <span className="font-bold text-[#0a1628]">{allFiles.length} File</span>
+          Total: <span className="font-bold text-navy-dark">{allFiles.length} File</span>
         </div>
       </div>
 
@@ -94,7 +94,7 @@ export default async function PenyimpananPage() {
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs font-semibold text-[#c9a84c] hover:text-[#0a1628] transition-colors border border-[#c9a84c] px-3 py-1.5 rounded-sm hover:bg-gray-100"
+                          className="text-xs font-semibold text-gold hover:text-navy-dark transition-colors border border-gold px-3 py-1.5 rounded-sm hover:bg-gray-100"
                         >
                           Lihat / Download
                         </a>

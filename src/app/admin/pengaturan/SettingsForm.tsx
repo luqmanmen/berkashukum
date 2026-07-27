@@ -123,7 +123,7 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
         <button
           onClick={handleSave}
           disabled={loading || uploading}
-          className="bg-[#0a1628] text-white px-6 py-2 rounded-sm text-sm font-semibold hover:bg-opacity-90 disabled:opacity-50"
+          className="bg-navy-dark text-white px-6 py-2 rounded-sm text-sm font-semibold hover:bg-opacity-90 disabled:opacity-50"
         >
           {loading ? "Menyimpan..." : "Simpan Pengaturan"}
         </button>

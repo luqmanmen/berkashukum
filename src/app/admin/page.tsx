@@ -101,10 +101,10 @@ export default async function AdminDashboard() {
             <a
               key={i}
               href={link.href}
-              className="bg-white border border-gray-200 rounded-sm p-5 hover:border-[#c9a84c] hover:shadow-md transition-all group"
+              className="bg-white border border-gray-200 rounded-sm p-5 hover:border-gold hover:shadow-md transition-all group"
             >
               <div className="text-3xl mb-3">{link.icon}</div>
-              <div className="font-semibold text-gray-800 text-sm mb-1 group-hover:text-[#0a1628]">{link.label}</div>
+              <div className="font-semibold text-gray-800 text-sm mb-1 group-hover:text-navy-dark">{link.label}</div>
               <div className="text-xs text-gray-400">{link.desc}</div>
             </a>
           ))}
@@ -150,23 +150,6 @@ export default async function AdminDashboard() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Next Steps Banner */}
-      <div className="bg-[#0a1628] rounded-sm p-6 text-white">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h3 className="font-serif font-bold text-lg mb-1">🚀 Tahap Selanjutnya</h3>
-            <p className="text-gray-300 text-sm">
-              Dashboard dasar sudah siap. Selanjutnya: fitur E-commerce publik, manajemen produk & pesanan lengkap.
-            </p>
-          </div>
-          <div className="flex-shrink-0">
-            <div className="bg-[#c9a84c] text-[#0a1628] font-bold text-sm px-5 py-2.5 rounded-sm">
-              Tahap 5 →
-            </div>
           </div>
         </div>
       </div>

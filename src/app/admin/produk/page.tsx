@@ -16,7 +16,7 @@ export default async function AdminProdukPage() {
         </div>
         <Link
           href="/admin/produk/baru"
-          className="bg-[#0a1628] hover:bg-[#c9a84c] text-white hover:text-[#0a1628] px-4 py-2 rounded-sm text-sm font-semibold transition-colors flex items-center gap-2"
+          className="bg-navy-dark hover:bg-gold text-white hover:text-navy-dark px-4 py-2 rounded-sm text-sm font-semibold transition-colors flex items-center gap-2"
         >
           <span>➕</span> Tambah Produk
         </Link>

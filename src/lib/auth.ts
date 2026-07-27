@@ -1,6 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import { prisma } from "./prisma";
 
 export const authOptions: NextAuthOptions = {
@@ -20,13 +20,13 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email }
         });
 
-        if (!user) {
-          throw new Error("No user found");
+        if (!user || !user.password) {
+          throw new Error("Email tidak terdaftar atau password salah.");
         }
 
-        const isValid = await bcrypt.compare(credentials.password, user.password);
+        const isPasswordValid = await bcryptjs.compare(credentials.password, user.password);
 
-        if (!isValid) {
+        if (!isPasswordValid) {
           throw new Error("Invalid password");
         }
 

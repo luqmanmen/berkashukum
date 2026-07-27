@@ -66,7 +66,7 @@ export default function ProductFilterModal({ isOpen, currentFilters, onClose, on
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3.5 border-b border-gray-100">
           <div className="w-6" />
-          <h2 className="text-[#0a1628] font-bold text-base">Pilih Preferensi</h2>
+          <h2 className="text-navy-dark font-bold text-base">Pilih Preferensi</h2>
           <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
@@ -86,13 +86,13 @@ export default function ProductFilterModal({ isOpen, currentFilters, onClose, on
                   onClick={() => setActiveTab(tab)}
                   className={`w-full text-left px-3 py-4 text-xs font-medium border-l-2 transition-colors relative ${
                     isActive
-                      ? "border-[#0a1628] bg-white text-[#0a1628] font-semibold"
+                      ? "border-navy-dark bg-white text-navy-dark font-semibold"
                       : "border-transparent text-gray-500 hover:bg-white hover:text-gray-700"
                   }`}
                 >
                   {tab}
                   {hasValue && (
-                    <span className="absolute top-3 right-2 w-1.5 h-1.5 bg-[#c9a84c] rounded-full" />
+                    <span className="absolute top-3 right-2 w-1.5 h-1.5 bg-gold rounded-full" />
                   )}
                 </button>
               );
@@ -103,7 +103,7 @@ export default function ProductFilterModal({ isOpen, currentFilters, onClose, on
           <div className="flex-1 p-4 overflow-y-auto bg-white">
             {activeTabConfig ? (
               <>
-                <h3 className="font-bold text-sm text-[#0a1628] mb-3">{activeTabConfig.label}</h3>
+                <h3 className="font-bold text-sm text-navy-dark mb-3">{activeTabConfig.label}</h3>
                 <div className="flex flex-wrap gap-2">
                   {activeTabConfig.choices.map((choice) => {
                     const isSelected = localFilters[activeTabConfig.field] === choice;
@@ -113,8 +113,8 @@ export default function ProductFilterModal({ isOpen, currentFilters, onClose, on
                         onClick={() => toggleChoice(activeTabConfig.field, choice)}
                         className={`px-3 py-2 rounded text-xs transition-colors border ${
                           isSelected
-                            ? "bg-[#0a1628] text-white border-[#0a1628]"
-                            : "bg-gray-100 text-gray-700 border-gray-100 hover:border-[#0a1628]/30"
+                            ? "bg-navy-dark text-white border-navy-dark"
+                            : "bg-gray-100 text-gray-700 border-gray-100 hover:border-navy-dark/30"
                         }`}
                       >
                         {choice}
@@ -135,13 +135,13 @@ export default function ProductFilterModal({ isOpen, currentFilters, onClose, on
         <div className="p-3 border-t border-gray-100 bg-white flex gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
           <button
             onClick={onReset}
-            className="flex-1 py-3 border border-[#c9a84c] text-[#a07830] font-bold text-sm rounded-md hover:bg-[#c9a84c]/10 transition-colors"
+            className="flex-1 py-3 border border-gold text-gold-dark font-bold text-sm rounded-md hover:bg-gold/10 transition-colors"
           >
             Atur Ulang
           </button>
           <button
             onClick={() => onApply(localFilters)}
-            className="flex-1 py-3 bg-[#0a1628] text-white font-bold text-sm rounded-md hover:bg-[#0a1628]/90 shadow-md transition-colors"
+            className="flex-1 py-3 bg-navy-dark text-white font-bold text-sm rounded-md hover:bg-navy-dark/90 shadow-md transition-colors"
           >
             Terapkan
           </button>

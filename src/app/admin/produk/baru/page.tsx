@@ -188,7 +188,7 @@ export default function TambahProdukPage() {
                   name="digitalFile"
                   type="file"
                   accept=".pdf,.doc,.docx,.zip"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-semibold file:bg-[#0a1628] file:text-white hover:file:bg-[#112440] cursor-pointer"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-semibold file:bg-navy-dark file:text-white hover:file:bg-navy-mid cursor-pointer"
                 />
                 <p className="text-xs text-gray-400 mt-1.5">
                   File ini yang akan dikirim ke pembeli setelah pesanan lunas. <br/>
@@ -218,7 +218,7 @@ export default function TambahProdukPage() {
             </Link>
             <button
               type="submit"
-              className="bg-[#0a1628] hover:bg-[#112440] text-white px-6 py-2 rounded-sm text-sm font-semibold transition-colors"
+              className="bg-navy-dark hover:bg-navy-mid text-white px-6 py-2 rounded-sm text-sm font-semibold transition-colors"
             >
               Simpan Produk
             </button>

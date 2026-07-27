@@ -84,7 +84,7 @@ export default function ProductListClient({ initialProducts }: { initialProducts
               placeholder="Cari Dokumen Hukum..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#f8f9fa] border border-gray-200 rounded-full py-2.5 pl-9 pr-4 text-sm focus:outline-none focus:border-[#c9a84c] text-gray-800"
+              className="w-full bg-[#f8f9fa] border border-gray-200 rounded-full py-2.5 pl-9 pr-4 text-sm focus:outline-none focus:border-gold text-gray-800"
             />
           </div>
         </div>
@@ -96,8 +96,8 @@ export default function ProductListClient({ initialProducts }: { initialProducts
               onClick={() => setActiveCategory(pill)}
               className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-semibold transition-colors border ${
                 activeCategory === pill
-                  ? "bg-[#0a1628] text-white border-[#0a1628]"
-                  : "bg-white text-gray-600 border-gray-200 hover:border-[#c9a84c] hover:text-[#c9a84c]"
+                  ? "bg-navy-dark text-white border-navy-dark"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-gold hover:text-gold"
               }`}
             >
               {pill}
@@ -110,14 +110,14 @@ export default function ProductListClient({ initialProducts }: { initialProducts
             onClick={() => setShowFilter(true)}
             className={`relative flex items-center gap-1 whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
               activeFilterCount > 0
-                ? "bg-[#0a1628] text-white border-[#0a1628]"
-                : "bg-white text-[#c9a84c] border-[#c9a84c]/50 hover:bg-[#c9a84c]/5"
+                ? "bg-navy-dark text-white border-navy-dark"
+                : "bg-white text-gold border-gold/50 hover:bg-gold/5"
             }`}
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
             Filter
             {activeFilterCount > 0 && (
-              <span className="bg-[#c9a84c] text-[#0a1628] text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+              <span className="bg-gold text-navy-dark text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                 {activeFilterCount}
               </span>
             )}
@@ -131,7 +131,7 @@ export default function ProductListClient({ initialProducts }: { initialProducts
           <div className="text-center py-20 text-gray-400 bg-white rounded-lg mx-2 mt-4 shadow-sm border border-gray-100">
             <div className="text-5xl mb-4">📭</div>
             <p className="text-sm font-medium">Tidak ada produk ditemukan.</p>
-            <button onClick={handleResetFilter} className="mt-4 text-xs text-[#c9a84c] underline">Hapus semua filter</button>
+            <button onClick={handleResetFilter} className="mt-4 text-xs text-gold underline">Hapus semua filter</button>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4">

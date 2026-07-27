@@ -26,7 +26,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
       className={`flex items-center justify-center gap-2 px-5 py-4 rounded-xl font-bold text-sm transition-all border-2 min-w-[52px] ${
         added
           ? "bg-green-600 border-green-600 text-white"
-          : "bg-white border-[#0a1628] text-[#0a1628] hover:bg-[#0a1628] hover:text-white"
+          : "bg-white border-navy-dark text-navy-dark hover:bg-navy-dark hover:text-white"
       }`}
     >
       {added ? (

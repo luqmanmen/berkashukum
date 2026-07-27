@@ -20,6 +20,7 @@ function CheckoutContent() {
 
   const [directProduct, setDirectProduct] = useState<ProductInfo | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isFetchingDirectProduct, setIsFetchingDirectProduct] = useState(!!directProductId);
   const [successData, setSuccessData] = useState<any>(null);
   const [form, setForm] = useState({
     name: "",
@@ -42,10 +43,12 @@ function CheckoutContent() {
 
   useEffect(() => {
     if (directProductId) {
+      setIsFetchingDirectProduct(true);
       fetch(`/api/products/${directProductId}`)
         .then((r) => r.json())
         .then((data) => setDirectProduct(data))
-        .catch(() => {});
+        .catch(() => {})
+        .finally(() => setIsFetchingDirectProduct(false));
     }
   }, [directProductId]);
 
@@ -66,6 +69,17 @@ function CheckoutContent() {
       return raw ? Number(raw) : 0;
     } catch { return 0; }
   })();
+
+  if (isFetchingDirectProduct) {
+    return (
+      <section className="pt-32 pb-20 min-h-screen bg-cream flex items-center justify-center">
+        <div className="text-gray-500 font-semibold flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-gray-200 border-t-gold rounded-full animate-spin"></div>
+          Memuat detail produk...
+        </div>
+      </section>
+    );
+  }
 
   if (checkoutItems.length === 0) {
     return (

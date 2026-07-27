@@ -113,7 +113,7 @@ export default async function TambahArtikelPage() {
             </Link>
             <button
               type="submit"
-              className="bg-[#0a1628] hover:bg-[#112440] text-white px-6 py-2 rounded-sm text-sm font-semibold transition-colors"
+              className="bg-navy-dark hover:bg-navy-mid text-white px-6 py-2 rounded-sm text-sm font-semibold transition-colors"
             >
               Simpan & Terbitkan
             </button>

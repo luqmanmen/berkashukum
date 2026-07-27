@@ -28,16 +28,16 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#0a1628] text-white flex-shrink-0 flex flex-col">
+      <aside className="w-64 bg-navy-dark text-white flex-shrink-0 flex flex-col">
         {/* Logo */}
         <div className="px-6 py-5 border-b border-white/10">
           <Link href="/admin" className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-[#c9a84c] rounded-sm flex items-center justify-center">
-              <span className="font-serif font-bold text-[#0a1628] text-base">L</span>
+            <div className="w-9 h-9 bg-gold rounded-sm flex items-center justify-center">
+              <span className="font-serif font-bold text-navy-dark text-base">L</span>
             </div>
             <div>
               <div className="font-serif font-bold text-sm text-white">LexNova</div>
-              <div className="text-[10px] text-[#c9a84c] tracking-widest uppercase">Admin Panel</div>
+              <div className="text-[10px] text-gold tracking-widest uppercase">Admin Panel</div>
             </div>
           </Link>
         </div>
@@ -59,8 +59,8 @@ export default async function AdminLayout({
         {/* User info */}
         <div className="px-4 py-4 border-t border-white/10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-full bg-[#c9a84c] flex items-center justify-center">
-              <span className="text-[#0a1628] text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-gold flex items-center justify-center">
+              <span className="text-navy-dark text-xs font-bold">
                 {session.user?.name?.[0] ?? "A"}
               </span>
             </div>

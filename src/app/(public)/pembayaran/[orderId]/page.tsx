@@ -5,7 +5,7 @@ import PembayaranClient from "./PembayaranClient";
 
 export default async function PembayaranPage({ params }: { params: Promise<{ orderId: string }> }) {
   const { orderId } = await params;
-  
+
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: {
@@ -32,10 +32,10 @@ export default async function PembayaranPage({ params }: { params: Promise<{ ord
   const danaPhone = settings.find((s) => s.key === "PAYMENT_DANA_PHONE")?.value || "081296393972";
 
   return (
-    <PembayaranClient 
-      order={JSON.parse(JSON.stringify(order))} 
-      qrisImage={qrisImage} 
-      danaPhone={danaPhone} 
+    <PembayaranClient
+      order={JSON.parse(JSON.stringify(order))}
+      qrisImage={qrisImage}
+      danaPhone={danaPhone}
     />
   );
 }

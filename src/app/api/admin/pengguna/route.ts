@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email sudah digunakan" }, { status: 400 });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     const user = await prisma.user.create({
       data: {

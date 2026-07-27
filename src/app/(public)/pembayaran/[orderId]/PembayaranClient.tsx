@@ -97,19 +97,19 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
   return (
     <section className="min-h-screen bg-[#faf7f2] font-sans relative pb-16">
       {/* Background Top Navy Area */}
-      <div className="absolute top-0 left-0 right-0 h-44 bg-[#0a1628]"></div>
+      <div className="absolute top-0 left-0 right-0 h-44 bg-navy-dark"></div>
       
       {/* Content Container */}
       <div className="max-w-[420px] mx-auto px-4 relative pt-6">
         
         {/* Header */}
-        <div className="flex items-center mb-6 text-[#c9a84c] cursor-pointer" onClick={() => router.back()}>
+        <div className="flex items-center mb-6 text-gold cursor-pointer" onClick={() => router.back()}>
           <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           <span className="font-semibold text-lg text-white">Pembayaran</span>
         </div>
 
         {/* Main Card */}
-        <div className="bg-white rounded-2xl shadow-md border border-[#c9a84c]/20 overflow-hidden mb-4 p-5">
+        <div className="bg-white rounded-2xl shadow-md border border-gold/20 overflow-hidden mb-4 p-5">
           {/* Top Row: Logo & Button Ganti */}
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-3">
@@ -118,7 +118,7 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
                   <div className="w-8 h-8 flex items-center justify-center">
                     <img src="/images/qris.svg" alt="QRIS" className="max-w-full max-h-full object-contain" />
                   </div>
-                  <span className="font-bold text-[#0a1628] text-sm">QRIS</span>
+                  <span className="font-bold text-navy-dark text-sm">QRIS</span>
                 </>
               ) : (
                 <>
@@ -131,13 +131,13 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
                       />
                     </div>
                   )}
-                  <span className="font-bold text-[#0a1628] text-sm">{bankInfo?.fullName ?? order.bankName}</span>
+                  <span className="font-bold text-navy-dark text-sm">{bankInfo?.fullName ?? order.bankName}</span>
                 </>
               )}
             </div>
             
             {!isExpired && (
-              <Link href="/checkout" className="px-4 py-1.5 border border-[#c9a84c] text-[#a07830] rounded-full text-xs font-bold hover:bg-[#c9a84c]/10 transition-colors active:scale-95">
+              <Link href="/checkout" className="px-4 py-1.5 border border-gold text-gold-dark rounded-full text-xs font-bold hover:bg-gold/10 transition-colors active:scale-95">
                 GANTI
               </Link>
             )}
@@ -150,11 +150,11 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
             </p>
             
             {order.paymentMethod === "QRIS" ? (
-               <div className="bg-[#faf7f2] rounded-xl p-4 flex flex-col items-center justify-center mb-2 border border-[#c9a84c]/20">
+               <div className="bg-[#faf7f2] rounded-xl p-4 flex flex-col items-center justify-center mb-2 border border-gold/20">
                  {qrisImage ? (
                    <>
                      <img src={qrisImage} alt="QRIS Code" className="w-48 h-48 object-contain mb-3" />
-                     <a href={qrisImage} download="QRIS-Payment.png" className="text-[#a07830] font-bold text-sm flex items-center gap-2 hover:text-[#c9a84c] transition-colors">
+                     <a href={qrisImage} download="QRIS-Payment.png" className="text-gold-dark font-bold text-sm flex items-center gap-2 hover:text-gold transition-colors">
                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                        Simpan QR Code
                      </a>
@@ -165,13 +165,13 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
                </div>
             ) : (
               <div 
-                className="bg-[#faf7f2] rounded-xl py-4 px-3 flex items-center justify-center gap-3 cursor-pointer hover:bg-[#f0ebe2] transition-colors border border-[#c9a84c]/20" 
+                className="bg-[#faf7f2] rounded-xl py-4 px-3 flex items-center justify-center gap-3 cursor-pointer hover:bg-[#f0ebe2] transition-colors border border-gold/20" 
                 onClick={handleCopy}
               >
-                <span className="font-mono text-xl font-semibold text-[#0a1628] tracking-widest">
+                <span className="font-mono text-xl font-semibold text-navy-dark tracking-widest">
                   {vaNumber.match(/.{1,4}/g)?.join(' ') || vaNumber}
                 </span>
-                <span className="text-[#c9a84c]">
+                <span className="text-gold">
                   {copied ? (
                     <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                   ) : (
@@ -182,18 +182,18 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
             )}
           </div>
           
-          <div className="border-t border-[#c9a84c]/15 pt-5 mt-2">
+          <div className="border-t border-gold/15 pt-5 mt-2">
             <p className="text-gray-500 font-medium text-xs mb-3 uppercase tracking-wider text-center">
               Total Tagihan
             </p>
             <div 
-              className="bg-[#faf7f2] rounded-xl py-3 px-3 flex items-center justify-center gap-3 cursor-pointer hover:bg-[#f0ebe2] transition-colors border border-[#c9a84c]/20 mb-4" 
+              className="bg-[#faf7f2] rounded-xl py-3 px-3 flex items-center justify-center gap-3 cursor-pointer hover:bg-[#f0ebe2] transition-colors border border-gold/20 mb-4" 
               onClick={handleCopyTotal}
             >
-              <span className="font-mono text-xl font-semibold text-[#0a1628] tracking-widest">
+              <span className="font-mono text-xl font-semibold text-navy-dark tracking-widest">
                 Rp {order.totalAmount.toLocaleString("id-ID")}
               </span>
-              <span className="text-[#c9a84c]">
+              <span className="text-gold">
                 {copiedTotal ? (
                   <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 ) : (
@@ -203,13 +203,13 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
             </div>
 
             {/* Rincian Pembayaran */}
-            <div className="bg-[#faf7f2]/50 rounded-xl p-4 border border-[#c9a84c]/10 text-sm">
-              <p className="font-semibold text-[#0a1628] mb-2 border-b border-[#c9a84c]/10 pb-2">Rincian Pesanan</p>
+            <div className="bg-[#faf7f2]/50 rounded-xl p-4 border border-gold/10 text-sm">
+              <p className="font-semibold text-navy-dark mb-2 border-b border-gold/10 pb-2">Rincian Pesanan</p>
               
               {order.items && order.items.map((item: any) => (
                 <div key={item.id} className="flex justify-between items-start py-1.5">
                   <span className="text-gray-600 truncate mr-2">{item.product?.name || "Produk"} <span className="text-xs text-gray-400">x{item.quantity}</span></span>
-                  <span className="text-[#0a1628] font-medium whitespace-nowrap">Rp {(item.price * item.quantity).toLocaleString("id-ID")}</span>
+                  <span className="text-navy-dark font-medium whitespace-nowrap">Rp {(item.price * item.quantity).toLocaleString("id-ID")}</span>
                 </div>
               ))}
               
@@ -219,9 +219,9 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
                 
                 if (adminOrUniqueCode > 0) {
                   return (
-                    <div className="flex justify-between items-start py-1.5 border-t border-dashed border-[#c9a84c]/20 mt-1 pt-2">
+                    <div className="flex justify-between items-start py-1.5 border-t border-dashed border-gold/20 mt-1 pt-2">
                       <span className="text-gray-600">Biaya Penanganan</span>
-                      <span className="text-[#a07830] font-medium whitespace-nowrap">+ Rp {adminOrUniqueCode.toLocaleString("id-ID")}</span>
+                      <span className="text-gold-dark font-medium whitespace-nowrap">+ Rp {adminOrUniqueCode.toLocaleString("id-ID")}</span>
                     </div>
                   );
                 }
@@ -239,9 +239,9 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
 
         {/* Countdown Timer */}
         {!isExpired && !waSent && timeLeft && (
-          <div className="mb-4 flex items-center justify-center gap-2 bg-[#0a1628]/5 border border-[#0a1628]/10 rounded-xl px-4 py-2.5">
-            <span className="text-[#a07830] text-xs font-medium">⏱ Selesaikan dalam</span>
-            <span className="text-[#0a1628] font-mono font-bold text-base">{timeLeft}</span>
+          <div className="mb-4 flex items-center justify-center gap-2 bg-navy-dark/5 border border-navy-dark/10 rounded-xl px-4 py-2.5">
+            <span className="text-gold-dark text-xs font-medium">⏱ Selesaikan dalam</span>
+            <span className="text-navy-dark font-mono font-bold text-base">{timeLeft}</span>
           </div>
         )}
 
@@ -265,11 +265,11 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
         )}
 
         {/* Accordions */}
-        <div className="bg-white rounded-xl shadow-sm border border-[#c9a84c]/20 overflow-hidden divide-y divide-[#c9a84c]/10">
+        <div className="bg-white rounded-xl shadow-sm border border-gold/20 overflow-hidden divide-y divide-gold/10">
           <details className="group">
-            <summary className="flex justify-between items-center font-semibold text-sm cursor-pointer list-none p-4 hover:bg-[#faf7f2] transition-colors [&::-webkit-details-marker]:hidden text-[#0a1628]">
+            <summary className="flex justify-between items-center font-semibold text-sm cursor-pointer list-none p-4 hover:bg-[#faf7f2] transition-colors [&::-webkit-details-marker]:hidden text-navy-dark">
               <span>ATM {bankLabel}</span>
-              <span className="transition-transform duration-300 group-open:-rotate-180 text-[#c9a84c]">
+              <span className="transition-transform duration-300 group-open:-rotate-180 text-gold">
                 <svg fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
               </span>
             </summary>
@@ -278,16 +278,16 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
                 <li>Masukkan kartu ATM dan PIN Anda.</li>
                 <li>Pilih menu <b>Transaksi Lainnya</b> {'>'} <b>Transfer</b>.</li>
                 <li>Pilih <b>Ke Rekening Virtual Account</b>.</li>
-                <li>Masukkan nomor <b className="text-[#0a1628]">{vaNumber}</b>.</li>
+                <li>Masukkan nomor <b className="text-navy-dark">{vaNumber}</b>.</li>
                 <li>Periksa detail dan konfirmasi pembayaran.</li>
               </ol>
             </div>
           </details>
 
           <details className="group">
-            <summary className="flex justify-between items-center font-semibold text-sm cursor-pointer list-none p-4 hover:bg-[#faf7f2] transition-colors [&::-webkit-details-marker]:hidden text-[#0a1628]">
+            <summary className="flex justify-between items-center font-semibold text-sm cursor-pointer list-none p-4 hover:bg-[#faf7f2] transition-colors [&::-webkit-details-marker]:hidden text-navy-dark">
               <span>m-Banking {bankLabel}</span>
-              <span className="transition-transform duration-300 group-open:-rotate-180 text-[#c9a84c]">
+              <span className="transition-transform duration-300 group-open:-rotate-180 text-gold">
                 <svg fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
               </span>
             </summary>
@@ -295,7 +295,7 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
               <ol className="list-decimal list-inside space-y-2">
                 <li>Buka aplikasi m-Banking Anda.</li>
                 <li>Pilih menu <b>Transfer</b> {'>'} <b>Virtual Account</b>.</li>
-                <li>Masukkan nomor <b className="text-[#0a1628]">{vaNumber}</b>.</li>
+                <li>Masukkan nomor <b className="text-navy-dark">{vaNumber}</b>.</li>
                 <li>Konfirmasi nominal tagihan.</li>
                 <li>Masukkan PIN untuk menyelesaikan transaksi.</li>
               </ol>
@@ -303,9 +303,9 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
           </details>
           
           <details className="group">
-            <summary className="flex justify-between items-center font-semibold text-sm cursor-pointer list-none p-4 hover:bg-[#faf7f2] transition-colors [&::-webkit-details-marker]:hidden text-[#0a1628]">
+            <summary className="flex justify-between items-center font-semibold text-sm cursor-pointer list-none p-4 hover:bg-[#faf7f2] transition-colors [&::-webkit-details-marker]:hidden text-navy-dark">
               <span>Syarat dan Ketentuan Biaya</span>
-              <span className="transition-transform duration-300 group-open:-rotate-180 text-[#c9a84c]">
+              <span className="transition-transform duration-300 group-open:-rotate-180 text-gold">
                 <svg fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
               </span>
             </summary>

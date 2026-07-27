@@ -70,7 +70,7 @@ export default async function ProductDetailPage({
                 )}
                 {/* Category Badge */}
                 {product.category && (
-                  <div className="absolute top-3 left-3 bg-[#0a1628] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm">
+                  <div className="absolute top-3 left-3 bg-navy-dark text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm">
                     {product.category}
                   </div>
                 )}
@@ -93,12 +93,12 @@ export default async function ProductDetailPage({
                 )}
 
                 {/* Title */}
-                <h1 className="font-serif text-2xl md:text-3xl font-bold text-[#0a1628] leading-snug">
+                <h1 className="font-serif text-2xl md:text-3xl font-bold text-navy-dark leading-snug">
                   {product.name}
                 </h1>
 
                 {/* Price */}
-                <div className="text-3xl font-bold text-[#c9a84c]">
+                <div className="text-3xl font-bold text-gold">
                   Rp {product.price.toLocaleString("id-ID")}
                 </div>
 
@@ -115,7 +115,7 @@ export default async function ProductDetailPage({
                 {/* Features */}
                 {product.features && (
                   <div className="bg-[#faf7f0] border border-[#e8dfc8] rounded-xl p-4">
-                    <div className="text-xs font-bold text-[#0a1628] uppercase tracking-wider mb-3">✨ Keunggulan Template</div>
+                    <div className="text-xs font-bold text-navy-dark uppercase tracking-wider mb-3">✨ Keunggulan Template</div>
                     <ul className="space-y-2">
                       {product.features.split("\n").filter((f: string) => f.trim().length > 0).map((feature: string, i: number) => {
                         const chars = Array.from(feature.trim());
@@ -125,7 +125,7 @@ export default async function ProductDetailPage({
                         const text = isAlphanumeric ? feature.trim() : chars.slice(1).join("").trim();
                         return (
                           <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                            <span className={`mt-0.5 shrink-0 ${icon === "✓" ? "text-[#c9a84c] font-bold" : ""}`}>{icon}</span>
+                            <span className={`mt-0.5 shrink-0 ${icon === "✓" ? "text-gold font-bold" : ""}`}>{icon}</span>
                             <span>{text}</span>
                           </li>
                         );
