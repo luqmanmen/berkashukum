@@ -100,30 +100,27 @@ export async function sendDownloadCodeEmail(
           </p>
 
           <!-- Signature Block -->
-          <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 40px; border-top: 1px dashed #e2e8f0; padding-top: 24px; width: 100%;">
+          <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 24px; width: 100%;">
             <tr>
-              <td width="80" valign="top" style="padding-right: 16px;">
-                <img src="${APP_URL}/images/logo2.png" alt="Luqman Arif" width="80" height="80" style="border-radius: 50%; object-fit: cover; border: 2px solid ${GOLD}; display: block;" />
-              </td>
-              <td valign="top">
-                <h3 style="margin: 0 0 4px 0; color: ${NAVY}; font-size: 18px; letter-spacing: 0.5px;">Luqman Arif S.I.Kom</h3>
-                <p style="margin: 0 0 8px 0; color: ${GOLD}; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+              <td valign="middle" style="padding-right: 20px;">
+                <h3 style="margin: 0 0 4px 0; color: ${NAVY}; font-size: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Berkas Hukum Corporate</h3>
+                <p style="margin: 0 0 12px 0; color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
                   Advokat &bull; Kurator &bull; Spesialis Legal Audit
                 </p>
-                <table cellpadding="0" cellspacing="0" border="0" style="font-size: 12px; color: #555; line-height: 1.6;">
+                <table cellpadding="0" cellspacing="0" border="0" style="font-size: 11px; color: #555; line-height: 1.8;">
                   <tr>
-                    <td width="20" style="color: ${NAVY}; font-weight: bold;">WA</td>
-                    <td>: <a href="https://wa.me/6282334196500" style="color: #555; text-decoration: none;">+62 823-3419-6500</a></td>
+                    <td><span style="color: ${GOLD}; margin-right: 4px;">📞</span> <a href="https://wa.me/6282334196500" style="color: #555; text-decoration: none;">+62 823-3419-6500</a></td>
                   </tr>
                   <tr>
-                    <td style="color: ${NAVY}; font-weight: bold;">EM</td>
-                    <td>: <a href="mailto:luqmanarifsby@gmail.com" style="color: #555; text-decoration: none;">luqmanarifsby@gmail.com</a></td>
+                    <td><span style="color: ${GOLD}; margin-right: 4px;">✉️</span> <a href="mailto:contact@berkashukum.com" style="color: #555; text-decoration: none;">contact@berkashukum.com</a></td>
                   </tr>
                   <tr>
-                    <td style="color: ${NAVY}; font-weight: bold;">WEB</td>
-                    <td>: <a href="${APP_URL}" style="color: ${GOLD}; text-decoration: none;">www.berkashukum.com</a></td>
+                    <td><span style="color: ${GOLD}; margin-right: 4px;">🌐</span> <a href="${APP_URL}" style="color: ${NAVY}; text-decoration: none;">www.berkashukum.com</a></td>
                   </tr>
                 </table>
+              </td>
+              <td width="100" valign="middle" style="border-left: 1px solid #e2e8f0; padding-left: 20px; text-align: center;">
+                <img src="${APP_URL}/images/logo-3d-2.png" alt="Berkas Hukum Corporate" width="80" height="80" style="object-fit: contain; display: block; margin: 0 auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));" />
               </td>
             </tr>
           </table>

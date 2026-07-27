@@ -91,7 +91,7 @@ export default async function TentangPage() {
                   </p>
                 </div>
                 
-                <div className="prose prose-sm text-gray-600 whitespace-pre-wrap">
+                <div className="prose prose-sm text-gray-600 whitespace-pre-wrap text-justify">
                   {aboutDesc}
                 </div>
 
