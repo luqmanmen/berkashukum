@@ -1,5 +1,5 @@
-export const runtime = "edge";
 "use client";
+export const runtime = "edge";
 
 import { useCart } from "@/hooks/useCart";
 import { Suspense, useState, useEffect } from "react";
