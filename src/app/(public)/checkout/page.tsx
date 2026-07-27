@@ -138,7 +138,18 @@ function CheckoutContent() {
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error || "Checkout gagal");
+      if (!res.ok) {
+        if (data.activeOrderId) {
+          // Restore the active order to localstorage to protect future attempts on this device
+          localStorage.setItem("active_order", JSON.stringify({
+            id: data.activeOrderId,
+            expiresAt: Date.now() + 24 * 60 * 60 * 1000
+          }));
+          router.push(`/pembayaran/${data.activeOrderId}`);
+          return;
+        }
+        throw new Error(data.error || "Checkout gagal");
+      }
 
       // Simpan data ke sessionStorage agar bisa dikembalikan jika user klik "GANTI"
       sessionStorage.setItem("checkout_form", JSON.stringify(form));

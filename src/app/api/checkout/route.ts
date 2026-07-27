@@ -11,6 +11,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
     }
 
+    // Check if user already has a pending order
+    const existingOrder = await prisma.order.findFirst({
+      where: {
+        status: "PENDING",
+        OR: [
+          { buyerEmail },
+          { buyerPhone }
+        ],
+        expiresAt: {
+          gt: new Date()
+        }
+      }
+    });
+
+    if (existingOrder) {
+      return NextResponse.json(
+        { 
+          error: "Anda masih memiliki pesanan aktif yang belum dibayar.",
+          activeOrderId: existingOrder.id
+        },
+        { status: 400 }
+      );
+    }
+
     // Generate unique Order ID (tiket style)
     const orderId = `LX-${nanoid(8).toUpperCase()}`;
 
