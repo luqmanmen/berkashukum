@@ -11,10 +11,6 @@ export default async function AdminPesananPage() {
         { paymentProof: { not: null } },
         { 
           status: "PENDING",
-          OR: [
-            { expiresAt: null },
-            { expiresAt: { gt: now } }
-          ]
         }
       ]
     },
@@ -86,12 +82,12 @@ export default async function AdminPesananPage() {
                         className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
                           order.status === "PAID"
                             ? "bg-green-100 text-green-700"
-                            : order.status === "PENDING"
+                            : (order.status === "PENDING" && (!order.expiresAt || new Date(order.expiresAt) > now))
                             ? "bg-yellow-100 text-yellow-700"
                             : "bg-red-100 text-red-700"
                         }`}
                       >
-                        {order.status}
+                        {order.status === "PENDING" && order.expiresAt && new Date(order.expiresAt) <= now ? "EXPIRED" : order.status}
                       </span>
                       {order.paymentProof && (
                         <div className="mt-2">
@@ -113,7 +109,7 @@ export default async function AdminPesananPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      {order.status === "PENDING" && (
+                      {order.status === "PENDING" && (!order.expiresAt || new Date(order.expiresAt) > now) && (
                         <UpdateStatusButton id={order.id} currentStatus="PENDING" targetStatus="PAID" label="Tandai Lunas" />
                       )}
                     </td>
