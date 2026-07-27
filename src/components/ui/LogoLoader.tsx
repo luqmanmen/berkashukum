@@ -78,7 +78,7 @@ export default function LogoLoader({ className = "w-40 h-40" }: { className?: st
       `}} />
       
       {/* Kontainer Logo */}
-      <div className={\`relative flex items-center justify-center \${className}\`}>
+      <div className={`relative flex items-center justify-center ${className}`}>
         {/* Efek White Splash di belakang */}
         <div className="animate-white-splash"></div>
         
@@ -98,7 +98,7 @@ export default function LogoLoader({ className = "w-40 h-40" }: { className?: st
       <div className="progress-bar-container">
         <div 
           className="progress-bar-fill" 
-          style={{ width: \`\${progress}%\` }}
+          style={{ width: `${progress}%` }}
         ></div>
       </div>
     </div>
