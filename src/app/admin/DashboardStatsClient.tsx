@@ -136,7 +136,7 @@ export default function DashboardStatsClient({ stats, chartData }: DashboardStat
                       dx={-10}
                     />
                     <Tooltip 
-                      formatter={(value: number | undefined) => [`Rp ${(value ?? 0).toLocaleString("id-ID")}`, "Pendapatan"]}
+                      formatter={(value) => [`Rp ${Number(value ?? 0).toLocaleString("id-ID")}`, "Pendapatan"]}
                       contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                     />
                     <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
