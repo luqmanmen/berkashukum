@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 export default function Footer({ ownerName = "Dr. Satria Wibowo" }: { ownerName?: string }) {
@@ -18,8 +19,8 @@ export default function Footer({ ownerName = "Dr. Satria Wibowo" }: { ownerName?
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <div className="bg-white/95 p-2 rounded-lg shadow-sm shrink-0">
-                <img src="/images/logo-1.png" alt="Berkas Hukum Logo" className="h-12 w-auto object-contain" />
+              <div className="bg-white/95 p-2 rounded-lg shadow-sm shrink-0 flex items-center justify-center">
+                <Image src="/images/logo-1.png" alt="Berkas Hukum Logo" width={48} height={48} className="h-12 w-auto object-contain" />
               </div>
               <div>
                 <div className="font-serif text-xl font-bold text-white leading-tight">

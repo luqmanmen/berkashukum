@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 export default function Navbar({ ownerName = "Dr. Satria Wibowo" }: { ownerName?: string }) {
@@ -96,18 +97,17 @@ export default function Navbar({ ownerName = "Dr. Satria Wibowo" }: { ownerName?
         <div className="flex justify-between items-center">
           
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="bg-white/95 p-1.5 rounded-md shadow-sm shrink-0">
-              <img src="/images/logo-1.png" alt="Berkas Hukum Logo" className="h-9 sm:h-11 w-auto object-contain" />
+          <Link href="/" className="flex items-center gap-3">
+            <div className="bg-white p-1 rounded-md shadow-sm shrink-0 flex items-center justify-center">
+              <Image src="/images/logo-1.png" alt="Berkas Hukum Logo" width={44} height={44} className="h-9 sm:h-11 w-auto object-contain" priority />
             </div>
-            <div>
-              <div className="font-serif text-xl font-bold text-white leading-tight">
+            {/* Teks Logo: 2 Baris yang Rapi */}
+            <div className="font-serif text-xl font-bold text-white leading-tight">
                 Berkas Hukum Corporate
               </div>
               <div className="text-[9px] text-gold-light tracking-wider uppercase mt-1">
                 Advokat &bull; Kurator &bull; Spesialis Legal Audit
               </div>
-            </div>
           </Link>
 
           {/* Desktop Nav */}

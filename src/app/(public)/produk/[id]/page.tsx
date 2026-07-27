@@ -136,7 +136,7 @@ export default async function ProductDetailPage({
 
                 {/* Author / Brand Logo */}
                 <div className="pt-3 border-t border-gray-100 flex flex-col gap-1.5">
-                  <img src="/images/logo-2.png" alt="Berkas Hukum Corporate" className="h-16 w-auto object-contain self-start" />
+                  <Image src="/images/logo-2.png" alt="Berkas Hukum Corporate" width={160} height={64} className="h-16 w-auto object-contain self-start" />
                   <div className="text-[10px] text-gray-500 font-bold tracking-wider uppercase ml-2">
                     Advokat &bull; Kurator &bull; Spesialis Legal Audit
                   </div>
