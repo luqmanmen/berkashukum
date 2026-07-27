@@ -21,6 +21,10 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
   useEffect(() => {
     if (order.status === "EXPIRED" || order.status === "PAID") {
       setIsExpired(order.status === "EXPIRED");
+      // Clear active_order block if order is already resolved (Paid/Expired)
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("active_order");
+      }
       return;
     }
 
@@ -137,9 +141,17 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
             </div>
             
             {!isExpired && (
-              <Link href="/checkout" className="px-4 py-1.5 border border-gold text-gold-dark rounded-full text-xs font-bold hover:bg-gold/10 transition-colors active:scale-95">
+              <button 
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    localStorage.removeItem("active_order");
+                  }
+                  router.push("/checkout");
+                }} 
+                className="px-4 py-1.5 border border-gold text-gold-dark rounded-full text-xs font-bold hover:bg-gold/10 transition-colors active:scale-95"
+              >
                 GANTI
-              </Link>
+              </button>
             )}
           </div>
 

@@ -182,6 +182,7 @@ export default function DownloadClient({ order }: { order: any }) {
             </div>
           )}
         </div>
+      </div>
       </main>
     </div>
   );

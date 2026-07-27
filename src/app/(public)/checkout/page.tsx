@@ -34,12 +34,27 @@ function CheckoutContent() {
   // Restore saved form data (when user clicks "GANTI" from payment page)
   useEffect(() => {
     try {
+      // 1. Check if user already has an active order in the last 24 hours
+      const activeRaw = localStorage.getItem("active_order");
+      if (activeRaw) {
+        const activeOrder = JSON.parse(activeRaw);
+        if (Date.now() < activeOrder.expiresAt) {
+          // Has active order, redirect to payment page
+          router.push(`/pembayaran/${activeOrder.id}`);
+          return;
+        } else {
+          // Expired, clear it
+          localStorage.removeItem("active_order");
+        }
+      }
+
+      // 2. Load saved form
       const savedForm = sessionStorage.getItem("checkout_form");
       if (savedForm) {
         setForm(JSON.parse(savedForm));
       }
     } catch {}
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (directProductId) {
@@ -129,6 +144,12 @@ function CheckoutContent() {
       sessionStorage.setItem("checkout_form", JSON.stringify(form));
       sessionStorage.setItem("checkout_items", JSON.stringify(checkoutItems));
       sessionStorage.setItem("checkout_total", String(checkoutTotal));
+
+      // Simpan status active order untuk 24 jam agar user tidak spam order baru
+      localStorage.setItem("active_order", JSON.stringify({
+        id: data.orderId,
+        expiresAt: Date.now() + 24 * 60 * 60 * 1000 // 24 hours from now
+      }));
 
       clearCart();
       router.push(`/pembayaran/${data.orderId}`);
