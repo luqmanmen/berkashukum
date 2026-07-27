@@ -11,10 +11,13 @@ export default async function TentangPage() {
   let heroImage: string | null = null;
   let aboutSubtitle = "BADAN HUKUM, KONSULTAN LEGAL & LEGAL AUDIT SEJAK 2016";
   let aboutDesc = "Sejak didirikan pada tahun 2016, Berkas Hukum Corporate telah mendedikasikan layanannya secara profesional pada penyelesaian sengketa bisnis kompleks, legal audit, restrukturisasi perusahaan, dan kepailitan.\n\nKami percaya bahwa hukum tidak hanya tentang memenangkan perdebatan di pengadilan, tetapi tentang menyusun strategi mitigasi risiko yang mengamankan masa depan bisnis Anda secara terstruktur. Karena itulah, selain menyediakan layanan konsultasi korporat premium, kami juga merancang sistem penyediaan dokumen hukum berkualitas tinggi yang dapat diakses oleh UMKM dan startup dengan efisien dan andal.";
+  
+  let educationList: {id: string, title: string, subtitle: string}[] = [];
+  let certList: {id: string, title: string, subtitle: string}[] = [];
 
   try {
     const settings = await prisma.siteSetting.findMany({
-      where: { key: { in: ["site_owner_name", "home_hero_image", "about_subtitle", "about_description"] } }
+      where: { key: { in: ["site_owner_name", "home_hero_image", "about_subtitle", "about_description", "about_education", "about_certifications"] } }
     });
     settings.forEach(s => {
       if (s.key === "site_owner_name") {
@@ -30,8 +33,28 @@ export default async function TentangPage() {
       if (s.key === "about_description") {
         aboutDesc = s.value;
       }
+      if (s.key === "about_education" && s.value) {
+        try { educationList = JSON.parse(s.value); } catch {}
+      }
+      if (s.key === "about_certifications" && s.value) {
+        try { certList = JSON.parse(s.value); } catch {}
+      }
     });
   } catch(e) {}
+
+  // Fallback to defaults if no settings set yet (to match old UI for first load before saving)
+  if (educationList.length === 0 && certList.length === 0 && aboutDesc === "Sejak didirikan pada tahun 2016, Berkas Hukum Corporate telah mendedikasikan layanannya secara profesional pada penyelesaian sengketa bisnis kompleks, legal audit, restrukturisasi perusahaan, dan kepailitan.\n\nKami percaya bahwa hukum tidak hanya tentang memenangkan perdebatan di pengadilan, tetapi tentang menyusun strategi mitigasi risiko yang mengamankan masa depan bisnis Anda secara terstruktur. Karena itulah, selain menyediakan layanan konsultasi korporat premium, kami juga merancang sistem penyediaan dokumen hukum berkualitas tinggi yang dapat diakses oleh UMKM dan startup dengan efisien dan andal.") {
+    educationList = [
+      { id: '1', title: "Ph.D. in Business Law", subtitle: "Universitas Indonesia (2018)" },
+      { id: '2', title: "Magister Hukum (M.H.)", subtitle: "Universitas Gadjah Mada (2012)" },
+      { id: '3', title: "Sarjana Hukum (S.H.)", subtitle: "Universitas Diponegoro (2008)" }
+    ];
+    certList = [
+      { id: '1', title: "Lisensi Kurator & Pengurus", subtitle: "Asosiasi Kurator dan Pengurus Indonesia (AKPI)" },
+      { id: '2', title: "Lisensi Advokat (PERADI)", subtitle: "Perhimpunan Advokat Indonesia" },
+      { id: '3', title: "Certified Legal Auditor (CLA)", subtitle: "Asosiasi Auditor Hukum Indonesia (ASAHI)" }
+    ];
+  }
 
 
   return (
@@ -72,10 +95,8 @@ export default async function TentangPage() {
                   </p>
                 </div>
                 
-                <div className="prose prose-sm text-gray-600">
-                  {aboutDesc.split('\n').map((paragraph, i) => (
-                    paragraph.trim() ? <p key={i}>{paragraph}</p> : <br key={i} />
-                  ))}
+                <div className="prose prose-sm text-gray-600 whitespace-pre-wrap">
+                  {aboutDesc}
                 </div>
 
                 <div className="pt-4 flex flex-wrap gap-3">
@@ -90,54 +111,50 @@ export default async function TentangPage() {
 
             </div>
 
-            <hr className="my-10 border-gray-100" />
+            {(educationList.length > 0 || certList.length > 0) && (
+              <>
+                <hr className="my-10 border-gray-100" />
 
-            {/* Resume Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              
-              {/* Education */}
-              <div>
-                <h3 className="font-serif text-xl font-bold text-navy mb-6 flex items-center gap-2">
-                  <span className="text-gold">🎓</span> Riwayat Pendidikan
-                </h3>
-                <ul className="space-y-4">
-                  <li className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gold before:rounded-full">
-                    <div className="font-bold text-navy text-sm">Ph.D. in Business Law</div>
-                    <div className="text-gray-500 text-xs mt-1">Universitas Indonesia (2018)</div>
-                  </li>
-                  <li className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gold before:rounded-full">
-                    <div className="font-bold text-navy text-sm">Magister Hukum (M.H.)</div>
-                    <div className="text-gray-500 text-xs mt-1">Universitas Gadjah Mada (2012)</div>
-                  </li>
-                  <li className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gold before:rounded-full">
-                    <div className="font-bold text-navy text-sm">Sarjana Hukum (S.H.)</div>
-                    <div className="text-gray-500 text-xs mt-1">Universitas Diponegoro (2008)</div>
-                  </li>
-                </ul>
-              </div>
+                {/* Resume Details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  
+                  {/* Education */}
+                  {educationList.length > 0 && (
+                    <div>
+                      <h3 className="font-serif text-xl font-bold text-navy mb-6 flex items-center gap-2">
+                        <span className="text-gold">🎓</span> Riwayat Pendidikan
+                      </h3>
+                      <ul className="space-y-4">
+                        {educationList.map(item => (
+                          <li key={item.id} className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gold before:rounded-full">
+                            <div className="font-bold text-navy text-sm">{item.title}</div>
+                            <div className="text-gray-500 text-xs mt-1">{item.subtitle}</div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
-              {/* Certifications & Affiliations */}
-              <div>
-                <h3 className="font-serif text-xl font-bold text-navy mb-6 flex items-center gap-2">
-                  <span className="text-gold">📜</span> Sertifikasi Resmi
-                </h3>
-                <ul className="space-y-4">
-                  <li className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gold before:rounded-full">
-                    <div className="font-bold text-navy text-sm">Lisensi Kurator & Pengurus</div>
-                    <div className="text-gray-500 text-xs mt-1">Asosiasi Kurator dan Pengurus Indonesia (AKPI)</div>
-                  </li>
-                  <li className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gold before:rounded-full">
-                    <div className="font-bold text-navy text-sm">Lisensi Advokat (PERADI)</div>
-                    <div className="text-gray-500 text-xs mt-1">Perhimpunan Advokat Indonesia</div>
-                  </li>
-                  <li className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gold before:rounded-full">
-                    <div className="font-bold text-navy text-sm">Certified Legal Auditor (CLA)</div>
-                    <div className="text-gray-500 text-xs mt-1">Asosiasi Auditor Hukum Indonesia (ASAHI)</div>
-                  </li>
-                </ul>
-              </div>
+                  {/* Certifications & Affiliations */}
+                  {certList.length > 0 && (
+                    <div>
+                      <h3 className="font-serif text-xl font-bold text-navy mb-6 flex items-center gap-2">
+                        <span className="text-gold">📜</span> Sertifikasi Resmi
+                      </h3>
+                      <ul className="space-y-4">
+                        {certList.map(item => (
+                          <li key={item.id} className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gold before:rounded-full">
+                            <div className="font-bold text-navy text-sm">{item.title}</div>
+                            <div className="text-gray-500 text-xs mt-1">{item.subtitle}</div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
-            </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -36,7 +36,7 @@ export default async function AdminLayout({
               <span className="font-serif font-bold text-navy-dark text-base">L</span>
             </div>
             <div>
-              <div className="font-serif font-bold text-sm text-white">LexNova</div>
+              <div className="font-serif font-bold text-sm text-white">Luckmen Developer</div>
               <div className="text-[10px] text-gold tracking-widest uppercase">Admin Panel</div>
             </div>
           </Link>
