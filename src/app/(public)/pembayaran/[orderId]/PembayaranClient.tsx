@@ -60,8 +60,11 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
   const waUrl = `https://wa.me/${adminWa}?text=${waMessage}`;
 
   const handleSendWa = () => {
-    setWaSent(true);
     window.open(waUrl, "_blank");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("active_order");
+    }
+    router.push("/status/diproses");
   };
 
   const handleCopy = () => {
@@ -257,8 +260,8 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
           </div>
         )}
 
-        {/* Action Button */}
-        {!isExpired && !waSent && (
+        {/* Removed waSent check because we redirect away anyway */}
+        {!isExpired && (
           <button
             onClick={handleSendWa}
             className="w-full bg-[#25D366] text-white py-3.5 rounded-xl font-bold text-sm hover:bg-green-600 transition-all duration-300 flex items-center justify-center gap-2 mb-5 shadow-sm active:scale-95"
@@ -270,11 +273,7 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
           </button>
         )}
 
-        {waSent && (
-           <div className="mt-4 mb-5 p-3 bg-green-50 text-green-700 text-sm font-semibold text-center rounded-xl border border-green-200">
-             ✅ Pesan WA Terkirim — Menunggu Konfirmasi Admin
-           </div>
-        )}
+
 
         {/* Accordions */}
         <div className="bg-white rounded-xl shadow-sm border border-gold/20 overflow-hidden divide-y divide-gold/10">
