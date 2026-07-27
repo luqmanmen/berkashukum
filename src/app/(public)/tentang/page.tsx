@@ -71,17 +71,13 @@ export default async function TentangPage() {
               
               {/* Photo Area */}
               <div className="w-full md:w-1/3 flex justify-center">
-                <div className="w-48 h-48 bg-navy-mid rounded-full overflow-hidden border-4 border-gold shadow-lg flex items-end justify-center shrink-0 relative">
-                  {heroImage ? (
-                    <Image
-                      src={heroImage}
-                      alt={`Foto ${ownerName}`}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="text-6xl text-white/20 mb-4">👤</div>
-                  )}
+                <div className="w-56 h-56 relative flex items-center justify-center shrink-0">
+                  <Image
+                    src="/images/logo-3d-2.png"
+                    alt={`Foto ${ownerName}`}
+                    fill
+                    className="object-contain"
+                  />
                 </div>
               </div>
 
@@ -111,50 +107,47 @@ export default async function TentangPage() {
 
             </div>
 
-            {(educationList.length > 0 || certList.length > 0) && (
-              <>
-                <hr className="my-10 border-gray-100" />
+            <>
+              <hr className="my-10 border-gray-100" />
 
-                {/* Resume Details */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  
-                  {/* Education */}
-                  {educationList.length > 0 && (
-                    <div>
-                      <h3 className="font-serif text-xl font-bold text-navy mb-6 flex items-center gap-2">
-                        <span className="text-gold">🎓</span> Riwayat Pendidikan
-                      </h3>
-                      <ul className="space-y-4">
-                        {educationList.map(item => (
-                          <li key={item.id} className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gold before:rounded-full">
-                            <div className="font-bold text-navy text-sm">{item.title}</div>
-                            <div className="text-gray-500 text-xs mt-1">{item.subtitle}</div>
-                          </li>
-                        ))}
-                      </ul>
+              {/* Lokasi Kantor */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                
+                {/* Alamat */}
+                <div className="flex flex-col justify-center">
+                  <h3 className="font-serif text-2xl font-bold text-navy mb-6 flex items-center gap-2">
+                    <span className="text-gold">📍</span> Lokasi Kantor
+                  </h3>
+                  <div className="space-y-4 text-gray-600 text-sm leading-relaxed">
+                    <p className="font-semibold text-lg text-navy-dark">Gedung Office 8, Lantai 15</p>
+                    <p>SCBD Lot 28, Jl. Jend. Sudirman Kav. 52-53<br />Senayan, Kebayoran Baru<br />Jakarta Selatan, 12190, Indonesia</p>
+                    
+                    <div className="pt-4 border-t border-gray-100 mt-4">
+                      <p className="flex items-center gap-2 font-medium">
+                        <span className="text-gold">📞</span> +62 812-3456-7890
+                      </p>
+                      <p className="flex items-center gap-2 mt-2 font-medium">
+                        <span className="text-gold">✉️</span> contact@berkashukum.com
+                      </p>
                     </div>
-                  )}
-
-                  {/* Certifications & Affiliations */}
-                  {certList.length > 0 && (
-                    <div>
-                      <h3 className="font-serif text-xl font-bold text-navy mb-6 flex items-center gap-2">
-                        <span className="text-gold">📜</span> Sertifikasi Resmi
-                      </h3>
-                      <ul className="space-y-4">
-                        {certList.map(item => (
-                          <li key={item.id} className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-gold before:rounded-full">
-                            <div className="font-bold text-navy text-sm">{item.title}</div>
-                            <div className="text-gray-500 text-xs mt-1">{item.subtitle}</div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
+                  </div>
                 </div>
-              </>
-            )}
+
+                {/* Maps */}
+                <div className="rounded-xl overflow-hidden shadow-md border border-gray-100 h-64 md:h-[320px]">
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.273629471378!2d106.80424561536965!3d-6.227607795491953!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f14371465e9b%3A0x6b4a62175c5e884e!2sOffice%208!5e0!3m2!1sen!2sid!4v1655101035622!5m2!1sen!2sid" 
+                    width="100%" 
+                    height="100%" 
+                    style={{border:0}} 
+                    allowFullScreen 
+                    loading="lazy" 
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
+                </div>
+
+              </div>
+            </>
           </div>
         </div>
       </div>

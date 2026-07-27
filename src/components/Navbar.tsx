@@ -102,12 +102,14 @@ export default function Navbar({ ownerName = "Dr. Satria Wibowo" }: { ownerName?
               <Image src="/images/logo-1.png" alt="Berkas Hukum Logo" width={44} height={44} className="h-9 sm:h-11 w-auto object-contain" priority />
             </div>
             {/* Teks Logo: 2 Baris yang Rapi */}
-            <div className="font-serif text-xl font-bold text-white leading-tight">
+            <div className="flex flex-col">
+              <div className="font-serif text-xl font-bold text-white leading-tight">
                 Berkas Hukum Corporate
               </div>
               <div className="text-[9px] text-gold-light tracking-wider uppercase mt-1">
                 Advokat &bull; Kurator &bull; Spesialis Legal Audit
               </div>
+            </div>
           </Link>
 
           {/* Desktop Nav */}
