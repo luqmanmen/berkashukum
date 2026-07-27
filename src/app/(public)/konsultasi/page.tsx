@@ -1,3 +1,4 @@
+export const runtime = "edge";
 import Script from "next/script";
 
 import { Metadata } from "next";

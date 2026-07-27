@@ -1,3 +1,4 @@
+export const runtime = "edge";
 import { CartProvider } from "@/hooks/useCart";
 
 export default function PembayaranLayout({

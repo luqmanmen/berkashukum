@@ -1,3 +1,4 @@
+export const runtime = "edge";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import PembayaranClient from "./PembayaranClient";

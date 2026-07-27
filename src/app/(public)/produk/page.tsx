@@ -1,3 +1,4 @@
+export const runtime = "edge";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import ProductListClient from "./ProductListClient";
