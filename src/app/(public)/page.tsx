@@ -67,21 +67,14 @@ export default async function Home() {
             {/* Right Photo */}
             <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
               <div className="relative w-72 h-72 sm:w-80 sm:h-80 lg:w-96 lg:h-96">
-                {/* Decorative border */}
-                <div className="absolute inset-0 border-2 border-gold rounded-full translate-x-4 translate-y-4 opacity-50"></div>
-                {/* Photo container */}
-                <div className="absolute inset-0 bg-navy-mid rounded-full overflow-hidden border-4 border-navy-dark shadow-2xl flex items-end justify-center">
-                  {heroImage ? (
-                    <Image
-                      src={heroImage}
-                      alt="Foto Profil"
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-                  ) : (
-                    <div className="text-8xl text-gold/20 mb-8">👤</div>
-                  )}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Image
+                    src="/images/logo-3d-2.png"
+                    alt="Berkas Hukum 3D"
+                    fill
+                    className="object-contain drop-shadow-[0_0_45px_rgba(255,255,255,0.7)]"
+                    priority
+                  />
                 </div>
               </div>
             </div>
