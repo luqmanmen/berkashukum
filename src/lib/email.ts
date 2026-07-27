@@ -96,7 +96,7 @@ export async function sendDownloadCodeEmail(
           <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
           <p style="font-size: 13px; color: #888; line-height: 1.6;">
             Jika ada kendala, silakan hubungi kami di 
-            <a href="mailto:luqmanarifsby@gmail.com" style="color: ${GOLD};">luqmanarifsby@gmail.com</a>.
+            <a href="mailto:support@berkashukum.com" style="color: ${GOLD};">support@berkashukum.com</a>.
           </p>
 
           <!-- Signature Block -->
@@ -112,7 +112,7 @@ export async function sendDownloadCodeEmail(
                     <td><span style="color: ${GOLD}; margin-right: 4px;">📞</span> <a href="https://wa.me/6282334196500" style="color: #555; text-decoration: none;">+62 823-3419-6500</a></td>
                   </tr>
                   <tr>
-                    <td><span style="color: ${GOLD}; margin-right: 4px;">✉️</span> <a href="mailto:contact@berkashukum.com" style="color: #555; text-decoration: none;">contact@berkashukum.com</a></td>
+                    <td><span style="color: ${GOLD}; margin-right: 4px;">✉️</span> <a href="mailto:support@berkashukum.com" style="color: #555; text-decoration: none;">support@berkashukum.com</a></td>
                   </tr>
                   <tr>
                     <td><span style="color: ${GOLD}; margin-right: 4px;">🌐</span> <a href="${APP_URL}" style="color: ${NAVY}; text-decoration: none;">www.berkashukum.com</a></td>
