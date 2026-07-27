@@ -1,4 +1,3 @@
-export const runtime = "edge";
 import { prisma } from "@/lib/prisma";
 import UpdateStatusButton from "./UpdateStatusButton";
 

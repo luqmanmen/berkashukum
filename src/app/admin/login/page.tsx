@@ -1,4 +1,3 @@
-export const runtime = "edge";
 import LoginForm from "./LoginForm";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
