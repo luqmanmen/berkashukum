@@ -27,8 +27,9 @@ export default function Navbar({ ownerName = "Dr. Satria Wibowo" }: { ownerName?
   const isPaymentPage = pathname.startsWith("/pembayaran");
   const isProductDetailPage = /^\/produk\/[^\/]+$/.test(pathname);
   const isProductListPage = pathname === "/produk";
+  const isDownloadPage = pathname.startsWith("/download");
 
-  if (isPaymentPage || isMinimalPage || isProductListPage) {
+  if (isPaymentPage || isMinimalPage || isProductListPage || isDownloadPage) {
     return null;
   }
 

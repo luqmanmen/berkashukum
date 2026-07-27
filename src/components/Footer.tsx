@@ -8,7 +8,7 @@ export default function Footer({ ownerName = "Dr. Satria Wibowo" }: { ownerName?
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
-  const isMinimalPage = pathname.startsWith("/checkout") || pathname.startsWith("/pembayaran");
+  const isMinimalPage = pathname.startsWith("/checkout") || pathname.startsWith("/pembayaran") || pathname.startsWith("/download");
   if (isMinimalPage) return null;
 
   return (

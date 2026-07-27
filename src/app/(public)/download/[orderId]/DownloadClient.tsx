@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function DownloadClient({ order }: { order: any }) {
   const [code, setCode] = useState("");
@@ -66,10 +67,31 @@ export default function DownloadClient({ order }: { order: any }) {
   };
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center p-4">
-      <div className="bg-white max-w-md w-full rounded-sm shadow-xl overflow-hidden border-t-4 border-gold">
+    <div className="min-h-screen bg-cream flex flex-col">
+      {/* Label Bar (Minimal Navbar without links) */}
+      <header className="bg-navy py-4 shadow-md w-full">
+        <div className="max-w-7xl mx-auto px-4 flex justify-center sm:justify-start">
+          <div className="flex items-center gap-3">
+            <div className="bg-white p-1 rounded-md shadow-sm shrink-0 flex items-center justify-center">
+              <Image src="/images/logo-1.png" alt="Berkas Hukum Logo" width={40} height={40} className="h-8 sm:h-9 w-auto object-contain" priority />
+            </div>
+            <div className="flex flex-col">
+              <div className="font-serif text-lg sm:text-xl font-bold text-white leading-tight">
+                Berkas Hukum Corporate
+              </div>
+              <div className="text-[8px] sm:text-[9px] text-gold-light tracking-wider uppercase mt-0.5">
+                Pusat Unduhan Resmi
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-grow flex items-center justify-center p-4">
+        <div className="bg-white max-w-md w-full rounded-sm shadow-xl overflow-hidden border-t-4 border-gold">
         
-        {/* Header */}
+        {/* Header (Inside Card) */}
         <div className="bg-navy p-6 text-center">
           <h1 className="text-xl font-bold font-serif text-white">Akses Unduhan Produk</h1>
           <p className="text-gold-light text-xs mt-1">Order #{order.id.slice(-8).toUpperCase()}</p>
@@ -160,7 +182,7 @@ export default function DownloadClient({ order }: { order: any }) {
             </div>
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
