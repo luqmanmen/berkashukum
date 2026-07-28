@@ -1,11 +1,20 @@
 import { Metadata } from "next";
 
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+
 export const metadata: Metadata = {
   title: "Under Maintenance | Berkas Hukum",
   description: "Website sedang dalam pemeliharaan.",
 };
 
-export default function MaintenancePage() {
+export default async function MaintenancePage() {
+  const setting = await prisma.siteSetting.findUnique({ where: { key: "maintenance_mode" } });
+  
+  if (setting?.value !== "true") {
+    redirect("/");
+  }
+
   return (
     <section className="min-h-screen bg-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* Background Decor */}
