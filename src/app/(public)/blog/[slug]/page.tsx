@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-
+import Image from "next/image";
 export default async function ArticleDetailPage({
   params,
 }: {
@@ -32,8 +32,13 @@ export default async function ArticleDetailPage({
             {article.title}
           </h1>
           <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-navy">{article.author?.name || "Dr. Satria Wibowo"}</span>
+            <div className="flex items-center gap-1.5 bg-gray-100/80 rounded-full pr-3">
+              <div className="bg-white p-1 rounded-full border border-gray-200 shadow-sm">
+                <Image src="/images/logo-1.png" alt="Berkas Hukum" width={20} height={20} className="object-contain w-5 h-5" />
+              </div>
+              <span className="font-bold text-navy truncate max-w-[200px]">
+                {(article as any).authorName || article.author?.name || "Tim Berkas Hukum"}
+              </span>
             </div>
             <span>•</span>
             <time dateTime={article.createdAt.toISOString()}>

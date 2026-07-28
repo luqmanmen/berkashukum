@@ -15,85 +15,154 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+import Image from "next/image";
+import CustomTrendingCarousel from "@/components/CustomTrendingCarousel";
+
 export const dynamic = "force-dynamic";
 
-export default async function BlogPage() {
-  const articles = await prisma.article.findMany({
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const currentCategory = resolvedSearchParams.category || "Semua";
+
+  // Fetch all published articles to extract unique categories and trending items
+  const allArticles = await prisma.article.findMany({
     where: { status: "PUBLISHED" },
     orderBy: { createdAt: "desc" },
     include: { author: true }
   });
 
-  const categories = ["Semua", "Hukum Bisnis", "Kepailitan", "Korporasi"];
+  const trendingArticles = allArticles.filter(a => a.isTrending);
+
+  // Extract unique categories dynamically from the articles
+  const uniqueCategories = Array.from(
+    new Set(allArticles.map(a => a.category).filter(Boolean))
+  ) as string[];
+  const categories = ["Semua", ...uniqueCategories];
+
+  // Filter articles for the grid based on selected category
+  const displayArticles = currentCategory === "Semua" 
+    ? allArticles 
+    : allArticles.filter(a => a.category === currentCategory);
+
+  const footerSetting = await prisma.siteSetting.findUnique({
+    where: { key: "blog_footer_text" }
+  });
+  const blogFooterText = footerSetting?.value || "";
+
+  const definitionSetting = await prisma.siteSetting.findUnique({
+    where: { key: "blog_definition_text" }
+  });
+  const blogDefinitionText = definitionSetting?.value || "";
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative pt-32 pb-20 bg-navy-dark overflow-hidden">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gold text-sm font-semibold tracking-widest uppercase mb-3">Edukasi Hukum</p>
-          <h1 className="font-serif text-5xl sm:text-6xl font-bold text-white mb-5">Blog & Publikasi</h1>
-          <div className="gold-divider mx-auto mb-5" />
-          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            Insight, opini hukum, dan analisis studi kasus terbaru.
-          </p>
-        </div>
+      {/* 1. Carousel 1 (Trending / Custom CSS Carousel) */}
+      <section className="bg-black">
+        <CustomTrendingCarousel articles={trendingArticles.length > 0 ? trendingArticles : allArticles.slice(0, 5)} />
       </section>
 
-      {/* Articles Grid */}
-      <section className="section-padding bg-cream">
+      {/* 2. Text (Definisi Artikel) */}
+      {blogDefinitionText && (
+        <section className="pt-16 pb-4 bg-cream">
+          <div className="max-w-4xl mx-auto px-4 text-center prose prose-base md:prose-lg prose-headings:font-serif prose-headings:text-navy-dark text-gray-700">
+            <div dangerouslySetInnerHTML={{ __html: blogDefinitionText }} />
+          </div>
+        </section>
+      )}
+
+      {/* 3. All Artikel Box (dengan efek 3D shadow) */}
+      <section className={`bg-cream relative z-20 ${blogDefinitionText ? 'pt-4 pb-20 md:pb-24' : 'section-padding'}`} id="artikel-list">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {articles.length === 0 ? (
-            <div className="text-center py-20 text-gray-400">
-              <div className="text-5xl mb-4">📭</div>
-              <p className="text-lg">Belum ada artikel publikasi.</p>
+          <div className="mb-8 md:mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <h2 className="font-serif text-2xl md:text-3xl font-bold text-navy-dark">Semua Artikel</h2>
+            <div className="flex flex-wrap gap-2">
+              {categories.map(cat => (
+                <Link 
+                  key={cat}
+                  href={cat === "Semua" ? "/blog#artikel-list" : `/blog?category=${encodeURIComponent(cat)}#artikel-list`}
+                  scroll={false}
+                  className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-all inline-block ${
+                    currentCategory === cat 
+                      ? "bg-navy text-white shadow-[3px_3px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_rgba(0,0,0,1)] border-2 border-black" 
+                      : "bg-white text-gray-600 border-2 border-black hover:bg-gold hover:text-black hover:shadow-[3px_3px_0px_rgba(0,0,0,1)] md:hover:shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5"
+                  }`}
+                >
+                  {cat}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {displayArticles.length === 0 ? (
+            <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-gray-100">
+              <p className="text-gray-500 font-medium">Belum ada artikel yang dipublikasikan.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {articles.map((article) => (
-                <article key={article.id} className="bg-white border border-gray-100 rounded-sm shadow-sm card-hover overflow-hidden flex flex-col">
-                  {/* Image placeholder with navy bg */}
-                  <div className="h-48 bg-navy flex items-center justify-center relative">
-                    {article.coverImage ? (
-                      <img src={article.coverImage} alt={article.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="font-serif text-6xl text-gold/20">SW</span>
-                    )}
-                    <div className="absolute top-4 left-4">
-                      <span className="bg-gold text-navy-dark text-xs font-bold px-3 py-1 rounded-full">
-                        {article.category || "Hukum"}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-6 flex-1 flex flex-col">
-                    <div className="flex gap-3 text-xs text-gray-400 mb-3">
-                      <span>{new Date(article.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
-                    </div>
-                    <h2 className="font-serif text-lg font-bold text-navy mb-3 leading-tight">
-                      <Link 
-                        href={`/blog/${article.slug}`}
-                        className="hover:text-gold transition-colors"
-                      >
-                        {article.title}
-                        {article.externalUrl && <span className="ml-2 text-xs text-gold">🔗</span>}
-                      </Link>
-                    </h2>
-                    <p className="text-gray-500 text-sm leading-relaxed mb-5 line-clamp-3">
-                      {/* Simple excerpt by stripping HTML tags if any, or just taking substring */}
-                      {article.content.replace(/<[^>]*>?/gm, '').substring(0, 150)}...
-                    </p>
-                    <div className="flex items-center justify-between mt-auto">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-navy flex items-center justify-center">
-                          <span className="text-gold text-xs font-bold">SW</span>
-                        </div>
-                        <span className="text-xs text-gray-500">{article.author?.name || "Admin"}</span>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
+              {displayArticles.map((article) => (
+                <article 
+                  key={article.id} 
+                  className="bg-white rounded-md border-2 border-black overflow-hidden shadow-[4px_4px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_rgba(0,0,0,1)] transition-transform hover:-translate-y-1 hover:shadow-[6px_6px_0px_rgba(0,0,0,1)] md:hover:shadow-[12px_12px_0px_rgba(0,0,0,1)] group flex flex-col"
+                >
+                  {article.coverImage ? (
+                    <div className="relative h-32 md:h-56 overflow-hidden border-b-2 border-black">
+                      <Image 
+                        src={article.coverImage} 
+                        alt={article.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute top-2 left-2 md:top-4 md:left-4">
+                        <span className="bg-white border-2 border-black px-2 py-0.5 md:px-3 md:py-1 text-[9px] md:text-xs font-bold uppercase tracking-wider text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+                          {article.category || "Hukum Umum"}
+                        </span>
                       </div>
+                    </div>
+                  ) : (
+                    <div className="relative h-32 md:h-56 bg-navy flex items-center justify-center p-4 md:p-6 border-b-2 border-black">
+                      <div className="absolute top-2 left-2 md:top-4 md:left-4">
+                        <span className="bg-white border-2 border-black px-2 py-0.5 md:px-3 md:py-1 text-[9px] md:text-xs font-bold uppercase tracking-wider text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+                          {article.category || "Hukum Umum"}
+                        </span>
+                      </div>
+                      <span className="font-serif text-white opacity-40 text-xl md:text-3xl font-bold text-center">BERKAS<br className="md:hidden"/>HUKUM</span>
+                    </div>
+                  )}
+                  
+                  <div className="p-3 md:p-6 flex-1 flex flex-col">
+                    <div className="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-sm text-gray-500 mb-2 md:mb-3 font-medium flex-wrap">
+                      <span>{new Date(article.createdAt).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric"
+                      })}</span>
+                      <span className="hidden sm:inline">•</span>
+                      <div className="flex items-center gap-1.5 bg-gray-100 rounded-full pr-2">
+                        <div className="bg-white p-0.5 rounded-full border border-gray-200">
+                          <Image src="/images/logo-1.png" alt="Berkas Hukum" width={16} height={16} className="object-contain w-4 h-4" />
+                        </div>
+                        <span className="truncate max-w-[80px] sm:max-w-[120px]">{(article as any).authorName || article.author?.name || "Tim Berkas Hukum"}</span>
+                      </div>
+                    </div>
+                    
+                    <h3 className="font-serif text-sm md:text-2xl font-bold text-gray-900 mb-2 md:mb-4 line-clamp-2 md:line-clamp-2 leading-tight md:leading-snug">
+                      <Link href={`/blog/${article.slug}`} className="hover:text-gold transition-colors">
+                        {article.title}
+                      </Link>
+                    </h3>
+                    
+                    <p className="text-gray-600 mb-3 md:mb-6 line-clamp-2 md:line-clamp-3 text-xs md:text-base leading-snug md:leading-relaxed">
+                      {article.content.replace(/<[^>]*>?/gm, '')}
+                    </p>
+                    
+                    <div className="mt-auto pt-2 md:pt-4 border-t-2 border-black flex items-center justify-between">
                       <Link 
                         href={`/blog/${article.slug}`}
-                        className="text-gold text-sm font-semibold hover:text-gold-light transition-colors"
+                        className="text-black font-bold uppercase tracking-wide text-[10px] md:text-sm hover:text-gold transition-colors flex items-center gap-1 md:gap-2 group-hover:gap-2 md:group-hover:gap-3"
                       >
                         Baca →
                       </Link>
@@ -106,14 +175,22 @@ export default async function BlogPage() {
         </div>
       </section>
 
-      {/* CTA to Products */}
-      <section className="bg-navy py-20 border-t border-white/10">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="font-serif text-3xl font-bold text-white mb-4">Butuh Draft Dokumen Hukum Cepat?</h2>
-          <p className="text-gray-300 mb-8">
-            Selain memberikan konsultasi, saya juga menyediakan draft kontrak dan dokumen legal siap pakai.
+      {/* 4 & 5. Teks Khusus & CTA Induk */}
+      <section className="bg-navy py-20 border-t-4 border-black text-white relative">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          {/* Custom Footer Teks (Optional) */}
+          {blogFooterText && (
+            <div className="prose prose-invert prose-lg mx-auto mb-16 pb-16 border-b border-white/20">
+              <div dangerouslySetInnerHTML={{ __html: blogFooterText }} />
+            </div>
+          )}
+
+          {/* CTA Induk */}
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-6">Butuh Draft Dokumen Hukum Cepat?</h2>
+          <p className="text-gray-300 mb-10 text-lg max-w-2xl mx-auto">
+            Selain memberikan insight hukum, saya juga menyediakan draft kontrak dan dokumen legal siap pakai untuk kebutuhan bisnis Anda.
           </p>
-          <Link href="/produk" className="btn-gold px-8 py-3.5 rounded-sm font-bold text-sm tracking-wide">
+          <Link href="/produk" className="inline-block bg-gold hover:bg-gold-light text-navy-dark border-2 border-black shadow-[6px_6px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 transition-all px-8 py-4 font-bold text-lg tracking-wide">
             Lihat Katalog Template
           </Link>
         </div>

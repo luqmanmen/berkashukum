@@ -1,0 +1,280 @@
+#service-carousel .container {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: #f5f5f5;
+  box-shadow: 0 30px 50px #dbdbdb;
+  border-radius: 20px;
+  overflow: hidden; /* Added to keep images inside rounded corners */
+}
+#service-carousel .container .slide {
+  border-radius: 20px;
+}
+#service-carousel .container .slide .item {
+  width: 200px;
+  height: 250px;
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  border-radius: 20px;
+  box-shadow: 0 30px 50px #505050;
+  background-position: 50% 50%;
+  background-size: cover;
+  display: inline-block;
+  transition: all 0.5s;
+}
+
+#service-carousel .slide .item:nth-child(1),
+#service-carousel .slide .item:nth-child(2) {
+  top: 0;
+  left: 0;
+  transform: translate(0, 0);
+  border-radius: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  transition: all .5s;
+}
+
+#service-carousel .slide .item:nth-child(3) {
+  left: 50%;
+}
+#service-carousel .slide .item:nth-child(4) {
+  left: calc(50% + 220px);
+}
+#service-carousel .slide .item:nth-child(5) {
+  left: calc(50% + 440px);
+}
+
+#service-carousel .slide .item:nth-child(n + 6) {
+  left: calc(50% + 660px);
+  opacity: 0;
+}
+#service-carousel .item .content {
+  position: absolute;
+  top: 50%;
+  left: 50px;
+  width: 350px;
+  text-align: left;
+  color: #eee;
+  transform: translate(0, -50%);
+  font-family: system-ui;
+  display: none;
+  z-index: 2;
+}
+
+#service-carousel .slide .item:nth-child(2) .content {
+  display: block;
+}
+
+#service-carousel .content .name {
+  font-size: 40px;
+  text-transform: uppercase;
+  font-weight: bold;
+  opacity: 0;
+  animation: animate 1s ease-in-out 1 forwards;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+  line-height: 1.1;
+  color: #fff;
+}
+
+#service-carousel .content .des {
+  margin-top: 15px;
+  margin-bottom: 25px;
+  opacity: 0;
+  animation: animate 1s ease-in-out 0.3s 1 forwards;
+  text-shadow: 1px 1px 5px rgba(0,0,0,1);
+  font-size: 16px;
+  color: #f1f1f1;
+}
+
+#service-carousel .content button {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.673);
+  transition: all 0.5s;
+  animation: animate 1s ease-in-out 0.6s 1 forwards;
+  color: black;
+}
+
+#service-carousel .content button:hover {
+  background-color: rgb(255, 255, 255);
+}
+
+@keyframes animate {
+  from {
+    opacity: 0;
+    transform: translate(0, 100px);
+    filter: blur(33px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0);
+    filter: blur(0);
+  }
+}
+
+#service-carousel .button {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  left: 45%;
+  right: 50%;
+  width: 100%;
+  align-items: center;
+  text-align: center;
+  position: absolute;
+  bottom: 20px;
+  z-index: 10;
+}
+
+#service-carousel .button button {
+  width: 40px;
+  height: 35px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin: 0 5px;
+  border: 2px solid #000000bd;
+  transition: 0.3s;
+  background: rgba(255, 255, 255, 0.578);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+}
+
+#service-carousel .button button:hover {
+  color: #000000;
+  border: 2px solid #ffffffbd;
+  transform: scale(1.1);
+}
+#service-carousel .button button:focus {
+  transform: scale(1.1);
+  background: #ffffff;
+  border: 2px solid #ffffffbd;
+}
+#service-carousel .button button:active {
+  transform: scale(1.02);
+}
+#service-carousel .next {
+  padding: 0 0 0 3px;
+}
+#service-carousel .prev {
+  padding: 0 3px 0 0;
+}
+
+/* Adjustments for responsive grid */
+#service-carousel .container {
+  width: 100%;
+  height: 100%;
+  box-shadow: none; /* Removed shadow since the parent grid cell has one */
+  border-radius: 20px; /* Kept border radius so it doesn't overflow */
+  overflow: hidden;
+  background: transparent;
+}
+
+#service-carousel .slide .item:nth-child(1),
+#service-carousel .slide .item:nth-child(2) {
+  border-radius: 20px; /* Ensure background image has rounded corners to match container */
+}
+
+/* Overlay for text readability on active slide */
+#service-carousel .item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Dark vignette gradient starting from left where text is */
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 40%, rgba(0, 0, 0, 0.1) 100%);
+  border-radius: 20px;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  /* Add a subtle blur to the background image just on the left side */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+#service-carousel .slide .item:nth-child(2)::before {
+  opacity: 1;
+}
+
+@media (max-width: 1024px) {
+  #service-carousel .slide .item:nth-child(3) { left: 40%; }
+  #service-carousel .slide .item:nth-child(4) { left: calc(40% + 220px); }
+  #service-carousel .slide .item:nth-child(5) { left: calc(40% + 440px); }
+  
+  #service-carousel .item .content {
+    left: 40px;
+    width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  #service-carousel .container {
+    width: 100%;
+    transform: none;
+    position: relative;
+    top: auto;
+    left: auto;
+  }
+  
+  /* Keep active and background images full size */
+  #service-carousel .slide .item:nth-child(1),
+  #service-carousel .slide .item:nth-child(2) {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+  }
+  
+  /* HIDE thumbnails from 4 onwards, but SHOW ONE THUMBNAIL (nth-child 3) */
+  #service-carousel .slide .item:nth-child(3) { 
+    left: calc(100% - 130px); /* 20px from right edge */
+    top: 30px; /* Near top */
+    width: 110px;
+    height: 150px;
+    opacity: 1;
+    transform: none; /* Remove centering transform so it stays anchored top-right */
+  }
+
+  #service-carousel .slide .item:nth-child(n+4) { 
+    opacity: 0; 
+    pointer-events: none;
+    left: 100%; /* hide to the right */
+  }
+  
+  /* Push text to the bottom so it doesn't overlap the thumbnail */
+  #service-carousel .item .content {
+    left: 20px;
+    top: auto; 
+    bottom: 80px; /* Put it above the buttons */
+    width: calc(100% - 40px);
+    max-width: none;
+    transform: none; /* Remove Y-centering transform */
+  }
+  #service-carousel .content .name { font-size: 26px; text-shadow: 2px 2px 5px rgba(0,0,0,0.9); }
+  #service-carousel .content .des { font-size: 14px; margin-bottom: 15px; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); }
+  
+  /* Darker vignette for mobile starting from bottom */
+  #service-carousel .item::before {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 40%, rgba(0, 0, 0, 0) 100%);
+  }
+
+  /* Position buttons properly */
+  #service-carousel .button { 
+    bottom: 20px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    width: max-content; 
+  }
+}

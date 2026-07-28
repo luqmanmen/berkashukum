@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import PriceInput from "@/components/admin/PriceInput";
 import FeatureInput from "@/components/admin/FeatureInput";
 import ActionForm from "@/components/admin/ActionForm";
+import ImageUploadWithCrop from "@/components/ui/ImageUploadWithCrop";
 
 export default async function EditProdukPage({
   params,
@@ -238,11 +239,11 @@ export default async function EditProdukPage({
                     </div>
                   </div>
                 )}
-                <input
+                <ImageUploadWithCrop
                   name="image"
-                  type="file"
-                  accept="image/*"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer"
+                  required={false}
+                  aspect={3/4}
+                  defaultValue={product.image || undefined}
                 />
                 <p className="text-xs text-gray-500 mt-2">
                   <b>Catatan:</b> Tulisan "No file chosen" di atas adalah normal. Biarkan saja kosong jika Anda <b>tidak ingin mengganti</b> gambar yang sudah ada.

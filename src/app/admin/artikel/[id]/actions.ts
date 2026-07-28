@@ -5,32 +5,32 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
-export async function createArticle(formData: FormData) {
+export async function updateArticle(formData: FormData) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
     throw new Error("Unauthorized");
   }
 
+  const id = formData.get("id") as string;
   const title = formData.get("title") as string;
   const category = formData.get("category") as string;
   const content = formData.get("content") as string;
   const externalUrl = formData.get("externalUrl") as string | null;
   const status = formData.get("status") as string;
   const isTrending = formData.get("isTrending") === "on" || formData.get("isTrending") === "true";
-
   const authorName = formData.get("authorName") as string | null;
 
-  // Generate simple slug
-  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
-  
-  let coverImageUrl: string | null = null;
+  // Let slug remain the same to not break SEO/links, 
+  // unless we specifically want to update it. Here we keep it simple and preserve the old slug.
+
+  let coverImageUrl: string | undefined = undefined;
   const coverImageFile = formData.get("coverImage") as File | null;
   
   if (coverImageFile && coverImageFile.size > 0) {
     const ext = coverImageFile.name.split('.').pop();
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
     const fileName = `articles/images/${slug}-${Date.now()}.${ext}`;
     
-    // Lazy import to avoid server components bundle issues if needed, but standard import is fine
     const { supabase } = await import("@/lib/supabase");
     
     const { data, error } = await supabase.storage
@@ -43,19 +43,23 @@ export async function createArticle(formData: FormData) {
     }
   }
 
-  await prisma.article.create({
-    data: {
-      title,
-      slug: `${slug}-${Date.now()}`, // append timestamp to ensure uniqueness
-      category,
-      content,
-      externalUrl,
-      status,
-      isTrending,
-      coverImage: coverImageUrl,
-      authorName: authorName || null,
-      authorId: session.user.id,
-    },
+  const updateData: any = {
+    title,
+    category,
+    content,
+    externalUrl,
+    status,
+    isTrending,
+    authorName: authorName || null,
+  };
+
+  if (coverImageUrl) {
+    updateData.coverImage = coverImageUrl;
+  }
+
+  await prisma.article.update({
+    where: { id },
+    data: updateData,
   });
 
   return { success: true };

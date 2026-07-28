@@ -58,7 +58,7 @@ export default async function AdminArtikelPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 font-medium text-gray-900 text-sm">
-                      {article.author.name}
+                      {(article as any).authorName || article.author.name || "Tim Berkas Hukum"}
                     </td>
                     <td className="px-6 py-4">
                       <span
@@ -73,7 +73,7 @@ export default async function AdminArtikelPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-3">
-                        <button className="text-blue-600 hover:text-blue-800 font-medium text-xs">Edit</button>
+                        <Link href={`/admin/artikel/${article.id}`} className="text-blue-600 hover:text-blue-800 font-medium text-xs">Edit</Link>
                         <button className="text-red-500 hover:text-red-700 font-medium text-xs">Hapus</button>
                       </div>
                     </td>

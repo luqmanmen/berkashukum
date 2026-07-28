@@ -43,7 +43,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
         supabase.storage
           .from("images")
           .upload(`articles/${fileName}`, file, { cacheControl: "3600", upsert: false })
-          .then(({ error }) => {
+          .then(({ error }: { error: any }) => {
             if (error) {
               console.error("Upload error:", error);
               alert("Gagal mengunggah gambar: " + error.message);
@@ -59,7 +59,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
             this.selection.insertImage(data.publicUrl);
             resolve(data.publicUrl);
           })
-          .catch((err) => {
+          .catch((err: any) => {
              console.error(err);
              reject();
           });

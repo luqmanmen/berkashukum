@@ -9,7 +9,7 @@ export default function ActionForm({
   successUrl, 
   className 
 }: { 
-  action: (formData: FormData) => Promise<{ success: boolean; error?: string }>; 
+  action: (formData: FormData) => Promise<any>; 
   children: React.ReactNode; 
   successUrl?: string;
   className?: string;

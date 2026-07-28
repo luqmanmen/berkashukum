@@ -88,7 +88,9 @@ model Article {
   externalUrl String?
   coverImage String?
   category   String?
+  authorName String?  // Optional override for the author's name
   status     String   @default("DRAFT") // DRAFT, PUBLISHED
+  isTrending Boolean  @default(false)
   authorId   String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -114,14 +116,40 @@ model Testimonial {
   updatedAt DateTime @updatedAt
 }
 
-model TeamMember {
-  id            String   @id @default(cuid())
-  name          String
-  photo         String?
-  specialization String
-  description   String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+model Lawyer {
+  id               String   @id @default(cuid())
+  name             String
+  photo            String?
+  specialization   String
+  description      String?
+  consultationPrice Float   @default(0)
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  bookings         ConsultationBooking[]
+}
+
+model ConsultationBooking {
+  id               String   @id @default(cuid())
+  lawyerId         String
+  clientName       String
+  clientEmail      String
+  clientPhone      String
+  caseDescription  String
+  scheduleDate     String   
+  scheduleTime     String   
+  
+  totalAmount      Float
+  status           String   @default("PENDING") // PENDING, PAID, REJECTED, COMPLETED
+  paymentMethod    String?  // TRANSFER, QRIS
+  bankName         String?
+  paymentProof     String?
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  lawyer           Lawyer   @relation(fields: [lawyerId], references: [id])
 }
 
 model SiteSetting {
@@ -132,4 +160,15 @@ model SiteSetting {
   category  String   @default("GENERAL") // e.g. "HOME", "ABOUT", "CONTACT"
   type      String   @default("TEXT") // e.g. "TEXT", "TEXTAREA", "IMAGE"
   updatedAt DateTime @updatedAt
+}
+
+model ServiceCarousel {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  imageUrl    String?
+  linkUrl     String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

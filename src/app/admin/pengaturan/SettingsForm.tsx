@@ -4,12 +4,17 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import ImageCropperModal from "@/components/ui/ImageCropperModal";
+import RichTextEditor from "@/components/RichTextEditor";
 
 type AboutListItem = { id: string; title: string; subtitle: string };
 
 export default function SettingsForm({ initialData }: { initialData: Record<string, string> }) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"pembayaran" | "tentang" | "sistem" | "beranda">("beranda");
+  const [activeTab, setActiveTab] = useState<"pembayaran" | "tentang" | "sistem" | "beranda" | "blog">("beranda");
+  
+  // Blog Settings
+  const [blogFooterText, setBlogFooterText] = useState(initialData["blog_footer_text"] || "Butuh Draft Dokumen Hukum Cepat?");
+  const [blogDefinitionText, setBlogDefinitionText] = useState(initialData["blog_definition_text"] || "");
   
   // System States
   const [maintenanceMode, setMaintenanceMode] = useState(initialData["maintenance_mode"] === "true");
@@ -126,6 +131,49 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
     }
   };
 
+  const handleSaveBlog = async () => {
+    setLoading(true);
+    try {
+      await saveSetting("blog_footer_text", "Footer Artikel", blogFooterText, "BLOG", "RICHTEXT");
+      await saveSetting("blog_definition_text", "Definisi Artikel", blogDefinitionText, "BLOG", "RICHTEXT");
+      alert("Pengaturan Halaman Artikel berhasil disimpan");
+      router.refresh();
+    } catch (err: any) {
+      alert("Error: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDirectUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (val: string) => void) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    e.target.value = "";
+    setUploading(true);
+
+    try {
+      const ext = file.name.split('.').pop() || "png";
+      const fileName = `upload-${Math.random()}.${ext}`;
+
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(`settings/${fileName}`, file, { cacheControl: '3600', upsert: false });
+
+      if (error) throw error;
+
+      const { data: publicUrlData } = supabase.storage
+        .from('images')
+        .getPublicUrl(`settings/${fileName}`);
+
+      setter(publicUrlData.publicUrl);
+    } catch (err: any) {
+      alert("Error upload: " + err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (val: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -218,6 +266,14 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
           }`}
         >
           ⚙️ Sistem
+        </button>
+        <button
+          onClick={() => setActiveTab("blog")}
+          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === "blog" ? "border-navy-dark text-navy-dark" : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+          }`}
+        >
+          📝 Halaman Artikel
         </button>
       </div>
 
@@ -319,7 +375,7 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
               <input 
                 type="file" 
                 accept="image/*"
-                onChange={(e) => handleFileUpload(e, setQrisImage)}
+                onChange={(e) => handleDirectUpload(e, setQrisImage)}
                 disabled={uploading}
                 className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
               />
@@ -487,6 +543,43 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
               className="bg-navy-dark text-white px-6 py-2 rounded-sm text-sm font-semibold hover:bg-opacity-90 disabled:opacity-50"
             >
               {loading ? "Menyimpan..." : "Simpan Pengaturan Sistem"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "blog" && (
+        <div className="space-y-8 animate-fade-in">
+          <div className="bg-white p-6 rounded-md shadow-sm border border-gray-100">
+            <h3 className="font-serif text-lg font-bold text-navy-dark mb-2">Teks Definisi Artikel</h3>
+            <p className="text-sm text-gray-500 mb-6">
+              Teks ini akan muncul tepat di bawah Carousel Trending pada halaman Blog. Cocok untuk memberikan penjelasan singkat tentang isi artikel di Berkas Hukum.
+            </p>
+            <div className="border border-gray-200 rounded-md overflow-hidden">
+              <RichTextEditor 
+                value={blogDefinitionText} 
+                onChange={setBlogDefinitionText} 
+              />
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-md shadow-sm border border-gray-100">
+            <h3 className="font-serif text-lg font-bold text-navy-dark mb-2">Footer Khusus Artikel</h3>
+            <p className="text-sm text-gray-500 mb-4">Edit teks khusus yang akan muncul di bagian bawah halaman semua artikel (Call to Action). Konsep editor ini menggunakan MS Word (Rich Text).</p>
+            
+            <div className="border border-gray-300 rounded-sm overflow-hidden bg-white">
+              {/* @ts-ignore - RichTextEditor might need to be imported if not already, but I'll add the import above */}
+              <RichTextEditor value={blogFooterText} onChange={setBlogFooterText} />
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-gray-200">
+            <button
+              onClick={handleSaveBlog}
+              disabled={loading}
+              className="bg-navy-dark text-white px-6 py-2 rounded-sm text-sm font-semibold hover:bg-opacity-90 disabled:opacity-50"
+            >
+              {loading ? "Menyimpan..." : "Simpan Footer Artikel"}
             </button>
           </div>
         </div>

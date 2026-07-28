@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import PriceInput from "@/components/admin/PriceInput";
 import FeatureInput from "@/components/admin/FeatureInput";
 import ActionForm from "@/components/admin/ActionForm";
+import ImageUploadWithCrop from "@/components/ui/ImageUploadWithCrop";
 
 export default function TambahProdukPage() {
   async function createProduct(formData: FormData) {
@@ -207,11 +208,10 @@ export default function TambahProdukPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Gambar Sampul (Opsional)</label>
-                <input
+                <ImageUploadWithCrop
                   name="image"
-                  type="file"
-                  accept="image/*"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer"
+                  required={false}
+                  aspect={3/4}
                 />
               </div>
 

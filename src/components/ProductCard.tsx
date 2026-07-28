@@ -9,6 +9,7 @@ interface Product {
   name: string;
   description: string;
   price: number;
+  originalPrice: number | null;
   category: string | null;
   documentFormat: string | null;
   promoStatus: string | null;

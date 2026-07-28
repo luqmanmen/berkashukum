@@ -168,7 +168,7 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
                <div className="bg-[#faf7f2] rounded-xl p-4 flex flex-col items-center justify-center mb-2 border border-gold/20">
                  {qrisImage ? (
                    <>
-                     <img src={qrisImage} alt="QRIS Code" className="w-48 h-48 object-contain mb-3" />
+                     <img src={qrisImage} alt="QRIS Code" className="w-full max-w-[320px] h-auto object-contain mx-auto mb-4 drop-shadow-sm rounded-lg" />
                      <a href={qrisImage} download="QRIS-Payment.png" className="text-gold-dark font-bold text-sm flex items-center gap-2 hover:text-gold transition-colors">
                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                        Simpan QR Code

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import RichTextEditor from "@/components/RichTextEditor";
+import ImageUploadWithCrop from "@/components/ui/ImageUploadWithCrop";
 import ActionForm from "@/components/admin/ActionForm";
 import { createArticle } from "./actions";
 
@@ -64,14 +65,35 @@ export default function ArticleFormClient() {
               </select>
             </div>
             
+            <div className="flex items-end mb-1">
+              <label className="flex items-center gap-2 cursor-pointer p-2 border border-gray-200 rounded-sm hover:bg-gray-50 w-full transition-colors">
+                <input 
+                  type="checkbox" 
+                  name="isTrending"
+                  className="w-4 h-4 text-navy rounded border-gray-300 focus:ring-navy" 
+                />
+                <span className="text-sm font-semibold text-gray-800">⭐ Jadikan Artikel Trending</span>
+              </label>
+            </div>
+            
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Gambar Cover (Opsional)</label>
-              <input
+              <ImageUploadWithCrop
                 name="coverImage"
-                type="file"
-                accept="image/*"
-                className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer"
+                required={false}
+                aspect={16/9}
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Penulis Artikel (Opsional)</label>
+              <input
+                name="authorName"
+                type="text"
+                placeholder="Misal: Tim Berkas Hukum"
+                className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-900"
+              />
+              <p className="text-xs text-gray-500 mt-1">Kosongkan jika ingin menggunakan nama Anda (Super Admin).</p>
             </div>
           </div>
 

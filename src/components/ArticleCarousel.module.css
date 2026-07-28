@@ -1,0 +1,195 @@
+.carouselContainer {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 500px;
+  background: #f5f5f5;
+  box-shadow: 0 30px 50px #dbdbdb;
+  border-radius: 20px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.slide {
+  border-radius: 20px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.item {
+  width: 200px;
+  height: 250px;
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  border-radius: 20px;
+  box-shadow: 0 30px 50px #505050;
+  background-position: 50% 50%;
+  background-size: cover;
+  display: inline-block;
+  transition: all 0.5s;
+}
+
+/* 1st and 2nd items take up the full screen */
+.item:nth-child(1),
+.item:nth-child(2) {
+  top: 0;
+  left: 0;
+  transform: translate(0, 0);
+  border-radius: 0;
+  width: 100%;
+  height: 100%;
+  transition: all 0.5s;
+}
+
+/* 3rd, 4th, 5th items stack horizontally */
+.item:nth-child(3) {
+  left: 50%;
+}
+.item:nth-child(4) {
+  left: calc(50% + 220px);
+}
+.item:nth-child(5) {
+  left: calc(50% + 440px);
+}
+
+/* 6th and beyond items are hidden off-screen */
+.item:nth-child(n + 6) {
+  left: calc(50% + 660px);
+  opacity: 0;
+}
+
+.content {
+  position: absolute;
+  top: 50%;
+  left: 100px;
+  width: 300px;
+  text-align: left;
+  color: #eee;
+  transform: translate(0, -50%);
+  font-family: system-ui, sans-serif;
+  display: none;
+}
+
+/* Only display content for the 2nd item (the one in focus) */
+.item:nth-child(2) .content {
+  display: block;
+}
+
+.name {
+  font-size: 40px;
+  text-transform: uppercase;
+  font-weight: bold;
+  opacity: 0;
+  animation: animate 1s ease-in-out 1 forwards;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+}
+
+.des {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: animate 1s ease-in-out 0.3s 1 forwards;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+  line-height: 1.5;
+}
+
+.content button {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.673);
+  transition: all 0.5s;
+  animation: animate 1s ease-in-out 0.6s 1 forwards;
+  color: #333;
+  font-weight: bold;
+}
+
+.content button:hover {
+  background-color: rgb(255, 255, 255);
+}
+
+@keyframes animate {
+  from {
+    opacity: 0;
+    transform: translate(0, 100px);
+    filter: blur(33px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0);
+    filter: blur(0);
+  }
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+.navButton {
+  width: 40px;
+  height: 35px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  border: 2px solid rgba(0, 0, 0, 0.74);
+  transition: 0.3s;
+  background: rgba(255, 255, 255, 0.578);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #333;
+}
+
+.navButton:hover {
+  color: #000000;
+  border: 2px solid rgba(255, 255, 255, 0.74);
+  transform: scale(1.1);
+}
+
+.navButton:focus {
+  transform: scale(1.1);
+  background: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.74);
+}
+
+.navButton:active {
+  transform: scale(1.02);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .carouselContainer {
+    height: 400px;
+  }
+  
+  .item {
+    width: 140px;
+    height: 180px;
+  }
+  
+  .item:nth-child(3) { left: 50%; }
+  .item:nth-child(4) { left: calc(50% + 150px); }
+  .item:nth-child(5) { left: calc(50% + 300px); }
+  
+  .content {
+    left: 20px;
+    width: 250px;
+  }
+  
+  .name {
+    font-size: 24px;
+  }
+}

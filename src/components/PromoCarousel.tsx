@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { Product } from "@prisma/client";
+import type { Product } from "@/generated/prisma";
 
 export default function PromoCarousel({ products }: { products: Product[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
