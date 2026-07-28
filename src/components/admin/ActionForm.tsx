@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function ActionForm({ 
-  action, 
-  children, 
-  successUrl, 
-  className 
-}: { 
-  action: (formData: FormData) => Promise<any>; 
-  children: React.ReactNode; 
+export default function ActionForm({
+  action,
+  children,
+  successUrl,
+  className
+}: {
+  action: (formData: FormData) => Promise<any>;
+  children: React.ReactNode;
   successUrl?: string;
   className?: string;
 }) {
@@ -20,7 +20,7 @@ export default function ActionForm({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("loading");
-    
+
     const formData = new FormData(e.currentTarget);
     try {
       const res = await action(formData);
@@ -56,7 +56,7 @@ export default function ActionForm({
                 <p className="mt-4 text-gray-600 font-medium text-sm">Menyimpan data...</p>
               </>
             )}
-            
+
             {status === "success" && (
               <>
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-3">
