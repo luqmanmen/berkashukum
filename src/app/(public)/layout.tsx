@@ -13,6 +13,8 @@ export default async function PublicLayout({
   children: React.ReactNode;
 }) {
   let ownerName = "Dr. Satria Wibowo";
+  let isMaintenance = false;
+
   try {
     const settings = await prisma.siteSetting.findMany({
       where: { key: { in: ["site_owner_name", "maintenance_mode"] } }
@@ -22,12 +24,13 @@ export default async function PublicLayout({
     const maintenanceSetting = settings.find(s => s.key === "maintenance_mode");
 
     if (ownerSetting) ownerName = ownerSetting.value;
-    
-    if (maintenanceSetting?.value === "true") {
-      const { redirect } = await import("next/navigation");
-      redirect("/maintenance");
-    }
+    if (maintenanceSetting?.value === "true") isMaintenance = true;
   } catch (e) {}
+
+  if (isMaintenance) {
+    const { redirect } = await import("next/navigation");
+    redirect("/maintenance");
+  }
 
   return (
     <CartProvider>
