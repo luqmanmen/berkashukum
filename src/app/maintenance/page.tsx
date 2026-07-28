@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function MaintenancePage() {
   return (
-    <section className="min-h-screen bg-cream flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <section className="min-h-screen bg-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-2 bg-gold"></div>
       
@@ -16,14 +16,12 @@ export default function MaintenancePage() {
            <img src="/images/logo.png" alt="Berkas Hukum" className="h-16 object-contain" />
         </div>
         
-        <div className="relative inline-block mb-10">
+        <div className="relative w-full max-w-lg mx-auto mb-10 px-4 md:px-0">
           <img 
             src="/images/maintenance.png" 
             alt="Maintenance Illustration" 
-            className="h-64 object-contain animate-vibrate" 
+            className="w-full h-auto object-contain" 
           />
-          {/* Dust animation effects */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-4 bg-black/10 blur-xl rounded-full animate-pulse"></div>
         </div>
 
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-navy mb-6">
