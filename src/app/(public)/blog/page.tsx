@@ -73,11 +73,11 @@ export default async function BlogPage() {
                     </div>
                     <h2 className="font-serif text-lg font-bold text-navy mb-3 leading-tight">
                       <Link 
-                        href={article.externalUrl || `/blog/${article.slug}`} 
-                        target={article.externalUrl ? "_blank" : undefined}
+                        href={`/blog/${article.slug}`}
                         className="hover:text-gold transition-colors"
                       >
                         {article.title}
+                        {article.externalUrl && <span className="ml-2 text-xs text-gold">🔗</span>}
                       </Link>
                     </h2>
                     <p className="text-gray-500 text-sm leading-relaxed mb-5 line-clamp-3">
@@ -92,8 +92,7 @@ export default async function BlogPage() {
                         <span className="text-xs text-gray-500">{article.author?.name || "Admin"}</span>
                       </div>
                       <Link 
-                        href={article.externalUrl || `/blog/${article.slug}`} 
-                        target={article.externalUrl ? "_blank" : undefined}
+                        href={`/blog/${article.slug}`}
                         className="text-gold text-sm font-semibold hover:text-gold-light transition-colors"
                       >
                         Baca →

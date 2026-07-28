@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 
 export default async function ArticleDetailPage({
   params,
@@ -18,13 +17,9 @@ export default async function ArticleDetailPage({
     notFound();
   }
 
-  if (article.externalUrl) {
-    redirect(article.externalUrl);
-  }
-
   return (
     <article className="pt-32 pb-20 bg-cream min-h-screen">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <header className="mb-10 text-center">
@@ -49,6 +44,22 @@ export default async function ArticleDetailPage({
               })}
             </time>
           </div>
+
+          {/* External URL link */}
+          {article.externalUrl && (
+            <div className="mt-6">
+              <a 
+                href={article.externalUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-gold hover:text-gold-light transition-colors font-semibold"
+              >
+                <span>🔗</span>
+                <span className="underline underline-offset-2">{article.externalUrl}</span>
+                <span className="text-xs">↗</span>
+              </a>
+            </div>
+          )}
         </header>
 
         {/* Cover Image */}
@@ -58,11 +69,33 @@ export default async function ArticleDetailPage({
           </div>
         )}
 
-        {/* Content */}
-        <div 
-          className="prose prose-lg prose-navy max-w-none mb-16 bg-white p-8 md:p-12 rounded-sm shadow-sm border border-gray-100"
-          dangerouslySetInnerHTML={{ __html: article.content }}
-        />
+        {/* Content: either iframe for external or HTML for manual */}
+        {article.externalUrl ? (
+          <div className="mb-16">
+            <iframe
+              src={article.externalUrl}
+              title={article.title}
+              className="w-full border border-gray-200 rounded-sm shadow-sm bg-white"
+              style={{ minHeight: "80vh" }}
+              sandbox="allow-scripts allow-same-origin allow-popups"
+            />
+            <div className="mt-4 text-center">
+              <a 
+                href={article.externalUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-sm text-gray-500 hover:text-gold transition-colors"
+              >
+                Jika konten tidak tampil, klik di sini untuk membuka langsung →
+              </a>
+            </div>
+          </div>
+        ) : (
+          <div 
+            className="prose prose-lg prose-navy max-w-none mb-16 bg-white p-8 md:p-12 rounded-sm shadow-sm border border-gray-100"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
+        )}
 
         {/* CTA (Promosi Template) */}
         <div className="bg-navy rounded-sm p-8 text-center shadow-xl border border-gold/20">
