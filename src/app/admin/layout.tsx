@@ -14,16 +14,22 @@ export default async function AdminLayout({
     return <>{children}</>;
   }
 
-  const navItems = [
-    { href: "/admin", label: "Dashboard", icon: "📊" },
-    { href: "/admin/produk", label: "Produk", icon: "📦" },
-    { href: "/admin/pesanan", label: "Pesanan", icon: "🛒" },
-    { href: "/admin/artikel", label: "Artikel", icon: "📝" },
-    { href: "/admin/halaman", label: "Halaman", icon: "🗂️" },
-    { href: "/admin/pengguna", label: "Pengguna", icon: "👥" },
-    { href: "/admin/penyimpanan", label: "Penyimpanan", icon: "🗄️" },
-    { href: "/admin/pengaturan", label: "Pengaturan", icon: "⚙️" },
+  const userRole = session.user?.role;
+
+  const allNavItems = [
+    { href: "/admin", label: "Dashboard", icon: "📊", superOnly: true },
+    { href: "/admin/produk", label: "Produk", icon: "📦", superOnly: false },
+    { href: "/admin/pesanan", label: "Pesanan", icon: "🛒", superOnly: false },
+    { href: "/admin/artikel", label: "Artikel", icon: "📝", superOnly: false },
+    { href: "/admin/halaman", label: "Halaman", icon: "🗂️", superOnly: true },
+    { href: "/admin/pengguna", label: "Pengguna", icon: "👥", superOnly: true },
+    { href: "/admin/penyimpanan", label: "Penyimpanan", icon: "🗄️", superOnly: true },
+    { href: "/admin/pengaturan", label: "Pengaturan", icon: "⚙️", superOnly: true },
   ];
+
+  const navItems = userRole === "SUPER_ADMIN"
+    ? allNavItems
+    : allNavItems.filter(item => !item.superOnly);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
