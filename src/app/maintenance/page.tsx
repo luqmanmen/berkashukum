@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Under Maintenance | Berkas Hukum",
   description: "Website sedang dalam pemeliharaan.",
