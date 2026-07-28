@@ -14,6 +14,7 @@ export async function createArticle(formData: FormData) {
   const title = formData.get("title") as string;
   const category = formData.get("category") as string;
   const content = formData.get("content") as string;
+  const externalUrl = formData.get("externalUrl") as string | null;
   const status = formData.get("status") as string;
   const coverImage = formData.get("coverImage") as string || null;
 
@@ -26,6 +27,7 @@ export async function createArticle(formData: FormData) {
       slug: `${slug}-${Date.now()}`, // append timestamp to ensure uniqueness
       category,
       content,
+      externalUrl,
       status,
       coverImage,
       authorId: session.user.id,

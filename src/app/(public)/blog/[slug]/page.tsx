@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -16,6 +16,10 @@ export default async function ArticleDetailPage({
 
   if (!article || article.status !== "PUBLISHED") {
     notFound();
+  }
+
+  if (article.externalUrl) {
+    redirect(article.externalUrl);
   }
 
   return (

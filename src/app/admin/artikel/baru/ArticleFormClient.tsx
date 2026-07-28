@@ -6,7 +6,9 @@ import RichTextEditor from "@/components/RichTextEditor";
 import { createArticle } from "./actions";
 
 export default function ArticleFormClient() {
+  const [sourceType, setSourceType] = useState<"MANUAL" | "EXTERNAL">("MANUAL");
   const [content, setContent] = useState("");
+  const [externalUrl, setExternalUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -14,7 +16,12 @@ export default function ArticleFormClient() {
     setLoading(true);
     try {
       const formData = new FormData(e.currentTarget);
-      formData.append("content", content);
+      if (sourceType === "MANUAL") {
+        formData.append("content", content);
+      } else {
+        formData.append("content", "");
+        formData.append("externalUrl", externalUrl);
+      }
       await createArticle(formData);
     } catch (error) {
       console.error(error);
@@ -68,11 +75,52 @@ export default function ArticleFormClient() {
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">Konten Artikel</label>
-        <div className="border border-gray-300 rounded-sm overflow-hidden">
-          <RichTextEditor value={content} onChange={setContent} />
+      <div className="pt-4 border-t border-gray-100">
+        <label className="block text-sm font-medium text-gray-700 mb-3">Sumber Artikel</label>
+        <div className="flex gap-4 mb-5">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input 
+              type="radio" 
+              name="sourceType" 
+              checked={sourceType === "MANUAL"} 
+              onChange={() => setSourceType("MANUAL")}
+              className="text-navy focus:ring-navy"
+            />
+            <span className="text-sm text-gray-800">Tulis Sendiri</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input 
+              type="radio" 
+              name="sourceType" 
+              checked={sourceType === "EXTERNAL"} 
+              onChange={() => setSourceType("EXTERNAL")}
+              className="text-navy focus:ring-navy"
+            />
+            <span className="text-sm text-gray-800">Link Eksternal (Add URL)</span>
+          </label>
         </div>
+
+        {sourceType === "MANUAL" ? (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Konten Artikel</label>
+            <div className="border border-gray-300 rounded-sm overflow-hidden">
+              <RichTextEditor value={content} onChange={setContent} />
+            </div>
+          </div>
+        ) : (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">URL Berita / Artikel Eksternal</label>
+            <input
+              type="url"
+              value={externalUrl}
+              onChange={(e) => setExternalUrl(e.target.value)}
+              required
+              placeholder="https://detik.com/berita-..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-900"
+            />
+            <p className="text-xs text-gray-500 mt-2">Jika Anda memasukkan link di sini, pengunjung yang mengklik artikel ini akan langsung diarahkan ke link tersebut.</p>
+          </div>
+        )}
       </div>
 
       <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">

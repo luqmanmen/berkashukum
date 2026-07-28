@@ -72,7 +72,11 @@ export default async function BlogPage() {
                       <span>{new Date(article.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
                     </div>
                     <h2 className="font-serif text-lg font-bold text-navy mb-3 leading-tight">
-                      <Link href={`/blog/${article.slug}`} className="hover:text-gold transition-colors">
+                      <Link 
+                        href={article.externalUrl || `/blog/${article.slug}`} 
+                        target={article.externalUrl ? "_blank" : undefined}
+                        className="hover:text-gold transition-colors"
+                      >
                         {article.title}
                       </Link>
                     </h2>
@@ -87,7 +91,11 @@ export default async function BlogPage() {
                         </div>
                         <span className="text-xs text-gray-500">{article.author?.name || "Admin"}</span>
                       </div>
-                      <Link href={`/blog/${article.slug}`} className="text-gold text-sm font-semibold hover:text-gold-light transition-colors">
+                      <Link 
+                        href={article.externalUrl || `/blog/${article.slug}`} 
+                        target={article.externalUrl ? "_blank" : undefined}
+                        className="text-gold text-sm font-semibold hover:text-gold-light transition-colors"
+                      >
                         Baca →
                       </Link>
                     </div>

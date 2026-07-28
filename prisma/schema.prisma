@@ -84,6 +84,7 @@ model Article {
   title      String
   slug       String   @unique
   content    String
+  externalUrl String?
   coverImage String?
   category   String?
   status     String   @default("DRAFT") // DRAFT, PUBLISHED
