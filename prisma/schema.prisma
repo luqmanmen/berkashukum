@@ -35,6 +35,7 @@ model Product {
   name           String
   description    String
   price          Float
+  originalPrice  Float?   // Harga sebelum diskon (dicoret)
   image          String?
   category       String?
   documentFormat String?  // e.g. "Microsoft Word (.docx)", "PDF (.pdf)", "Microsoft Excel (.xlsx)"

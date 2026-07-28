@@ -61,12 +61,12 @@ export default async function getCroppedImg(
   return new Promise((resolve, reject) => {
     croppedCanvas.toBlob((file) => {
       if (file) {
-        // Convert Blob to File
-        const croppedFile = new File([file], "cropped_image.jpg", { type: "image/jpeg" });
+        // Convert Blob to File (Use PNG to preserve transparency)
+        const croppedFile = new File([file], "cropped_image.png", { type: "image/png" });
         resolve(croppedFile);
       } else {
         reject(new Error("Canvas is empty"));
       }
-    }, "image/jpeg");
+    }, "image/png");
   });
 }

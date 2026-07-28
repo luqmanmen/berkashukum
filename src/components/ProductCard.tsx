@@ -70,9 +70,23 @@ export default function ProductCard({ product }: { product: Product }) {
         </h3>
         
         {/* Price */}
-        <div className="text-gold font-bold text-base mb-1.5 flex items-baseline">
-          <span className="text-xs font-normal mr-0.5">Rp</span>
-          {product.price.toLocaleString("id-ID")}
+        <div className="flex flex-col mb-4">
+          {product.originalPrice && product.originalPrice > product.price ? (
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400 line-through text-xs font-medium">
+                Rp {product.originalPrice.toLocaleString("id-ID")}
+              </span>
+              <span className="text-red-500 text-[10px] font-bold bg-red-50 border border-red-200 px-1 py-0.5 rounded">
+                -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+              </span>
+            </div>
+          ) : (
+            <div className="h-5" /> // placeholder spacer
+          )}
+          <div className="font-bold text-gray-900 text-lg flex items-center">
+            <span className="text-sm font-medium mr-1 text-gray-500">Rp</span>
+            {product.price.toLocaleString("id-ID")}
+          </div>
         </div>
 
         {/* Labels/Tags */}

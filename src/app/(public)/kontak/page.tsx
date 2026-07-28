@@ -35,17 +35,17 @@ export default function ContactPage() {
                     {
                       icon: "📍",
                       label: "Alamat",
-                      value: "Jl. Sudirman No. 123, Lantai 15\nJakarta Pusat, 10220\nIndonesia",
+                      value: "JL Bogen Krajan No 33, Ploso, Tambaksari\n60133 Surabaya, Indonesia",
                     },
                     {
                       icon: "📞",
                       label: "Telepon",
-                      value: "+62 21 234 567\n+62 812 3456 789",
+                      value: "+62 812-9639-3972\n+62 857-7112-3000",
                     },
                     {
                       icon: "✉️",
                       label: "Email",
-                      value: "info@lexnova.co.id\nconsultation@lexnova.co.id",
+                      value: "support@berkashukum.com",
                     },
                     {
                       icon: "🕒",
@@ -68,7 +68,19 @@ export default function ContactPage() {
 
               {/* WhatsApp CTA */}
               <a
-                href="https://wa.me/628123456789"
+                href="https://wa.me/6281296393972"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 bg-green-600 hover:bg-green-500 text-white font-semibold px-6 py-4 rounded-sm transition-colors w-full justify-center mb-3"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                  <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.524 5.852L.057 23.43a.5.5 0 00.513.57l5.701-1.495A11.96 11.96 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.863 9.863 0 01-5.031-1.378l-.36-.213-3.728.979.995-3.632-.234-.374A9.861 9.861 0 012.118 12C2.118 6.532 6.532 2.118 12 2.118c5.467 0 9.882 4.414 9.882 9.882 0 5.467-4.415 9.882-9.882 9.882z"/>
+                </svg>
+                WhatsApp Admin 1
+              </a>
+              <a
+                href="https://wa.me/6285771123000"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 bg-green-600 hover:bg-green-500 text-white font-semibold px-6 py-4 rounded-sm transition-colors w-full justify-center"
@@ -77,7 +89,7 @@ export default function ContactPage() {
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
                   <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.524 5.852L.057 23.43a.5.5 0 00.513.57l5.701-1.495A11.96 11.96 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.863 9.863 0 01-5.031-1.378l-.36-.213-3.728.979.995-3.632-.234-.374A9.861 9.861 0 012.118 12C2.118 6.532 6.532 2.118 12 2.118c5.467 0 9.882 4.414 9.882 9.882 0 5.467-4.415 9.882-9.882 9.882z"/>
                 </svg>
-                Chat via WhatsApp
+                WhatsApp Admin 2
               </a>
             </div>
 
@@ -184,8 +196,8 @@ export default function ContactPage() {
       <section className="h-96 bg-navy-mid flex items-center justify-center border-t border-gold/10">
         <div className="text-center">
           <div className="text-gold text-5xl mb-4">📍</div>
-          <p className="text-white font-serif text-xl font-bold mb-2">LexNova Law Firm</p>
-          <p className="text-gray-400 text-sm">Jl. Sudirman No. 123, Lantai 15, Jakarta Pusat</p>
+          <p className="text-white font-serif text-xl font-bold mb-2">Berkas Hukum Corporate</p>
+          <p className="text-gray-400 text-sm">JL Bogen Krajan No 33, Ploso, Tambaksari, Surabaya</p>
           <a
             href="https://maps.google.com"
             target="_blank"

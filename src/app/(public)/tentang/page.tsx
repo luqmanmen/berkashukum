@@ -114,21 +114,46 @@ export default async function TentangPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 
                 {/* Alamat */}
-                <div className="flex flex-col justify-center">
-                  <h3 className="font-serif text-2xl font-bold text-navy mb-6 flex items-center gap-2">
-                    <span className="text-gold">📍</span> Lokasi Kantor
-                  </h3>
-                  <div className="space-y-4 text-gray-600 text-sm leading-relaxed">
-                    <p className="font-semibold text-lg text-navy-dark">Gedung Office 8, Lantai 15</p>
-                    <p>SCBD Lot 28, Jl. Jend. Sudirman Kav. 52-53<br />Senayan, Kebayoran Baru<br />Jakarta Selatan, 12190, Indonesia</p>
-                    
-                    <div className="pt-4 border-t border-gray-100 mt-4">
-                      <p className="flex items-center gap-2 font-medium">
-                        <span className="text-gold">📞</span> +62 812-3456-7890
+                <div className="space-y-8">
+                  <div className="flex gap-4">
+                    <div className="w-12 h-12 bg-gold/10 rounded-xl flex items-center justify-center shrink-0">
+                      <span className="text-gold text-xl">🏢</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-navy-dark text-lg mb-2">Kantor Pusat</h3>
+                      <p className="text-gray-600 text-sm leading-relaxed">
+                        JL Bogen Krajan No 33, Ploso, Tambaksari<br />
+                        60133 Surabaya, Indonesia
                       </p>
-                      <p className="flex items-center gap-2 mt-2 font-medium">
-                        <span className="text-gold">✉️</span> contact@berkashukum.com
-                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <div className="w-12 h-12 bg-gold/10 rounded-xl flex items-center justify-center shrink-0">
+                      <span className="text-gold text-xl">📞</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-navy-dark text-lg mb-2">Kontak Langsung</h3>
+                      <div className="space-y-2 text-sm text-gray-600">
+                        <p className="flex items-center gap-2 hover:text-gold transition-colors">
+                          <span className="w-5 text-center text-gold">📱</span> 
+                          <a href="https://wa.me/6281296393972" target="_blank" rel="noopener noreferrer">
+                            +62 812-9639-3972
+                          </a>
+                        </p>
+                        <p className="flex items-center gap-2 hover:text-gold transition-colors">
+                          <span className="w-5 text-center text-gold">📱</span> 
+                          <a href="https://wa.me/6285771123000" target="_blank" rel="noopener noreferrer">
+                            +62 857-7112-3000
+                          </a>
+                        </p>
+                        <p className="flex items-center gap-2 hover:text-gold transition-colors">
+                          <span className="w-5 text-center text-gold">✉️</span> 
+                          <a href="mailto:support@berkashukum.com">
+                            support@berkashukum.com
+                          </a>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

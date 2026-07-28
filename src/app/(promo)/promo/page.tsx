@@ -6,31 +6,31 @@ import PromoCarousel from "@/components/PromoCarousel";
 export const dynamic = "force-dynamic";
 
 export default async function PromoFBAdsPage() {
-  // Fetch up to 3 top/featured products
+  // Fetch up to 5 top/featured products for the carousel
   const products = await prisma.product.findMany({
     where: { status: "PUBLISHED" },
-    take: 3,
+    take: 5,
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
       name: true,
       price: true,
+      originalPrice: true,
       image: true,
       category: true,
+      promoStatus: true,
     }
   });
 
-  // Fetch dynamic hook texts
+  // Fetch dynamic hook texts (from settings if exists)
   let hookTitle = "Pusing Ngurus <span class=\"text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-200\">Pengacara Mahal?</span>";
-  let hookDesc = "Kini Anda tidak perlu lagi menghabiskan puluhan juta rupiah hanya untuk mengurus dokumen legal bisnis. Berkas Hukum menghadirkan koleksi template kontrak dan akta setara kualitas firma hukum raksasa, siap pakai hanya dalam hitungan detik.";
-
+  
   try {
     const settings = await prisma.siteSetting.findMany({
-      where: { key: { in: ["promo_hook_title", "promo_hook_description"] } }
+      where: { key: { in: ["promo_hook_title"] } }
     });
     settings.forEach(s => {
       if (s.key === "promo_hook_title" && s.value) {
-        // Automatically make the last 2 words gradient gold if no HTML is provided
         const words = s.value.split(" ");
         if (words.length >= 2 && !s.value.includes("<span")) {
           const lastTwo = words.splice(-2).join(" ");
@@ -39,82 +39,107 @@ export default async function PromoFBAdsPage() {
           hookTitle = s.value;
         }
       }
-      if (s.key === "promo_hook_description" && s.value) {
-        hookDesc = s.value;
-      }
     });
   } catch(e) {}
 
   return (
-    <div className="min-h-screen bg-navy text-white font-inter flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-navy-dark text-white font-inter flex flex-col relative overflow-hidden">
       {/* Decorative background blobs */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-20 pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-gold rounded-full blur-[100px]"></div>
-        <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-blue-900 rounded-full blur-[120px]"></div>
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-30 pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-gold rounded-full blur-[120px]"></div>
+        <div className="absolute top-1/2 -left-40 w-[600px] h-[600px] bg-blue-900 rounded-full blur-[150px]"></div>
       </div>
 
       {/* Simple Header */}
-      <header className="relative z-10 w-full px-6 py-6 sm:px-12 flex justify-between items-center">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="bg-white/95 p-1.5 rounded-md shadow-sm shrink-0">
-            <Image src="/images/logo-1.png" alt="Berkas Hukum" width={40} height={40} className="h-9 w-auto object-contain" />
+      <header className="relative z-10 w-full px-4 py-6 sm:px-8 flex justify-between items-center max-w-5xl mx-auto">
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <div className="bg-white p-1.5 rounded-lg shadow-sm shrink-0">
+            <Image src="/images/logo-1.png" alt="Berkas Hukum" width={32} height={32} className="h-8 w-auto object-contain" />
           </div>
-          <div className="font-serif text-xl font-bold text-white tracking-wide hidden sm:block">
+          <div className="font-serif text-lg font-bold text-white tracking-wide">
             Berkas Hukum
           </div>
         </Link>
-        <Link href="/produk" className="text-sm font-semibold text-gold hover:text-white transition-colors border-b border-transparent hover:border-white pb-0.5">
-          Lihat Katalog
+        <Link href="/produk" className="text-sm font-semibold text-gold hover:text-white transition-colors border-b border-gold/50 hover:border-white pb-0.5">
+          Katalog
         </Link>
       </header>
 
-      {/* Main Content Split */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center justify-center relative z-10 gap-12 lg:gap-20 py-12 lg:py-0">
+      {/* Main Content (Storytelling Hook) */}
+      <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 py-10 lg:py-16 flex flex-col items-center text-center relative z-10">
         
-        {/* Left Side: Hook Text */}
-        <div className="w-full lg:w-1/2 space-y-8 text-center lg:text-left">
-          <div className="inline-block px-4 py-1.5 rounded-full border border-gold/30 bg-gold/10 text-gold text-xs font-bold tracking-widest uppercase mb-2">
-            Solusi Hukum Digital
+        {/* Step 1: Giring Opini (The Hook) */}
+        <div className="inline-block px-4 py-1.5 rounded-full border border-gold/30 bg-gold/10 text-gold text-xs font-bold tracking-widest uppercase mb-6 animate-fade-in-up">
+          Waktu Anda Terlalu Berharga
+        </div>
+        
+        <h1 
+          className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-serif leading-[1.15] mb-6 drop-shadow-lg" 
+          dangerouslySetInnerHTML={{ __html: hookTitle }}
+        />
+        
+        <p className="text-lg md:text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto mb-16 font-light">
+          Setiap hari Anda fokus membesarkan bisnis, tapi tahukah Anda bahwa <span className="text-white font-bold border-b border-red-500">satu kesalahan kecil di kontrak</span> bisa meruntuhkan semua yang telah Anda bangun?
+        </p>
+
+        {/* Step 2: Masalah (Pain Points - Mini Version) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl mx-auto mb-16 text-left">
+          <div className="bg-white/5 border border-white/10 p-5 rounded-2xl flex gap-4 items-start">
+            <div className="text-2xl mt-1">📉</div>
+            <div>
+              <h3 className="font-bold text-white text-sm mb-1">Pakai Jasa Pengacara?</h3>
+              <p className="text-xs text-gray-400">Tarifnya jutaan hingga puluhan juta hanya untuk satu *draft* kontrak.</p>
+            </div>
           </div>
-          <h1 
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold font-serif leading-[1.15]" 
-            dangerouslySetInnerHTML={{ __html: hookTitle }}
-          />
-          <p className="text-lg text-gray-300 leading-relaxed max-w-xl mx-auto lg:mx-0">
-            {hookDesc}
-          </p>
-          
-          <div className="pt-4 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-            <Link 
-              href="/produk"
-              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-gold to-yellow-500 text-navy-dark font-bold rounded-sm shadow-lg shadow-gold/20 hover:scale-105 transition-transform"
-            >
-              Lihat Semua Template
-            </Link>
-            <div className="flex items-center gap-2 text-sm text-gray-400">
-              <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-              <span>Download Instan</span>
+          <div className="bg-white/5 border border-white/10 p-5 rounded-2xl flex gap-4 items-start">
+            <div className="text-2xl mt-1">🤦‍♂️</div>
+            <div>
+              <h3 className="font-bold text-white text-sm mb-1">Download Gratisan di Google?</h3>
+              <p className="text-xs text-gray-400">Format acak-acakan, pasal ketinggalan zaman, dan seringkali tidak sah secara hukum Indonesia.</p>
             </div>
           </div>
         </div>
 
-        {/* Right Side: 3D Carousel */}
-        <div className="w-full lg:w-1/2 mt-12 lg:mt-0 relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gold/10 via-transparent to-transparent -z-10 blur-2xl"></div>
-          {products.length > 0 ? (
-            <PromoCarousel products={products} />
-          ) : (
-            <div className="h-[400px] flex items-center justify-center text-gray-400 border border-white/10 rounded-xl bg-white/5 backdrop-blur-md">
-              Belum ada produk untuk ditampilkan.
-            </div>
-          )}
+        {/* Step 3: Solusi (The Solution with Carousel) */}
+        <div className="w-full relative mt-4">
+          <div className="text-center mb-8">
+            <span className="bg-green-500/20 text-green-400 border border-green-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+              Solusi Instan
+            </span>
+            <h2 className="text-2xl md:text-3xl font-serif font-bold text-white mt-4">
+              Pilih Template. Edit. <span className="text-gold italic">Selesai.</span>
+            </h2>
+          </div>
+
+          <div className="relative w-[110%] -ml-[5%] md:w-full md:ml-0">
+            {products.length > 0 ? (
+              <PromoCarousel products={products as any} />
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-gray-400 border border-white/10 rounded-xl bg-white/5 backdrop-blur-md">
+                Belum ada produk promo saat ini.
+              </div>
+            )}
+          </div>
+
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <Link 
+              href="/produk"
+              className="px-10 py-4 bg-gradient-to-r from-gold to-yellow-500 text-navy-dark font-extrabold rounded-full shadow-[0_0_30px_rgba(201,168,76,0.4)] hover:scale-105 transition-all w-full max-w-sm text-lg"
+            >
+              Borong Semua Template &rarr;
+            </Link>
+            <p className="text-xs text-gray-400">✅ File format .docx siap edit &nbsp;&bull;&nbsp; ✅ Sah secara hukum</p>
+          </div>
         </div>
 
       </main>
 
       {/* Simple Footer */}
-      <footer className="relative z-10 py-6 text-center text-xs text-gray-500">
-        &copy; {new Date().getFullYear()} Berkas Hukum Corporate. All rights reserved.
+      <footer className="relative z-10 py-8 text-center border-t border-white/10 mt-12">
+        <p className="text-xs text-gray-500">
+          &copy; {new Date().getFullYear()} Berkas Hukum Corporate. All rights reserved.<br/>
+          <span className="opacity-50">Developer: luckmen org.</span>
+        </p>
       </footer>
     </div>
   );

@@ -104,11 +104,11 @@ export default async function SuksesPage({
         {/* Contact if issue */}
         <div className="mt-8 p-4 border border-gold/20 rounded-sm text-sm text-gray-500">
           Ada masalah? Hubungi kami di{" "}
-          <a href="mailto:info@lexnova.co.id" className="text-gold hover:text-gold-light transition-colors font-medium">
-            info@lexnova.co.id
+          <a href="mailto:support@berkashukum.com" className="text-gold hover:text-gold-light transition-colors font-medium">
+            support@berkashukum.com
           </a>{" "}
           atau{" "}
-          <a href="https://wa.me/628123456789" className="text-green-600 hover:text-green-700 transition-colors font-medium">
+          <a href="https://wa.me/6281296393972" className="text-green-600 hover:text-green-700 transition-colors font-medium">
             WhatsApp
           </a>
         </div>

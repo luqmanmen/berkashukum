@@ -98,8 +98,23 @@ export default async function ProductDetailPage({
                 </h1>
 
                 {/* Price */}
-                <div className="text-3xl font-bold text-gold">
-                  Rp {product.price.toLocaleString("id-ID")}
+                <div className="flex flex-col mb-1.5">
+                  {product.originalPrice && product.originalPrice > product.price ? (
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-gray-400 line-through text-sm font-medium">
+                        Rp {product.originalPrice.toLocaleString("id-ID")}
+                      </span>
+                      <span className="text-red-500 text-xs font-bold bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">
+                        -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                      </span>
+                      <span className="text-green-600 text-xs font-bold bg-green-100 px-2 py-0.5 rounded">
+                        Hemat Rp {(product.originalPrice - product.price).toLocaleString("id-ID")}
+                      </span>
+                    </div>
+                  ) : null}
+                  <div className="text-3xl font-bold text-gold flex items-center">
+                    Rp {product.price.toLocaleString("id-ID")}
+                  </div>
                 </div>
 
                 {/* Divider */}

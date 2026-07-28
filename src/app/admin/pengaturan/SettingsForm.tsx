@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import ImageCropperModal from "@/components/ui/ImageCropperModal";
 
 type AboutListItem = { id: string; title: string; subtitle: string };
 
 export default function SettingsForm({ initialData }: { initialData: Record<string, string> }) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"pembayaran" | "tentang" | "sistem">("sistem");
+  const [activeTab, setActiveTab] = useState<"pembayaran" | "tentang" | "sistem" | "beranda">("beranda");
   
   // System States
   const [maintenanceMode, setMaintenanceMode] = useState(initialData["maintenance_mode"] === "true");
@@ -22,6 +23,10 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
   const [aboutSubtitle, setAboutSubtitle] = useState(initialData["about_subtitle"] || "BADAN HUKUM, KONSULTAN LEGAL & LEGAL AUDIT SEJAK 2016");
   const [aboutDesc, setAboutDesc] = useState(initialData["about_description"] || "");
   const [aboutImage, setAboutImage] = useState(initialData["home_hero_image"] || "");
+  // Beranda States
+  const [clientLogos, setClientLogos] = useState<string[]>(() => {
+    try { return JSON.parse(initialData["home_client_logos"] || "[]"); } catch { return []; }
+  });
   
   // Lists
   const [educationList, setEducationList] = useState<AboutListItem[]>(() => {
@@ -33,6 +38,26 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
 
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  
+  // Cropper States
+  const [cropperModalOpen, setCropperModalOpen] = useState(false);
+  const [uncroppedImage, setUncroppedImage] = useState<string | null>(null);
+  const [pendingSetter, setPendingSetter] = useState<((val: string) => void) | null>(null);
+  
+  // Storage Cleanup Helper
+  const deleteImageFromSupabase = async (url: string) => {
+    if (!url || !url.includes("supabase.co")) return;
+    try {
+      // Extract the path after /storage/v1/object/public/images/
+      const pathMatch = url.match(/\/images\/(.+)$/);
+      if (pathMatch && pathMatch[1]) {
+        const filePath = pathMatch[1];
+        await supabase.storage.from("images").remove([filePath]);
+      }
+    } catch (e) {
+      console.error("Gagal menghapus gambar di storage:", e);
+    }
+  };
 
   const saveSetting = async (key: string, label: string, value: string, category: string, type: string) => {
     await fetch("/api/admin/settings", {
@@ -48,6 +73,19 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
       await saveSetting("PAYMENT_DANA_PHONE", "Nomor HP DANA / VA", danaPhone, "PAYMENT", "TEXT");
       await saveSetting("PAYMENT_QRIS_IMAGE", "QRIS Image", qrisImage, "PAYMENT", "IMAGE");
       alert("Pengaturan Pembayaran berhasil disimpan");
+      router.refresh();
+    } catch (err: any) {
+      alert("Error: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveHome = async () => {
+    setLoading(true);
+    try {
+      await saveSetting("home_client_logos", "Logo Klien Beranda", JSON.stringify(clientLogos), "HOME", "JSON");
+      alert("Pengaturan Beranda berhasil disimpan");
       router.refresh();
     } catch (err: any) {
       alert("Error: " + err.message);
@@ -92,14 +130,28 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Reset input value so same file can be selected again
+    e.target.value = "";
+
+    // Load file as data URL to pass to cropper
+    const reader = new FileReader();
+    reader.onload = () => {
+      setUncroppedImage(reader.result as string);
+      setPendingSetter(() => setter);
+      setCropperModalOpen(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCropComplete = async (croppedFile: File) => {
+    setCropperModalOpen(false);
     setUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `upload-${Math.random()}.${fileExt}`;
+      const fileName = `upload-${Math.random()}.jpg`;
 
       const { data, error } = await supabase.storage
         .from('images')
-        .upload(`settings/${fileName}`, file, { cacheControl: '3600', upsert: false });
+        .upload(`settings/${fileName}`, croppedFile, { cacheControl: '3600', upsert: false });
 
       if (error) throw error;
 
@@ -107,11 +159,15 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
         .from('images')
         .getPublicUrl(`settings/${fileName}`);
 
-      setter(publicUrlData.publicUrl);
+      if (pendingSetter) {
+        pendingSetter(publicUrlData.publicUrl);
+      }
     } catch (err: any) {
       alert("Error upload: " + err.message);
     } finally {
       setUploading(false);
+      setUncroppedImage(null);
+      setPendingSetter(null);
     }
   };
 
@@ -130,10 +186,18 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
   return (
     <div className="space-y-6">
       {/* Tabs */}
-      <div className="flex border-b border-gray-200">
+      <div className="flex border-b border-gray-200 overflow-x-auto no-scrollbar">
+        <button
+          onClick={() => setActiveTab("beranda")}
+          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === "beranda" ? "border-navy-dark text-navy-dark" : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+          }`}
+        >
+          🏠 Beranda
+        </button>
         <button
           onClick={() => setActiveTab("pembayaran")}
-          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors ${
+          className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
             activeTab === "pembayaran" ? "border-navy-dark text-navy-dark" : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
           }`}
         >
@@ -156,6 +220,73 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
           ⚙️ Sistem
         </button>
       </div>
+
+      {activeTab === "beranda" && (
+        <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="space-y-4">
+            <h3 className="font-serif font-bold text-lg text-gray-800 border-b pb-2">Logo Klien / Partner (Carousel)</h3>
+            <p className="text-sm text-gray-500 mb-4">Upload hingga 10 logo klien atau partner bisnis Anda. Logo ini akan ditampilkan dengan efek berjalan (marquee) di Halaman Beranda. Disarankan menggunakan gambar dengan latar transparan (PNG).</p>
+            
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className="border border-gray-200 rounded-sm p-3 bg-gray-50 flex flex-col items-center justify-center relative group min-h-[120px]">
+                  {clientLogos[i] ? (
+                    <>
+                      <img src={clientLogos[i]} alt={`Logo ${i+1}`} className="w-full h-16 object-contain mb-2 mix-blend-multiply" />
+                      <button 
+                        onClick={async () => {
+                          const urlToDelete = clientLogos[i];
+                          if (urlToDelete) {
+                            await deleteImageFromSupabase(urlToDelete);
+                          }
+                          const newLogos = [...clientLogos];
+                          newLogos[i] = "";
+                          setClientLogos(newLogos);
+                        }}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+                        title="Hapus gambar"
+                      >
+                        ✕
+                      </button>
+                    </>
+                  ) : (
+                    <div className="text-center w-full">
+                      <span className="text-gray-400 text-xs block mb-2">Slot {i+1} Kosong</span>
+                      <label className="cursor-pointer bg-white border border-gray-300 text-gray-600 text-xs py-1 px-2 rounded hover:bg-gray-100 transition inline-block">
+                        Upload
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          className="hidden"
+                          disabled={uploading}
+                          onChange={(e) => {
+                            handleFileUpload(e, (url) => {
+                              const newLogos = [...clientLogos];
+                              newLogos[i] = url;
+                              setClientLogos(newLogos);
+                            });
+                          }}
+                        />
+                      </label>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            {uploading && <p className="text-xs text-blue-500 mt-2">Sedang mengunggah gambar...</p>}
+          </div>
+
+          <div className="pt-4 border-t border-gray-200">
+            <button
+              onClick={handleSaveHome}
+              disabled={loading || uploading}
+              className="bg-navy-dark text-white px-6 py-2 rounded-sm text-sm font-semibold hover:bg-opacity-90 disabled:opacity-50"
+            >
+              {loading ? "Menyimpan..." : "Simpan Pengaturan Beranda"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {activeTab === "pembayaran" && (
         <div className="space-y-6 animate-in fade-in duration-200">
@@ -360,6 +491,18 @@ export default function SettingsForm({ initialData }: { initialData: Record<stri
           </div>
         </div>
       )}
+
+      {/* Image Cropper Modal */}
+      <ImageCropperModal
+        isOpen={cropperModalOpen}
+        imageSrc={uncroppedImage}
+        onClose={() => {
+          setCropperModalOpen(false);
+          setUncroppedImage(null);
+          setPendingSetter(null);
+        }}
+        onCropCompleteAction={handleCropComplete}
+      />
     </div>
   );
 }

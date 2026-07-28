@@ -51,8 +51,11 @@ export default function KonsultasiPage() {
           <p className="text-gray-500 text-sm mb-4">
             Untuk perusahaan yang membutuhkan legal standing rutin atau review kontrak harian, silakan hubungi asisten kami.
           </p>
-          <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className="inline-block btn-navy bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-sm font-semibold text-sm">
-            Chat via WhatsApp
+          <a href="https://wa.me/6281296393972" target="_blank" rel="noopener noreferrer" className="inline-block btn-navy bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-sm font-semibold text-sm mr-2 mb-2">
+            WhatsApp Admin 1
+          </a>
+          <a href="https://wa.me/6285771123000" target="_blank" rel="noopener noreferrer" className="inline-block btn-navy bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-sm font-semibold text-sm mb-2">
+            WhatsApp Admin 2
           </a>
         </div>
 

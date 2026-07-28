@@ -5,11 +5,12 @@ import DashboardStatsClient from "./DashboardStatsClient";
 
 async function getStats() {
   try {
-    const [totalOrders, totalProducts, totalArticles, totalUsers] = await Promise.all([
+    const [totalOrders, totalProducts, totalArticles, totalUsers, recentActivities] = await Promise.all([
       prisma.order.count(),
       prisma.product.count(),
       prisma.article.count(),
       prisma.user.count(),
+      prisma.activityLog.findMany({ orderBy: { createdAt: 'desc' }, take: 5 }),
     ]);
 
     const paidOrders = await prisma.order.findMany({
@@ -23,21 +24,16 @@ async function getStats() {
     // Group orders by month for the chart
     const monthlyData: Record<string, { revenue: number, orders: number }> = {};
     
-    // Add some mock data to make the chart look good if it's empty or has very few records
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
-    months.forEach((m, i) => {
-      monthlyData[m] = { 
-        revenue: i === 0 ? 0 : Math.floor(Math.random() * 5000000) + 1000000, 
-        orders: i === 0 ? 0 : Math.floor(Math.random() * 20) + 5 
-      };
-    });
+    // Default to today if no data
+    const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    monthlyData[today] = { revenue: 0, orders: 0 };
 
     // Override with real data
     paidOrders.forEach(o => {
-      const month = o.createdAt.toLocaleDateString('id-ID', { month: 'short' });
-      if (!monthlyData[month]) monthlyData[month] = { revenue: 0, orders: 0 };
-      monthlyData[month].revenue += o.totalAmount;
-      monthlyData[month].orders += 1;
+      const date = o.createdAt.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+      if (!monthlyData[date]) monthlyData[date] = { revenue: 0, orders: 0 };
+      monthlyData[date].revenue += o.totalAmount;
+      monthlyData[date].orders += 1;
     });
 
     const chartData = Object.entries(monthlyData).map(([date, data]) => ({
@@ -46,11 +42,12 @@ async function getStats() {
       orders: data.orders
     }));
 
-    return { totalOrders, totalProducts, totalArticles, totalUsers, totalRevenue, chartData };
-  } catch {
+    return { totalOrders, totalProducts, totalArticles, totalUsers, totalRevenue, chartData, recentActivities };
+  } catch (e) {
+    console.error(e);
     return { 
       totalOrders: 0, totalProducts: 0, totalArticles: 0, totalUsers: 0, totalRevenue: 0, 
-      chartData: [] 
+      chartData: [], recentActivities: [] 
     };
   }
 }
@@ -128,20 +125,28 @@ export default async function AdminDashboard() {
         <div className="bg-white border border-gray-200 rounded-sm p-6 shadow-sm">
           <h3 className="font-bold text-gray-800 font-serif mb-4">Aktivitas Terbaru</h3>
           <div className="space-y-3">
-            {[
-              { action: "Admin login berhasil", time: "Baru saja", icon: "🔐" },
-              { action: "Database terkoneksi ke Supabase", time: "Setup", icon: "🗄️" },
-              { action: "Skema database berhasil dimigrasikan", time: "Setup", icon: "✅" },
-              { action: "Akun Super Admin dibuat", time: "Setup", icon: "👤" },
-            ].map((act, i) => (
-              <div key={i} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
-                <span className="text-xl">{act.icon}</span>
-                <div className="flex-1">
-                  <div className="text-sm text-gray-700">{act.action}</div>
-                  <div className="text-xs text-gray-400">{act.time}</div>
+            {stats.recentActivities && stats.recentActivities.length > 0 ? (
+              stats.recentActivities.map((act, i) => (
+                <div key={i} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
+                  <span className="text-xl">
+                    {act.action.toLowerCase().includes('login') ? "🔐" : 
+                     act.action.toLowerCase().includes('produk') ? "📦" :
+                     act.action.toLowerCase().includes('artikel') ? "📝" :
+                     act.action.toLowerCase().includes('pesanan') ? "🛒" : "⚡"}
+                  </span>
+                  <div className="flex-1">
+                    <div className="text-sm text-gray-700">{act.action}</div>
+                    <div className="text-xs text-gray-400">
+                      {new Date(act.createdAt).toLocaleString('id-ID', {
+                        day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                      })}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className="text-sm text-gray-500 py-4 text-center">Belum ada aktivitas.</div>
+            )}
           </div>
         </div>
       </div>

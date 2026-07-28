@@ -4,6 +4,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import PriceInput from "@/components/admin/PriceInput";
 import FeatureInput from "@/components/admin/FeatureInput";
+import ActionForm from "@/components/admin/ActionForm";
 
 export default async function EditProdukPage({
   params,
@@ -13,14 +14,31 @@ export default async function EditProdukPage({
   const { id } = await params;
   const product = await prisma.product.findUnique({ where: { id } });
 
-  if (!product) notFound();
+  if (!product) {
+    return (
+      <div className="p-10 text-center">
+        <h1>Produk tidak ditemukan!</h1>
+        <p>ID: {id}</p>
+        <Link href="/admin/produk" className="text-blue-500 underline mt-4 block">Kembali ke Daftar Produk</Link>
+      </div>
+    );
+  }
 
   async function updateProduct(formData: FormData) {
     "use server";
 
+    const productId = formData.get("productId") as string;
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
-    const price = parseInt((formData.get("price") as string).replace(/\D/g, ""), 10);
+    const originalPriceStr = formData.get("originalPrice") as string;
+    const originalPrice = originalPriceStr ? parseInt(originalPriceStr.replace(/\D/g, ""), 10) : 0;
+    
+    const discountStr = formData.get("discountPercentage") as string;
+    const discountPercentage = discountStr ? parseInt(discountStr, 10) : 0;
+    
+    // Calculate final price based on original price and discount percentage
+    const price = Math.round(originalPrice - (originalPrice * (discountPercentage / 100)));
+    
     const category = formData.get("category") as string;
     const documentFormat = (formData.get("documentFormat") as string) || null;
     const promoStatus = (formData.get("promoStatus") as string) || null;
@@ -31,6 +49,7 @@ export default async function EditProdukPage({
       name,
       description,
       price,
+      originalPrice,
       category,
       documentFormat,
       promoStatus,
@@ -42,7 +61,7 @@ export default async function EditProdukPage({
     const imageFile = formData.get("image") as File | null;
     if (imageFile && imageFile.size > 0) {
       const ext = imageFile.name.split('.').pop();
-      const fileName = `images/${id}-${Date.now()}.${ext}`;
+      const fileName = `products/images/${productId}-${Date.now()}.${ext}`;
       
       const { data, error } = await supabase.storage
         .from("images")
@@ -58,7 +77,7 @@ export default async function EditProdukPage({
     const digitalFile = formData.get("digitalFile") as File | null;
     if (digitalFile && digitalFile.size > 0) {
       const ext = digitalFile.name.split('.').pop();
-      const fileName = `files/${id}-${Date.now()}.${ext}`;
+      const fileName = `products/files/${productId}-${Date.now()}.${ext}`;
       
       const { data, error } = await supabase.storage
         .from("images")
@@ -70,12 +89,15 @@ export default async function EditProdukPage({
       }
     }
 
-    await prisma.product.update({
-      where: { id },
-      data: dataToUpdate,
-    });
-
-    redirect("/admin/produk");
+    try {
+      await prisma.product.update({
+        where: { id: productId },
+        data: dataToUpdate,
+      });
+      return { success: true };
+    } catch (e: any) {
+      return { success: false, error: e.message };
+    }
   }
 
   return (
@@ -88,7 +110,9 @@ export default async function EditProdukPage({
       </div>
 
       <div className="bg-white border border-gray-200 rounded-sm shadow-sm p-6">
-        <form action={updateProduct} className="space-y-5">
+        <ActionForm action={updateProduct} successUrl="/admin/produk" className="space-y-5">
+          <input type="hidden" name="productId" value={product.id} />
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Nama Produk</label>
             <input
@@ -141,7 +165,7 @@ export default async function EditProdukPage({
                 className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-900"
               >
                 <option value="">-- Tidak Ada Promo --</option>
-                <option value="Diskon 50%">Diskon 50%</option>
+                <option value="Diskon">Diskon</option>
                 <option value="Promo Bundling">Promo Bundling</option>
                 <option value="Harga Spesial">Harga Spesial</option>
               </select>
@@ -149,9 +173,33 @@ export default async function EditProdukPage({
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Harga (Rp)</label>
-            <PriceInput defaultValue={product.price} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Harga Produk (Rp) <span className="text-red-500">*</span></label>
+              <PriceInput name="originalPrice" defaultValue={product.originalPrice || product.price} required={true} />
+              <p className="text-xs text-gray-400 mt-1">Harga wajib sebelum diskon.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Diskon (%)</label>
+              <div className="relative">
+                <input
+                  type="number"
+                  name="discountPercentage"
+                  min="0"
+                  max="100"
+                  defaultValue={
+                    product.originalPrice && product.originalPrice > product.price
+                      ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+                      : 0
+                  }
+                  className="w-full pr-10 pl-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-900"
+                />
+                <span className="absolute right-4 top-2.5 text-sm text-gray-500 font-medium pointer-events-none">
+                  %
+                </span>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">Isi 1-100 jika sedang diskon. Sistem akan menghitung harga jual.</p>
+            </div>
           </div>
 
           <div>
@@ -242,7 +290,7 @@ export default async function EditProdukPage({
             </select>
           </div>
 
-          <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
+          <div className="pt-4 border-t border-gray-100 flex justify-between items-center mt-5">
             <Link
               href="/admin/produk"
               className="px-6 py-2 border border-gray-300 text-gray-700 rounded-sm text-sm font-semibold hover:bg-gray-50 transition-colors"
@@ -256,7 +304,7 @@ export default async function EditProdukPage({
               Simpan Perubahan
             </button>
           </div>
-        </form>
+        </ActionForm>
       </div>
     </div>
   );

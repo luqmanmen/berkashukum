@@ -1,12 +1,14 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 
 interface PriceInputProps {
   defaultValue?: number;
+  name?: string;
+  required?: boolean;
 }
 
-export default function PriceInput({ defaultValue }: PriceInputProps) {
+export default function PriceInput({ defaultValue, name = "price", required = true }: PriceInputProps) {
   const [display, setDisplay] = useState(
     defaultValue ? defaultValue.toLocaleString("id-ID") : ""
   );
@@ -29,11 +31,11 @@ export default function PriceInput({ defaultValue }: PriceInputProps) {
       <span className="absolute left-3 top-2.5 text-sm text-gray-500 font-medium pointer-events-none">
         Rp
       </span>
-      <input type="hidden" name="price" value={rawValue} />
+      <input type="hidden" name={name} value={rawValue} />
       <input
         type="text"
         inputMode="numeric"
-        required
+        required={required}
         value={display}
         onChange={handleChange}
         placeholder="Contoh: 79.000"

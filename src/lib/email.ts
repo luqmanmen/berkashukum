@@ -109,18 +109,24 @@ export async function sendDownloadCodeEmail(
                 </p>
                 <table cellpadding="0" cellspacing="0" border="0" style="font-size: 11px; color: #555; line-height: 1.8;">
                   <tr>
-                    <td><span style="color: ${GOLD}; margin-right: 4px;">📞</span> <a href="https://wa.me/6282334196500" style="color: #555; text-decoration: none;">+62 823-3419-6500</a></td>
+                    <td valign="top" style="padding-right: 6px; padding-bottom: 4px;"><span style="color: ${GOLD};">📞</span></td>
+                    <td valign="top" style="padding-bottom: 4px;">
+                      <a href="https://wa.me/6281296393972" style="color: #555; text-decoration: none; white-space: nowrap;">+62 812-9639-3972</a><br/>
+                      <a href="https://wa.me/6285771123000" style="color: #555; text-decoration: none; white-space: nowrap;">+62 857-7112-3000</a>
+                    </td>
                   </tr>
                   <tr>
-                    <td><span style="color: ${GOLD}; margin-right: 4px;">✉️</span> <a href="mailto:support@berkashukum.com" style="color: #555; text-decoration: none;">support@berkashukum.com</a></td>
+                    <td valign="top" style="padding-right: 6px;"><span style="color: ${GOLD};">✉️</span></td>
+                    <td valign="top"><a href="mailto:support@berkashukum.com" style="color: #555; text-decoration: none; white-space: nowrap;">support@berkashukum.com</a></td>
                   </tr>
                   <tr>
-                    <td><span style="color: ${GOLD}; margin-right: 4px;">🌐</span> <a href="${APP_URL}" style="color: ${NAVY}; text-decoration: none;">www.berkashukum.com</a></td>
+                    <td valign="top" style="padding-right: 6px;"><span style="color: ${GOLD};">🌐</span></td>
+                    <td valign="top"><a href="${APP_URL}" style="color: ${NAVY}; text-decoration: none; white-space: nowrap;">www.berkashukum.com</a></td>
                   </tr>
                 </table>
               </td>
-              <td width="100" valign="middle" style="border-left: 1px solid #e2e8f0; padding-left: 20px; text-align: center;">
-                <img src="${APP_URL}/images/logo-3d-2.png" alt="Berkas Hukum Corporate" width="80" height="80" style="object-fit: contain; display: block; margin: 0 auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));" />
+              <td width="90" valign="middle" style="border-left: 1px solid #e2e8f0; padding-left: 15px; text-align: center;">
+                <img src="${APP_URL}/images/logo-3d-2.png" alt="Berkas Hukum Corporate" width="70" height="70" style="object-fit: contain; display: block; margin: 0 auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));" />
               </td>
             </tr>
           </table>
@@ -129,7 +135,7 @@ export async function sendDownloadCodeEmail(
         </div>
 
         <div style="background-color: #f7f8fa; padding: 16px 30px; text-align: center; font-size: 12px; color: #aaa; border-top: 1px solid #e2e8f0;">
-          © ${new Date().getFullYear()} Luqman Arif S.I.Kom. Seluruh hak cipta dilindungi.
+          © ${new Date().getFullYear()} Berkas Hukum Corporate. All rights reserved.
         </div>
       </div>
     `,

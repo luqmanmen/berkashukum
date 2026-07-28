@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 import { supabase } from "@/lib/supabase";
 import PriceInput from "@/components/admin/PriceInput";
 import FeatureInput from "@/components/admin/FeatureInput";
+import ActionForm from "@/components/admin/ActionForm";
 
 export default function TambahProdukPage() {
   async function createProduct(formData: FormData) {
@@ -12,13 +13,21 @@ export default function TambahProdukPage() {
 
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
-    const price = parseInt((formData.get("price") as string).replace(/\D/g, ""), 10);
+    const originalPriceStr = formData.get("originalPrice") as string;
+    const originalPrice = originalPriceStr ? parseInt(originalPriceStr.replace(/\D/g, ""), 10) : 0;
+    
+    const discountStr = formData.get("discountPercentage") as string;
+    const discountPercentage = discountStr ? parseInt(discountStr, 10) : 0;
+    
+    // Calculate final price based on original price and discount percentage
+    const price = Math.round(originalPrice - (originalPrice * (discountPercentage / 100)));
+    
     const category = formData.get("category") as string;
-    const documentFormat = formData.get("documentFormat") as string | null;
+    const documentFormat = (formData.get("documentFormat") as string) || null;
     const promoStatus = (formData.get("promoStatus") as string) || null;
     const features = formData.get("features") as string;
     const status = formData.get("status") as string;
-
+    
     const id = `PROD-${nanoid(8).toUpperCase()}`;
 
     // Handle Image Upload
@@ -26,7 +35,7 @@ export default function TambahProdukPage() {
     const imageFile = formData.get("image") as File | null;
     if (imageFile && imageFile.size > 0) {
       const ext = imageFile.name.split('.').pop();
-      const fileName = `images/${id}.${ext}`;
+      const fileName = `products/images/${id}-${Date.now()}.${ext}`;
       
       const { data, error } = await supabase.storage
         .from("images")
@@ -43,7 +52,7 @@ export default function TambahProdukPage() {
     const digitalFile = formData.get("digitalFile") as File | null;
     if (digitalFile && digitalFile.size > 0) {
       const ext = digitalFile.name.split('.').pop();
-      const fileName = `files/${id}.${ext}`;
+      const fileName = `products/files/${id}-${Date.now()}.${ext}`;
       
       const { data, error } = await supabase.storage
         .from("images")
@@ -58,23 +67,27 @@ export default function TambahProdukPage() {
       }
     }
 
-    await prisma.product.create({
-      data: {
-        id,
-        name,
-        description,
-        price,
-        category,
-        documentFormat: documentFormat || null,
-        promoStatus,
-        features: features || null,
-        status,
-        image: imageUrl,
-        digitalFile: digitalFileUrl,
-      },
-    });
-
-    redirect("/admin/produk");
+    try {
+      await prisma.product.create({
+        data: {
+          id,
+          name,
+          description,
+          price,
+          originalPrice,
+          category,
+          documentFormat: documentFormat || null,
+          promoStatus,
+          features: features || null,
+          status,
+          image: imageUrl,
+          digitalFile: digitalFileUrl,
+        },
+      });
+      return { success: true };
+    } catch (e: any) {
+      return { success: false, error: e.message };
+    }
   }
 
   return (
@@ -87,7 +100,7 @@ export default function TambahProdukPage() {
       </div>
 
       <div className="bg-white border border-gray-200 rounded-sm shadow-sm p-6">
-        <form action={createProduct} className="space-y-5">
+        <ActionForm action={createProduct} successUrl="/admin/produk" className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Nama Produk</label>
             <input
@@ -137,7 +150,7 @@ export default function TambahProdukPage() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-900"
               >
                 <option value="">-- Tidak Ada Promo --</option>
-                <option value="Diskon 50%">Diskon 50%</option>
+                <option value="Diskon">Diskon</option>
                 <option value="Promo Bundling">Promo Bundling</option>
                 <option value="Harga Spesial">Harga Spesial</option>
               </select>
@@ -145,9 +158,29 @@ export default function TambahProdukPage() {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Harga (Rp)</label>
-            <PriceInput />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Harga Produk (Rp) <span className="text-red-500">*</span></label>
+              <PriceInput name="originalPrice" required={true} />
+              <p className="text-xs text-gray-400 mt-1">Harga wajib sebelum diskon.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Diskon (%)</label>
+              <div className="relative">
+                <input
+                  type="number"
+                  name="discountPercentage"
+                  min="0"
+                  max="100"
+                  defaultValue="0"
+                  className="w-full pr-10 pl-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-900"
+                />
+                <span className="absolute right-4 top-2.5 text-sm text-gray-500 font-medium pointer-events-none">
+                  %
+                </span>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">Isi 1-100 jika sedang diskon. Sistem akan menghitung harga jual.</p>
+            </div>
           </div>
 
           <div>
@@ -223,7 +256,7 @@ export default function TambahProdukPage() {
               Simpan Produk
             </button>
           </div>
-        </form>
+        </ActionForm>
       </div>
     </div>
   );
