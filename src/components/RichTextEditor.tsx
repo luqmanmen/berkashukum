@@ -1,12 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useCallback, useState } from "react";
-import "react-quill/dist/quill.snow.css";
+import { useMemo, useRef, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+// Dynamically import JoditEditor
+const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
 interface RichTextEditorProps {
   value: string;
@@ -14,111 +13,69 @@ interface RichTextEditorProps {
   placeholder?: string;
 }
 
-// We store the quill instance globally in a variable because
-// the dynamically imported ReactQuill doesn't support ref prop cleanly.
-let quillInstance: any = null;
-
 export default function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
-  const [mounted, setMounted] = useState(false);
+  const editorRef = useRef(null);
 
-  // Custom Image Handler to upload image to Supabase and insert URL instead of base64
-  const imageHandler = useCallback(() => {
-    const input = document.createElement("input");
-    input.setAttribute("type", "file");
-    input.setAttribute("accept", "image/*");
-    input.click();
-
-    input.onchange = async () => {
-      const file = input.files ? input.files[0] : null;
-      if (!file) return;
-
-      if (!quillInstance) return;
-      const range = quillInstance.getSelection(true);
-
-      try {
+  const config = useMemo(() => ({
+    readonly: false,
+    placeholder: placeholder || "Mulai menulis di sini...",
+    height: 500,
+    uploader: {
+      insertImageAsBase64URI: false,
+    },
+    buttons: [
+      'source', '|',
+      'bold', 'strikethrough', 'underline', 'italic', '|',
+      'ul', 'ol', '|',
+      'outdent', 'indent', '|',
+      'font', 'fontsize', 'brush', 'paragraph', '|',
+      'image', 'video', 'table', 'link', '|',
+      'align', 'undo', 'redo', '|',
+      'hr', 'eraser', 'copyformat', '|',
+      'fullsize'
+    ],
+    events: {
+      beforeInsertImage: function (this: any, file: File, __: any, resolve: (val: string) => void, reject: () => void) {
+        // Upload to Supabase manually
         const fileExt = file.name.split(".").pop();
         const fileName = `article-${Date.now()}-${Math.random()}.${fileExt}`;
-
-        // Upload to Supabase
-        const { error } = await supabase.storage
+        
+        supabase.storage
           .from("images")
-          .upload(`articles/${fileName}`, file, { cacheControl: "3600", upsert: false });
-
-        if (error) {
-          console.error("Upload error:", error);
-          alert("Gagal mengunggah gambar: " + error.message);
-          return;
-        }
-
-        // Get Public URL
-        const { data: publicUrlData } = supabase.storage
-          .from("images")
-          .getPublicUrl(`articles/${fileName}`);
-
-        const url = publicUrlData.publicUrl;
-
-        // Insert image at cursor
-        quillInstance.insertEmbed(range.index, "image", url);
-        // Move cursor to next position
-        quillInstance.setSelection(range.index + 1);
-      } catch (err) {
-        console.error("Unexpected upload error:", err);
-        alert("Terjadi kesalahan saat mengunggah gambar.");
+          .upload(`articles/${fileName}`, file, { cacheControl: "3600", upsert: false })
+          .then(({ error }) => {
+            if (error) {
+              console.error("Upload error:", error);
+              alert("Gagal mengunggah gambar: " + error.message);
+              reject();
+              return;
+            }
+            
+            const { data } = supabase.storage
+              .from("images")
+              .getPublicUrl(`articles/${fileName}`);
+              
+            // Create an image node and insert it manually because resolve string sometimes doesn't work well
+            this.selection.insertImage(data.publicUrl);
+            resolve(data.publicUrl);
+          })
+          .catch((err) => {
+             console.error(err);
+             reject();
+          });
+          
+        return false; // Prevent default Jodit upload
       }
-    };
-  }, []);
-
-  const modules = useMemo(
-    () => ({
-      toolbar: {
-        container: [
-          [{ header: [1, 2, 3, 4, 5, 6, false] }, { font: [] }],
-          [{ align: [] }],
-          ["bold", "italic", "underline", "strike"],
-          [{ color: [] }, { background: [] }],
-          [{ list: "ordered" }, { list: "bullet" }],
-          [{ indent: "-1" }, { indent: "+1" }],
-          ["link", "image", "video"],
-          ["blockquote", "code-block"],
-          ["clean"],
-        ],
-        handlers: {
-          image: imageHandler,
-        },
-      },
-    }),
-    [imageHandler]
-  );
-
-  // Grab the quill instance after mount via the container's querySelector
-  const handleContainerRef = useCallback((el: HTMLDivElement | null) => {
-    if (el && !mounted) {
-      // Small delay to let ReactQuill fully mount
-      setTimeout(() => {
-        const quillEditor = el.querySelector(".ql-editor");
-        if (quillEditor) {
-          // Access quill via the Quill class attached to the container
-          const quillContainer = el.querySelector(".ql-container");
-          if (quillContainer && (quillContainer as any).__quill) {
-            quillInstance = (quillContainer as any).__quill;
-          }
-        }
-        setMounted(true);
-      }, 500);
     }
-  }, [mounted]);
+  }), [placeholder]);
 
   return (
-    <div 
-      ref={handleContainerRef}
-      className="bg-white [&_.ql-container]:min-h-[400px] [&_.ql-editor]:text-base [&_.ql-editor]:text-gray-800"
-    >
-      <ReactQuill
-        theme="snow"
+    <div className="bg-white text-black">
+      <JoditEditor
+        ref={editorRef}
         value={value}
-        onChange={onChange}
-        modules={modules}
-        placeholder={placeholder || "Mulai menulis di sini..."}
+        config={config}
+        onBlur={(newContent) => onChange(newContent)}
       />
     </div>
   );

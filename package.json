@@ -20,6 +20,7 @@
     "@supabase/supabase-js": "^2.110.7",
     "bcryptjs": "^3.0.3",
     "detectincognitojs": "^1.8.0",
+    "jodit-react": "^5.3.21",
     "jose": "^6.2.4",
     "jsonwebtoken": "^9.0.3",
     "nanoid": "^6.0.0",
@@ -30,7 +31,6 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-easy-crop": "^6.2.3",
-    "react-quill": "^2.0.0",
     "recharts": "^3.10.1"
   },
   "devDependencies": {
