@@ -25,6 +25,8 @@ export default async function BookingPage({ params }: { params: Promise<{ lawyer
     const caseDescription = formData.get("caseDescription") as string;
     const scheduleDate = formData.get("scheduleDate") as string;
     const scheduleTime = formData.get("scheduleTime") as string;
+    const paymentMethod = formData.get("paymentMethod") as string;
+    const bankName = formData.get("bankName") as string;
 
     const booking = await prisma.consultationBooking.create({
       data: {
@@ -35,8 +37,11 @@ export default async function BookingPage({ params }: { params: Promise<{ lawyer
         caseDescription,
         scheduleDate,
         scheduleTime,
+        paymentMethod,
+        bankName,
         totalAmount: lawyer!.consultationPrice,
-        status: "PENDING"
+        status: "PENDING",
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
       }
     });
 
@@ -58,7 +63,11 @@ export default async function BookingPage({ params }: { params: Promise<{ lawyer
           <div className="md:col-span-2">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
               <h2 className="text-xl font-bold text-navy mb-6">Lengkapi Data Anda</h2>
-              <BookingFormClient submitAction={submitBooking} />
+              <BookingFormClient 
+                submitAction={submitBooking} 
+                availableTimes={lawyer.availableTimes}
+                availableDays={lawyer.availableDays}
+              />
             </div>
           </div>
 

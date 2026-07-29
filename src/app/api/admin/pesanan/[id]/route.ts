@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { sendDownloadCodeEmail } from "@/lib/email";
+import { sendDownloadCodeEmail, sendPaymentReceiptEmail } from "@/lib/email";
 
 /** Generate kode unik format: BHK-XXXX-XXXX */
 function generateDownloadCode(): string {
@@ -52,6 +52,15 @@ export async function PATCH(
         where: { id },
         data: { status: "PAID", downloadCode },
       });
+
+      // Kirim email resi pembayaran
+      await sendPaymentReceiptEmail(
+        order.buyerEmail,
+        order.buyerName,
+        order.id,
+        order.totalAmount,
+        "Produk"
+      );
 
       // Kirim email ke pembeli berisi kode & link aktivasi
       const productNames = order.items.map((item) => item.product.name);

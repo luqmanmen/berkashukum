@@ -4,8 +4,17 @@ import { updateBookingStatus } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function JadwalKonsultasiPage() {
+export default async function JadwalKonsultasiPage({
+  searchParams,
+}: {
+  searchParams: { q?: string };
+}) {
+  const q = searchParams.q || "";
+
   const bookings = await prisma.consultationBooking.findMany({
+    where: {
+      ...(q ? { id: { contains: q, mode: 'insensitive' } } : {})
+    },
     orderBy: { createdAt: "desc" },
     include: {
       lawyer: true
@@ -14,8 +23,20 @@ export default async function JadwalKonsultasiPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-gray-900">Jadwal Konsultasi</h1>
+        <form method="GET" action="/admin/jadwal-konsultasi" className="flex items-center gap-2">
+          <input 
+            type="text" 
+            name="q" 
+            defaultValue={q} 
+            placeholder="Cari Booking ID..." 
+            className="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full md:w-64 focus:ring-2 focus:ring-gold focus:border-transparent outline-none" 
+          />
+          <button type="submit" className="bg-navy hover:bg-navy-dark text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+            Cari
+          </button>
+        </form>
       </div>
 
       <div className="bg-white shadow rounded-lg overflow-hidden">
@@ -49,6 +70,7 @@ export default async function JadwalKonsultasiPage() {
             ) : bookings.map((b) => (
               <tr key={b.id}>
                 <td className="px-6 py-4">
+                  <div className="font-mono text-xs font-semibold text-navy mb-1">{b.id}</div>
                   <div className="text-sm font-medium text-gray-900">{b.clientName}</div>
                   <div className="text-sm text-gray-500">WA: {b.clientPhone}</div>
                   <div className="text-xs text-gray-400 truncate max-w-[200px]" title={b.caseDescription}>
@@ -82,7 +104,7 @@ export default async function JadwalKonsultasiPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  {b.status === "PENDING" && b.paymentProof && (
+                  {b.status === "PENDING" && (
                     <form action={updateBookingStatus}>
                       <input type="hidden" name="id" value={b.id} />
                       <input type="hidden" name="status" value="PAID" />

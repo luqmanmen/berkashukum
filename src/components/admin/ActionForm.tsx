@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export default function ActionForm({
   action,
@@ -38,7 +39,10 @@ export default function ActionForm({
           }
         }, 2000);
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (isRedirectError(err) || err?.message?.includes('NEXT_REDIRECT') || err?.digest?.includes('NEXT_REDIRECT')) {
+        throw err;
+      }
       console.error(err);
       setStatus("error");
       setTimeout(() => setStatus("idle"), 2000);

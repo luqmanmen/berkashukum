@@ -124,6 +124,8 @@ model Lawyer {
   description      String?
   consultationPrice Float   @default(0)
   isActive         Boolean  @default(true)
+  availableTimes   String[] @default(["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"])
+  availableDays    String[] @default(["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"])
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -145,6 +147,7 @@ model ConsultationBooking {
   paymentMethod    String?  // TRANSFER, QRIS
   bankName         String?
   paymentProof     String?
+  expiresAt        DateTime?
 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt

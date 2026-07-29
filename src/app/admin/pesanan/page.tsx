@@ -1,17 +1,21 @@
 import { prisma } from "@/lib/prisma";
 import UpdateStatusButton from "./UpdateStatusButton";
 
-export default async function AdminPesananPage() {
+export default async function AdminPesananPage({
+  searchParams,
+}: {
+  searchParams: { q?: string };
+}) {
+  const q = searchParams.q || "";
   const now = new Date();
   
   const orders = await prisma.order.findMany({
     where: {
-      OR: [
+      ...(q ? { id: { contains: q, mode: 'insensitive' } } : {}),
+      OR: q ? undefined : [
         { status: "PAID" },
         { paymentProof: { not: null } },
-        { 
-          status: "PENDING",
-        }
+        { status: "PENDING" }
       ]
     },
     orderBy: { createdAt: "desc" },
@@ -24,9 +28,23 @@ export default async function AdminPesananPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 font-serif">Kelola Pesanan</h1>
-        <p className="text-gray-500 text-sm mt-1">Daftar semua transaksi yang masuk</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 font-serif">Kelola Pesanan</h1>
+          <p className="text-gray-500 text-sm mt-1">Daftar semua transaksi yang masuk</p>
+        </div>
+        <form method="GET" action="/admin/pesanan" className="flex items-center gap-2">
+          <input 
+            type="text" 
+            name="q" 
+            defaultValue={q} 
+            placeholder="Cari Order ID..." 
+            className="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full md:w-64 focus:ring-2 focus:ring-gold focus:border-transparent outline-none" 
+          />
+          <button type="submit" className="bg-navy hover:bg-navy-dark text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
+            Cari
+          </button>
+        </form>
       </div>
 
       <div className="bg-white border border-gray-200 rounded-sm shadow-sm overflow-hidden">

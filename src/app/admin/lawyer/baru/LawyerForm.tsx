@@ -51,7 +51,7 @@ export default function LawyerForm({ initialData }: { initialData?: Lawyer }) {
             name="specialization"
             required
             defaultValue={initialData?.specialization}
-            placeholder="Misal: Corporate Law & Kepailitan"
+            placeholder={"Misal: Corporate Law & Kepailitan"}
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-navy focus:border-navy sm:text-sm"
           />
         </div>
@@ -75,6 +75,54 @@ export default function LawyerForm({ initialData }: { initialData?: Lawyer }) {
             defaultValue={initialData?.description || ""}
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-navy focus:border-navy sm:text-sm"
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Hari Tersedia (Praktik)</label>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
+            {["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"].map((day) => {
+              const isDayChecked = initialData?.availableDays ? initialData.availableDays.includes(day) : true;
+              return (
+                <label key={day} className="flex items-center space-x-2 bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                  <input
+                    type="checkbox"
+                    name="availableDays"
+                    value={day}
+                    defaultChecked={isDayChecked}
+                    className="text-navy focus:ring-navy border-gray-300 rounded"
+                  />
+                  <span className="text-sm text-gray-700 font-medium">{day}</span>
+                </label>
+              );
+            })}
+          </div>
+          <p className="mt-2 text-xs text-gray-500">Centang hari apa saja Lawyer tersedia menerima konsultasi.</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Jam Tersedia (Praktik)</label>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+            {[
+              "09:00", "10:00", "11:00", "12:00", 
+              "13:00", "14:00", "15:00", "16:00", 
+              "17:00", "18:00", "19:00", "20:00", "21:00"
+            ].map((time) => {
+              const isChecked = initialData?.availableTimes ? initialData.availableTimes.includes(time) : ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"].includes(time);
+              return (
+                <label key={time} className="flex items-center space-x-2 bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                  <input
+                    type="checkbox"
+                    name="availableTimes"
+                    value={time}
+                    defaultChecked={isChecked}
+                    className="text-navy focus:ring-navy border-gray-300 rounded"
+                  />
+                  <span className="text-sm text-gray-700 font-medium">{time}</span>
+                </label>
+              );
+            })}
+          </div>
+          <p className="mt-2 text-xs text-gray-500">Centang jam berapa saja Lawyer siap melayani konsultasi klien.</p>
         </div>
 
         <div className="flex items-center">

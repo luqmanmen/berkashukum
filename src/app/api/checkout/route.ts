@@ -26,13 +26,11 @@ export async function POST(req: NextRequest) {
     });
 
     if (existingOrder) {
-      return NextResponse.json(
-        { 
-          error: "Anda masih memiliki pesanan aktif yang belum dibayar.",
-          activeOrderId: existingOrder.id
-        },
-        { status: 400 }
-      );
+      // Batalkan otomatis pesanan yang lama agar user bisa mengganti metode pembayaran
+      await prisma.order.update({
+        where: { id: existingOrder.id },
+        data: { status: "EXPIRED" }
+      });
     }
 
     // Generate unique Order ID (tiket style)

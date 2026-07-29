@@ -16,7 +16,7 @@ export default function PembayaranClient({ order, qrisImage, danaPhone }: { orde
   const bankInfo = BANKS.find((b) => b.id === order.bankName);
   const vaNumber = getVaNumber(order.bankName, danaPhone);
   // Nomor WA Admin (format internasional tanpa +)
-  const adminWa = "6282334196500";
+  const adminWa = "6285771123000";
 
   useEffect(() => {
     if (order.status === "EXPIRED" || order.status === "PAID") {

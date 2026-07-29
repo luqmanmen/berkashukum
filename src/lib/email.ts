@@ -15,11 +15,65 @@ const GOLD = "#cfa740";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.berkashukum.com";
 
 /**
+ * Kirim email resi pembayaran
+ */
+export async function sendPaymentReceiptEmail(
+  buyerEmail: string,
+  buyerName: string,
+  orderId: string,
+  totalAmount: number,
+  type: "Produk" | "Konsultasi"
+) {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.log("⚠️ SMTP tidak dikonfigurasi. Mock email resi ke", buyerEmail);
+    return;
+  }
+
+  const mailOptions = {
+    from: `"Berkas Hukum Corporate" <${process.env.SMTP_USER}>`,
+    to: buyerEmail,
+    subject: `✅ Resi Pembayaran Diterima - ${type} [${orderId.slice(-8).toUpperCase()}]`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+        <div style="background-color: ${NAVY}; padding: 28px 30px; text-align: center;">
+          <h1 style="color: ${GOLD}; margin: 0; font-size: 22px; letter-spacing: 1px;">BERKAS HUKUM CORPORATE</h1>
+          <p style="color: rgba(255,255,255,0.6); margin: 6px 0 0; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;">
+            Advokat &bull; Kurator &bull; Spesialis Legal Audit
+          </p>
+        </div>
+        <div style="padding: 32px 30px;">
+          <h2 style="margin-top: 0; color: ${NAVY};">Halo, ${buyerName}! 👋</h2>
+          <p style="line-height: 1.6;">
+            Terima kasih! Kami ingin menginformasikan bahwa pembayaran Anda untuk <strong>${type}</strong> sebesar <strong>Rp ${totalAmount.toLocaleString("id-ID")}</strong> (Order ID: #${orderId.slice(-8).toUpperCase()}) <strong>telah kami verifikasi</strong>.
+          </p>
+          <p style="line-height: 1.6;">
+            Detail mengenai ${type === "Produk" ? "kode unduhan produk" : "jadwal konsultasi"} Anda akan dikirimkan pada email yang terpisah.
+          </p>
+          <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
+          <p style="font-size: 13px; color: #888; line-height: 1.6;">
+            Jika ada kendala, silakan hubungi kami di <a href="mailto:support@berkashukum.com" style="color: ${GOLD};">support@berkashukum.com</a>.
+          </p>
+        </div>
+        <div style="background-color: #f7f8fa; padding: 16px 30px; text-align: center; font-size: 12px; color: #aaa; border-top: 1px solid #e2e8f0;">
+          © ${new Date().getFullYear()} Berkas Hukum Corporate. All rights reserved.
+        </div>
+      </div>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`✅ Email resi pembayaran terkirim ke ${buyerEmail}`);
+    return true;
+  } catch (error) {
+    console.error("Gagal mengirim email resi:", error);
+    return false;
+  }
+}
+
+
+/**
  * Kirim email ke pembeli setelah admin approve pesanan.
- * Email berisi:
- *  - Kode unik (downloadCode) yang harus dimasukkan di halaman aktivasi
- *  - Link permanen ke halaman aktivasi (/download/[orderId])
- *  - Penjelasan bahwa link download aktif hanya 10 menit setelah input kode
  */
 export async function sendDownloadCodeEmail(
   buyerEmail: string,
@@ -43,7 +97,7 @@ export async function sendDownloadCodeEmail(
   const mailOptions = {
     from: `"Berkas Hukum Corporate" <${process.env.SMTP_USER}>`,
     to: buyerEmail,
-    subject: `✅ Pesanan Disetujui — Kode Unduhan Anda [${orderId.slice(-8).toUpperCase()}]`,
+    subject: `📦 Kode Unduhan Produk Anda [${orderId.slice(-8).toUpperCase()}]`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
         
@@ -57,8 +111,7 @@ export async function sendDownloadCodeEmail(
         <div style="padding: 32px 30px;">
           <h2 style="margin-top: 0; color: ${NAVY};">Halo, ${buyerName}! 👋</h2>
           <p style="line-height: 1.6;">
-            Pembayaran Anda untuk pesanan <strong>#${orderId.slice(-8).toUpperCase()}</strong> telah kami konfirmasi.
-            Berikut adalah produk yang Anda beli:
+            Berikut adalah rincian produk yang Anda pesan dan kode unduhan untuk mengaksesnya:
           </p>
           <ul style="padding-left: 18px; color: #555; line-height: 1.8;">
             ${productsHtml}
@@ -80,8 +133,7 @@ export async function sendDownloadCodeEmail(
 
           <p style="font-weight: bold; color: ${NAVY};">🔗 Link Halaman Unduhan (Permanent):</p>
           <p style="color: #666; font-size: 13px; margin-bottom: 16px; line-height: 1.6;">
-            Klik tombol di bawah, lalu masukkan kode di atas untuk mendapatkan link unduhan.
-            <strong>Link unduhan berlaku 10 menit</strong> — tidak bisa disalin atau dibagikan.
+            Klik tombol di bawah, lalu masukkan kode di atas untuk mendapatkan file unduhan Anda.
           </p>
           <div style="text-align: center; margin: 24px 0;">
             <a href="${activationUrl}"
@@ -89,48 +141,12 @@ export async function sendDownloadCodeEmail(
               🔓 Akses Halaman Unduhan
             </a>
           </div>
-          <p style="text-align: center; font-size: 11px; color: #bbb; word-break: break-all;">
-            ${activationUrl}
-          </p>
 
           <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
           <p style="font-size: 13px; color: #888; line-height: 1.6;">
             Jika ada kendala, silakan hubungi kami di 
             <a href="mailto:support@berkashukum.com" style="color: ${GOLD};">support@berkashukum.com</a>.
           </p>
-
-          <!-- Signature Block -->
-          <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 24px; width: 100%;">
-            <tr>
-              <td valign="middle" style="padding-right: 20px;">
-                <h3 style="margin: 0 0 4px 0; color: ${NAVY}; font-size: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Berkas Hukum Corporate</h3>
-                <p style="margin: 0 0 12px 0; color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
-                  Advokat &bull; Kurator &bull; Spesialis Legal Audit
-                </p>
-                <table cellpadding="0" cellspacing="0" border="0" style="font-size: 11px; color: #555; line-height: 1.8;">
-                  <tr>
-                    <td valign="top" style="padding-right: 6px; padding-bottom: 4px;"><span style="color: ${GOLD};">📞</span></td>
-                    <td valign="top" style="padding-bottom: 4px;">
-                      <a href="https://wa.me/6281296393972" style="color: #555; text-decoration: none; white-space: nowrap;">+62 812-9639-3972</a><br/>
-                      <a href="https://wa.me/6285771123000" style="color: #555; text-decoration: none; white-space: nowrap;">+62 857-7112-3000</a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td valign="top" style="padding-right: 6px;"><span style="color: ${GOLD};">✉️</span></td>
-                    <td valign="top"><a href="mailto:support@berkashukum.com" style="color: #555; text-decoration: none; white-space: nowrap;">support@berkashukum.com</a></td>
-                  </tr>
-                  <tr>
-                    <td valign="top" style="padding-right: 6px;"><span style="color: ${GOLD};">🌐</span></td>
-                    <td valign="top"><a href="${APP_URL}" style="color: ${NAVY}; text-decoration: none; white-space: nowrap;">www.berkashukum.com</a></td>
-                  </tr>
-                </table>
-              </td>
-              <td width="90" valign="middle" style="border-left: 1px solid #e2e8f0; padding-left: 15px; text-align: center;">
-                <img src="${APP_URL}/images/logo-3d-2.png" alt="Berkas Hukum Corporate" width="70" height="70" style="object-fit: contain; display: block; margin: 0 auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));" />
-              </td>
-            </tr>
-          </table>
-          <!-- End Signature -->
 
         </div>
 
@@ -147,6 +163,201 @@ export async function sendDownloadCodeEmail(
     return true;
   } catch (error) {
     console.error("Gagal mengirim email:", error);
+    return false;
+  }
+}
+
+
+/**
+ * Fungsi pembantu untuk memformat tanggal ke format kalender iCal (UTC)
+ */
+function formatDateToICalUTC(dateStr: string, timeStr: string, addHours: number = 0): string {
+  // Asumsi input dari Jakarta (WIB, UTC+7)
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const [hour, minute] = timeStr.split(":").map(Number);
+  
+  // Buat objek Date dengan menganggapnya zona waktu lokal (server/WIB)
+  // Untuk memastikan konversi aman, kita ubah secara eksplisit dari UTC+7
+  const localDate = new Date(Date.UTC(year, month - 1, day, hour - 7 + addHours, minute, 0));
+  
+  const yyyy = localDate.getUTCFullYear();
+  const MM = String(localDate.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(localDate.getUTCDate()).padStart(2, '0');
+  const hh = String(localDate.getUTCHours()).padStart(2, '0');
+  const mm = String(localDate.getUTCMinutes()).padStart(2, '0');
+  const ss = String(localDate.getUTCSeconds()).padStart(2, '0');
+  
+  return `${yyyy}${MM}${dd}T${hh}${mm}${ss}Z`;
+}
+
+/**
+ * Kirim email undangan konsultasi Lawyer (Termasuk Calendar Invite / .ics file)
+ */
+export async function sendConsultationInvitationEmail(
+  clientEmail: string,
+  clientName: string,
+  lawyerName: string,
+  scheduleDate: string,
+  scheduleTime: string,
+  caseDescription: string,
+  bookingId: string
+) {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.log("⚠️ SMTP tidak dikonfigurasi. Mock email undangan ke", clientEmail);
+    return;
+  }
+
+  // Generate Date formats untuk ICS (mulai dan berakhir, durasi default 1 jam)
+  const dtStart = formatDateToICalUTC(scheduleDate, scheduleTime, 0);
+  const dtEnd = formatDateToICalUTC(scheduleDate, scheduleTime, 1);
+  const dtStamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  
+  // Isi file .ics (iCalendar)
+  const icsContent = 
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Berkas Hukum Corporate//Konsultasi//ID
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+BEGIN:VEVENT
+UID:booking-${bookingId}@berkashukum.com
+DTSTAMP:${dtStamp}
+DTSTART:${dtStart}
+DTEND:${dtEnd}
+SUMMARY:Konsultasi Hukum dengan ${lawyerName}
+DESCRIPTION:Konsultasi Hukum Berkas Hukum Corporate.\\nNama Klien: ${clientName}\\nKasus: ${caseDescription.replace(/\n/g, "\\n")}\\n\\nAdmin akan mengirimkan link meeting via WhatsApp.
+LOCATION:Online Meeting
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Konsultasi Hukum akan dimulai dalam 15 menit
+END:VALARM
+END:VEVENT
+END:VCALENDAR`;
+
+  const mailOptions = {
+    from: `"Berkas Hukum Corporate" <${process.env.SMTP_USER}>`,
+    to: clientEmail,
+    subject: `📅 Detail Jadwal Konsultasi Hukum - ${lawyerName} [${new Date(scheduleDate).toLocaleDateString("id-ID")}]`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+        
+        <div style="background-color: ${NAVY}; padding: 28px 30px; text-align: center;">
+          <h1 style="color: ${GOLD}; margin: 0; font-size: 22px; letter-spacing: 1px;">BERKAS HUKUM CORPORATE</h1>
+          <p style="color: rgba(255,255,255,0.6); margin: 6px 0 0; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;">
+            Advokat &bull; Kurator &bull; Spesialis Legal Audit
+          </p>
+        </div>
+
+        <div style="padding: 32px 30px;">
+          <h2 style="margin-top: 0; color: ${NAVY};">Halo, ${clientName}! 👋</h2>
+          <p style="line-height: 1.6;">
+            Jadwal Konsultasi Hukum Anda telah dikonfirmasi oleh tim kami. 
+            Berikut adalah rincian jadwal Anda:
+          </p>
+          
+          <div style="background: #f8fafc; border-left: 4px solid ${GOLD}; padding: 16px; margin: 20px 0;">
+            <p style="margin: 0 0 8px;">👨‍⚖️ <strong>Lawyer:</strong> ${lawyerName}</p>
+            <p style="margin: 0 0 8px;">📅 <strong>Tanggal:</strong> ${new Date(scheduleDate).toLocaleDateString("id-ID", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <p style="margin: 0 0 8px;">⏰ <strong>Jam:</strong> ${scheduleTime} WIB</p>
+            <p style="margin: 0;">📝 <strong>Topik:</strong> ${caseDescription}</p>
+          </div>
+
+          <p style="color: #666; font-size: 14px; line-height: 1.6;">
+            Silakan buka <strong>lampiran kalender (invite.ics)</strong> pada email ini untuk menambahkan pengingat (reminder) otomatis ke Google Calendar atau Apple Calendar di perangkat Anda.
+          </p>
+
+          <p style="color: #666; font-size: 14px; line-height: 1.6; margin-top: 24px;">
+            Link pertemuan online (Zoom/Google Meet) akan dikirimkan oleh admin kami melalui WhatsApp sebelum jadwal dimulai. Pastikan nomor WhatsApp Anda aktif.
+          </p>
+
+          <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
+          <p style="font-size: 13px; color: #888; line-height: 1.6;">
+            Jika ada pertanyaan atau ingin mengubah jadwal, silakan balas email ini atau hubungi admin di 
+            <a href="mailto:support@berkashukum.com" style="color: ${GOLD};">support@berkashukum.com</a>.
+          </p>
+        </div>
+
+        <div style="background-color: #f7f8fa; padding: 16px 30px; text-align: center; font-size: 12px; color: #aaa; border-top: 1px solid #e2e8f0;">
+          © ${new Date().getFullYear()} Berkas Hukum Corporate. All rights reserved.
+        </div>
+      </div>
+    `,
+    attachments: [
+      {
+        filename: "undangan-konsultasi.ics",
+        content: icsContent,
+        contentType: 'text/calendar; method=REQUEST'
+      }
+    ]
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`✅ Email undangan konsultasi terkirim ke ${clientEmail}: ${info.messageId}`);
+    return true;
+  } catch (error) {
+    console.error("Gagal mengirim email undangan:", error);
+    return false;
+  }
+}
+
+/**
+ * Kirim email pengingat (reminder) konsultasi pada hari-H
+ */
+export async function sendConsultationReminderEmail(
+  clientEmail: string,
+  clientName: string,
+  lawyerName: string,
+  scheduleDate: string,
+  scheduleTime: string,
+  caseDescription: string,
+  bookingId: string
+) {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.log("⚠️ SMTP tidak dikonfigurasi. Mock email reminder ke", clientEmail);
+    return;
+  }
+
+  const mailOptions = {
+    from: `"Berkas Hukum Corporate" <${process.env.SMTP_USER}>`,
+    to: clientEmail,
+    subject: `⏰ Pengingat: Jadwal Konsultasi Hukum Hari Ini - ${lawyerName}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+        <div style="background-color: ${NAVY}; padding: 28px 30px; text-align: center;">
+          <h1 style="color: ${GOLD}; margin: 0; font-size: 22px; letter-spacing: 1px;">BERKAS HUKUM CORPORATE</h1>
+        </div>
+        <div style="padding: 32px 30px;">
+          <h2 style="margin-top: 0; color: ${NAVY};">Halo, ${clientName}! 👋</h2>
+          <p style="line-height: 1.6;">
+            Kami ingin mengingatkan bahwa Anda memiliki <strong>Jadwal Konsultasi Hukum pada HARI INI</strong>.
+          </p>
+          <div style="background: #f8fafc; border-left: 4px solid ${GOLD}; padding: 16px; margin: 20px 0;">
+            <p style="margin: 0 0 8px;">👨‍⚖️ <strong>Lawyer:</strong> ${lawyerName}</p>
+            <p style="margin: 0 0 8px;">📅 <strong>Tanggal:</strong> ${new Date(scheduleDate).toLocaleDateString("id-ID", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <p style="margin: 0 0 8px;">⏰ <strong>Jam:</strong> ${scheduleTime} WIB</p>
+            <p style="margin: 0;">📝 <strong>Topik:</strong> ${caseDescription}</p>
+          </div>
+          <p style="color: #666; font-size: 14px; line-height: 1.6;">
+            Mohon persiapkan diri dan dokumen yang relevan. Admin kami akan segera menghubungi Anda via WhatsApp untuk memberikan link/akses pertemuan sebelum sesi dimulai.
+          </p>
+          <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
+          <p style="font-size: 13px; color: #888; line-height: 1.6;">
+            Jika ada kendala, hubungi kami di <a href="mailto:support@berkashukum.com" style="color: ${GOLD};">support@berkashukum.com</a>.
+          </p>
+        </div>
+      </div>
+    `,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`✅ Email reminder terkirim ke ${clientEmail}: ${info.messageId}`);
+    return true;
+  } catch (error) {
+    console.error("Gagal mengirim email reminder:", error);
     return false;
   }
 }

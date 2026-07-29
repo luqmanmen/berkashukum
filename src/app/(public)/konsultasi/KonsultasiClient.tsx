@@ -10,7 +10,11 @@ export default function KonsultasiClient({ lawyers }: { lawyers: Lawyer[] }) {
 
   return (
     <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      <div className={`grid grid-cols-1 gap-6 mb-12 mx-auto ${
+        lawyers.length === 1 ? 'max-w-sm' : 
+        lawyers.length === 2 ? 'sm:grid-cols-2 max-w-2xl' : 
+        'sm:grid-cols-2 lg:grid-cols-3'
+      }`}>
         {lawyers.map((lawyer) => (
           <div 
             key={lawyer.id} 

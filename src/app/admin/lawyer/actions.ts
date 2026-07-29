@@ -16,6 +16,10 @@ export async function createLawyer(formData: FormData) {
   const description = formData.get("description") as string;
   const consultationPrice = parseFloat((formData.get("consultationPrice") as string) || "0");
   const isActive = formData.get("isActive") === "on";
+  
+  // Capture availableTimes & availableDays
+  const availableTimes = formData.getAll("availableTimes") as string[];
+  const availableDays = formData.getAll("availableDays") as string[];
 
   let photoUrl: string | undefined = undefined;
   const photoFile = formData.get("photo") as File | null;
@@ -42,6 +46,8 @@ export async function createLawyer(formData: FormData) {
       description,
       consultationPrice,
       isActive,
+      availableTimes,
+      availableDays,
       photo: photoUrl,
     },
   });
@@ -61,6 +67,10 @@ export async function updateLawyer(formData: FormData) {
   const description = formData.get("description") as string;
   const consultationPrice = parseFloat((formData.get("consultationPrice") as string) || "0");
   const isActive = formData.get("isActive") === "on";
+
+  // Capture availableTimes & availableDays
+  const availableTimes = formData.getAll("availableTimes") as string[];
+  const availableDays = formData.getAll("availableDays") as string[];
 
   let photoUrl: string | undefined = undefined;
   const photoFile = formData.get("photo") as File | null;
@@ -86,6 +96,8 @@ export async function updateLawyer(formData: FormData) {
     description,
     consultationPrice,
     isActive,
+    availableTimes,
+    availableDays,
   };
 
   if (photoUrl) {
