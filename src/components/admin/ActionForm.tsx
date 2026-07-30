@@ -16,6 +16,7 @@ export default function ActionForm({
   className?: string;
 }) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,7 +28,8 @@ export default function ActionForm({
       const res = await action(formData);
       if (res?.error) {
         setStatus("error");
-        setTimeout(() => setStatus("idle"), 2000);
+        setErrorMessage(res.error);
+        setTimeout(() => setStatus("idle"), 5000);
       } else {
         setStatus("success");
         setTimeout(() => {
@@ -45,7 +47,8 @@ export default function ActionForm({
       }
       console.error(err);
       setStatus("error");
-      setTimeout(() => setStatus("idle"), 2000);
+      setErrorMessage(err.message || "Unknown error");
+      setTimeout(() => setStatus("idle"), 5000);
     }
   };
 
@@ -81,7 +84,12 @@ export default function ActionForm({
                   </svg>
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-1">Gagal</h3>
-                <p className="text-gray-500 text-sm">Terjadi kesalahan. Silakan coba lagi.</p>
+                <p className="text-gray-500 text-sm text-center">Terjadi kesalahan. Silakan coba lagi.</p>
+                {errorMessage && (
+                  <div className="mt-3 p-2 bg-red-50 border border-red-100 rounded text-xs text-red-600 max-w-[280px] break-words text-center">
+                    {errorMessage}
+                  </div>
+                )}
               </>
             )}
           </div>
