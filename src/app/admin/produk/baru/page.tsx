@@ -11,6 +11,7 @@ import ImageUploadWithCrop from "@/components/ui/ImageUploadWithCrop";
 export default function TambahProdukPage() {
   async function createProduct(formData: FormData) {
     "use server";
+    try {
 
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
@@ -68,7 +69,6 @@ export default function TambahProdukPage() {
       }
     }
 
-    try {
       await prisma.product.create({
         data: {
           id,
@@ -87,7 +87,8 @@ export default function TambahProdukPage() {
       });
       return { success: true };
     } catch (e: any) {
-      return { success: false, error: e.message };
+      console.error("Server Action Error:", e);
+      return { success: false, error: e.message || "Terjadi kesalahan pada server." };
     }
   }
 
