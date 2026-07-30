@@ -22,16 +22,18 @@ export async function createLawyer(formData: FormData) {
   const availableDays = formData.getAll("availableDays") as string[];
 
   let photoUrl: string | undefined = undefined;
-  const photoFile = formData.get("photo") as File | null;
+  const photoEntry = formData.get("photo");
   
-  if (photoFile && photoFile.size > 0) {
-    const ext = photoFile.name.split('.').pop();
+  if (typeof photoEntry === 'string' && photoEntry.startsWith('http')) {
+    photoUrl = photoEntry;
+  } else if (photoEntry instanceof File && photoEntry.size > 0) {
+    const ext = photoEntry.name.split('.').pop();
     const fileName = `lawyer-${Date.now()}.${ext}`;
     
     const { supabase } = await import("@/lib/supabase");
     const { data, error } = await supabase.storage
       .from("images")
-      .upload(`lawyers/${fileName}`, photoFile, { upsert: true });
+      .upload(`lawyers/${fileName}`, photoEntry, { upsert: true });
       
     if (!error && data) {
       const { data: publicUrlData } = supabase.storage.from("images").getPublicUrl(`lawyers/${fileName}`);
@@ -73,16 +75,18 @@ export async function updateLawyer(formData: FormData) {
   const availableDays = formData.getAll("availableDays") as string[];
 
   let photoUrl: string | undefined = undefined;
-  const photoFile = formData.get("photo") as File | null;
+  const photoEntry = formData.get("photo");
   
-  if (photoFile && photoFile.size > 0) {
-    const ext = photoFile.name.split('.').pop();
+  if (typeof photoEntry === 'string' && photoEntry.startsWith('http')) {
+    photoUrl = photoEntry;
+  } else if (photoEntry instanceof File && photoEntry.size > 0) {
+    const ext = photoEntry.name.split('.').pop();
     const fileName = `lawyer-${Date.now()}.${ext}`;
     
     const { supabase } = await import("@/lib/supabase");
     const { data, error } = await supabase.storage
       .from("images")
-      .upload(`lawyers/${fileName}`, photoFile, { upsert: true });
+      .upload(`lawyers/${fileName}`, photoEntry, { upsert: true });
       
     if (!error && data) {
       const { data: publicUrlData } = supabase.storage.from("images").getPublicUrl(`lawyers/${fileName}`);

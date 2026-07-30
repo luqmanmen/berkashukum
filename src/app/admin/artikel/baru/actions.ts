@@ -24,10 +24,12 @@ export async function createArticle(formData: FormData) {
   const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
   
   let coverImageUrl: string | null = null;
-  const coverImageFile = formData.get("coverImage") as File | null;
+  const coverImageEntry = formData.get("coverImage");
   
-  if (coverImageFile && coverImageFile.size > 0) {
-    const ext = coverImageFile.name.split('.').pop();
+  if (typeof coverImageEntry === 'string' && coverImageEntry.startsWith('http')) {
+    coverImageUrl = coverImageEntry;
+  } else if (coverImageEntry instanceof File && coverImageEntry.size > 0) {
+    const ext = coverImageEntry.name.split('.').pop();
     const fileName = `articles/images/${slug}-${Date.now()}.${ext}`;
     
     // Lazy import to avoid server components bundle issues if needed, but standard import is fine
@@ -35,7 +37,7 @@ export async function createArticle(formData: FormData) {
     
     const { data, error } = await supabase.storage
       .from("images")
-      .upload(fileName, coverImageFile, { upsert: true });
+      .upload(fileName, coverImageEntry, { upsert: true });
       
     if (!error && data) {
       const { data: publicUrlData } = supabase.storage.from("images").getPublicUrl(fileName);

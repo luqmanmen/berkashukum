@@ -34,14 +34,16 @@ export default function TambahProdukPage() {
 
     // Handle Image Upload
     let imageUrl = null;
-    const imageFile = formData.get("image") as File | null;
-    if (imageFile && imageFile.size > 0) {
-      const ext = imageFile.name.split('.').pop();
+    const imageEntry = formData.get("image");
+    if (typeof imageEntry === 'string' && imageEntry.startsWith('http')) {
+      imageUrl = imageEntry;
+    } else if (imageEntry instanceof File && imageEntry.size > 0) {
+      const ext = imageEntry.name.split('.').pop();
       const fileName = `products/images/${id}-${Date.now()}.${ext}`;
       
       const { data, error } = await supabase.storage
         .from("images")
-        .upload(fileName, imageFile, { upsert: true });
+        .upload(fileName, imageEntry, { upsert: true });
         
       if (!error && data) {
         const { data: publicUrlData } = supabase.storage.from("images").getPublicUrl(fileName);
@@ -49,21 +51,20 @@ export default function TambahProdukPage() {
       }
     }
 
-    // Handle Digital File Upload (The actual document/ebook)
+    // Handle Digital File Upload
     let digitalFileUrl = null;
-    const digitalFile = formData.get("digitalFile") as File | null;
-    if (digitalFile && digitalFile.size > 0) {
-      const ext = digitalFile.name.split('.').pop();
+    const fileEntry = formData.get("digitalFile");
+    if (typeof fileEntry === 'string' && fileEntry.startsWith('http')) {
+      digitalFileUrl = fileEntry;
+    } else if (fileEntry instanceof File && fileEntry.size > 0) {
+      const ext = fileEntry.name.split('.').pop();
       const fileName = `products/files/${id}-${Date.now()}.${ext}`;
       
       const { data, error } = await supabase.storage
         .from("images")
-        .upload(fileName, digitalFile, { upsert: true });
+        .upload(fileName, fileEntry, { upsert: true });
         
       if (!error && data) {
-        // Ideally this should be signed url generated at download time, 
-        // but for simplicity we store the public URL or the path. 
-        // We'll store the public URL here.
         const { data: publicUrlData } = supabase.storage.from("images").getPublicUrl(fileName);
         digitalFileUrl = publicUrlData.publicUrl;
       }
@@ -213,6 +214,7 @@ export default function TambahProdukPage() {
                   name="image"
                   required={false}
                   aspect={3/4}
+                  folder="products/images"
                 />
               </div>
 
@@ -222,6 +224,7 @@ export default function TambahProdukPage() {
                   name="digitalFile"
                   type="file"
                   accept=".pdf,.doc,.docx,.zip"
+                  data-folder="products/files"
                   className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-semibold file:bg-navy-dark file:text-white hover:file:bg-navy-mid cursor-pointer"
                 />
                 <p className="text-xs text-gray-400 mt-1.5">

@@ -20,22 +20,26 @@ export async function updateArticle(formData: FormData) {
   const isTrending = formData.get("isTrending") === "on" || formData.get("isTrending") === "true";
   const authorName = formData.get("authorName") as string | null;
 
+  const article = await prisma.article.findUnique({ where: { id } });
+  if (!article) throw new Error("Article not found");
+
   // Let slug remain the same to not break SEO/links, 
   // unless we specifically want to update it. Here we keep it simple and preserve the old slug.
 
-  let coverImageUrl: string | undefined = undefined;
-  const coverImageFile = formData.get("coverImage") as File | null;
+  let coverImageUrl = article.coverImage;
+  const coverImageEntry = formData.get("coverImage");
   
-  if (coverImageFile && coverImageFile.size > 0) {
-    const ext = coverImageFile.name.split('.').pop();
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
-    const fileName = `articles/images/${slug}-${Date.now()}.${ext}`;
+  if (typeof coverImageEntry === 'string' && coverImageEntry.startsWith('http')) {
+    coverImageUrl = coverImageEntry;
+  } else if (coverImageEntry instanceof File && coverImageEntry.size > 0) {
+    const ext = coverImageEntry.name.split('.').pop();
+    const fileName = `articles/${Date.now()}.${ext}`;
     
     const { supabase } = await import("@/lib/supabase");
     
     const { data, error } = await supabase.storage
       .from("images")
-      .upload(fileName, coverImageFile, { upsert: true });
+      .upload(fileName, coverImageEntry, { upsert: true });
       
     if (!error && data) {
       const { data: publicUrlData } = supabase.storage.from("images").getPublicUrl(fileName);

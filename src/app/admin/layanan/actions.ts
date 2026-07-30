@@ -11,17 +11,19 @@ export async function createServiceItem(formData: FormData) {
   const order = parseInt((formData.get("order") as string) || "0", 10);
   
   let imageUrl: string | null = null;
-  const imageFile = formData.get("imageUrl") as File | null;
+  const imageEntry = formData.get("imageUrl");
   
-  if (imageFile && imageFile.size > 0) {
-    const ext = imageFile.name.split('.').pop();
+  if (typeof imageEntry === 'string' && imageEntry.startsWith('http')) {
+    imageUrl = imageEntry;
+  } else if (imageEntry instanceof File && imageEntry.size > 0) {
+    const ext = imageEntry.name.split('.').pop();
     const fileName = `services/${Date.now()}.${ext}`;
     
     const { supabase } = await import("@/lib/supabase");
     
     const { data, error } = await supabase.storage
       .from("images")
-      .upload(fileName, imageFile, { upsert: true });
+      .upload(fileName, imageEntry, { upsert: true });
       
     if (!error && data) {
       const { data: publicUrlData } = supabase.storage.from("images").getPublicUrl(fileName);
@@ -57,16 +59,18 @@ export async function updateServiceItem(formData: FormData) {
     order,
   };
 
-  const imageFile = formData.get("imageUrl") as File | null;
-  if (imageFile && imageFile.size > 0) {
-    const ext = imageFile.name.split('.').pop();
+  const imageEntry = formData.get("imageUrl");
+  if (typeof imageEntry === 'string' && imageEntry.startsWith('http')) {
+    updateData.imageUrl = imageEntry;
+  } else if (imageEntry instanceof File && imageEntry.size > 0) {
+    const ext = imageEntry.name.split('.').pop();
     const fileName = `services/${Date.now()}.${ext}`;
     
     const { supabase } = await import("@/lib/supabase");
     
     const { data, error } = await supabase.storage
       .from("images")
-      .upload(fileName, imageFile, { upsert: true });
+      .upload(fileName, imageEntry, { upsert: true });
       
     if (!error && data) {
       const { data: publicUrlData } = supabase.storage.from("images").getPublicUrl(fileName);

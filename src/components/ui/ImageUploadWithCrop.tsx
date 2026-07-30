@@ -10,6 +10,8 @@ interface ImageUploadWithCropProps {
   className?: string;
   aspect?: number;
   defaultValue?: string; // Original URL if editing
+  folder?: string;
+  bucket?: string;
 }
 
 export default function ImageUploadWithCrop({
@@ -19,6 +21,8 @@ export default function ImageUploadWithCrop({
   className,
   aspect,
   defaultValue,
+  folder = "uploads",
+  bucket = "images",
 }: ImageUploadWithCropProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -75,6 +79,8 @@ export default function ImageUploadWithCrop({
         name={name}
         type="file"
         accept={accept}
+        data-folder={folder}
+        data-bucket={bucket}
         required={required && !defaultValue} // Only require if no existing image
         className={className || "w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer"}
         onChange={handleFileChange}

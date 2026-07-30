@@ -27,6 +27,7 @@ export default async function EditProdukPage({
 
   async function updateProduct(formData: FormData) {
     "use server";
+    try {
 
     const productId = formData.get("productId") as string;
     const name = formData.get("name") as string;
@@ -59,14 +60,16 @@ export default async function EditProdukPage({
     };
 
     // Handle Image Upload
-    const imageFile = formData.get("image") as File | null;
-    if (imageFile && imageFile.size > 0) {
-      const ext = imageFile.name.split('.').pop();
+    const imageEntry = formData.get("image");
+    if (typeof imageEntry === 'string' && imageEntry.startsWith('http')) {
+      dataToUpdate.image = imageEntry;
+    } else if (imageEntry instanceof File && imageEntry.size > 0) {
+      const ext = imageEntry.name.split('.').pop();
       const fileName = `products/images/${productId}-${Date.now()}.${ext}`;
       
       const { data, error } = await supabase.storage
         .from("images")
-        .upload(fileName, imageFile, { upsert: true });
+        .upload(fileName, imageEntry, { upsert: true });
         
       if (!error && data) {
         const { data: publicUrlData } = supabase.storage.from("images").getPublicUrl(fileName);
@@ -75,14 +78,16 @@ export default async function EditProdukPage({
     }
 
     // Handle Digital File Upload
-    const digitalFile = formData.get("digitalFile") as File | null;
-    if (digitalFile && digitalFile.size > 0) {
-      const ext = digitalFile.name.split('.').pop();
+    const fileEntry = formData.get("digitalFile");
+    if (typeof fileEntry === 'string' && fileEntry.startsWith('http')) {
+      dataToUpdate.digitalFile = fileEntry;
+    } else if (fileEntry instanceof File && fileEntry.size > 0) {
+      const ext = fileEntry.name.split('.').pop();
       const fileName = `products/files/${productId}-${Date.now()}.${ext}`;
       
       const { data, error } = await supabase.storage
         .from("images")
-        .upload(fileName, digitalFile, { upsert: true });
+        .upload(fileName, fileEntry, { upsert: true });
         
       if (!error && data) {
         const { data: publicUrlData } = supabase.storage.from("images").getPublicUrl(fileName);
@@ -90,14 +95,14 @@ export default async function EditProdukPage({
       }
     }
 
-    try {
       await prisma.product.update({
         where: { id: productId },
         data: dataToUpdate,
       });
       return { success: true };
     } catch (e: any) {
-      return { success: false, error: e.message };
+      console.error("Server Action Error:", e);
+      return { success: false, error: e.message || "Terjadi kesalahan pada server." };
     }
   }
 
@@ -244,6 +249,7 @@ export default async function EditProdukPage({
                   required={false}
                   aspect={3/4}
                   defaultValue={product.image || undefined}
+                  folder="products/images"
                 />
                 <p className="text-xs text-gray-500 mt-2">
                   <b>Catatan:</b> Tulisan "No file chosen" di atas adalah normal. Biarkan saja kosong jika Anda <b>tidak ingin mengganti</b> gambar yang sudah ada.
@@ -269,6 +275,7 @@ export default async function EditProdukPage({
                   name="digitalFile"
                   type="file"
                   accept=".pdf,.doc,.docx,.zip,.rar"
+                  data-folder="products/files"
                   className="w-full px-4 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:border-navy text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-sm file:border-0 file:text-sm file:font-semibold file:bg-navy-dark file:text-white hover:file:bg-navy-mid cursor-pointer"
                 />
                 <p className="text-xs text-gray-500 mt-2 leading-relaxed">

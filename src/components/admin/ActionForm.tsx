@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabaseClient } from "@/lib/supabaseClient";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export default function ActionForm({
@@ -24,6 +25,50 @@ export default function ActionForm({
     setStatus("loading");
 
     const formData = new FormData(e.currentTarget);
+    setErrorMessage("");
+
+    try {
+      const fileInputs = e.currentTarget.querySelectorAll('input[type="file"]');
+      for (const input of Array.from(fileInputs)) {
+        const fileInput = input as HTMLInputElement;
+        const key = fileInput.name;
+        if (!key) continue;
+        
+        const bucket = fileInput.getAttribute('data-bucket') || 'images';
+        const folder = fileInput.getAttribute('data-folder') || 'uploads';
+        
+        const file = formData.get(key);
+        if (file instanceof File && file.size > 0) {
+          if (!supabaseClient) {
+            throw new Error("Konfigurasi Supabase tidak ditemukan.");
+          }
+          
+          const ext = file.name.split('.').pop() || 'tmp';
+          const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`;
+          
+          const { data, error } = await supabaseClient.storage
+            .from(bucket)
+            .upload(fileName, file, { upsert: true });
+            
+          if (error) {
+            throw new Error(`Gagal upload file: ${error.message}`);
+          }
+          
+          if (data) {
+            const { data: publicUrlData } = supabaseClient.storage.from(bucket).getPublicUrl(fileName);
+            // Ganti objek File di formData dengan URL public-nya
+            formData.set(key, publicUrlData.publicUrl);
+          }
+        }
+      }
+    } catch (err: any) {
+      console.error("Client Upload Error:", err);
+      setStatus("error");
+      setErrorMessage(err.message || "Gagal mengupload file.");
+      setTimeout(() => setStatus("idle"), 5000);
+      return; // Stop form submission
+    }
+
     try {
       const res = await action(formData);
       if (res?.error) {
