@@ -1,4 +1,5 @@
 {
+  "name": "landing-page-hukum",
   "crons": [
     {
       "path": "/api/cron/reminder",

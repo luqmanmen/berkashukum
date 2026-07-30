@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import DashboardStatsClient from "./DashboardStatsClient";
+import os from "os";
 
 async function getStats() {
   try {
@@ -21,33 +22,40 @@ async function getStats() {
 
     const totalRevenue = paidOrders.reduce((sum, o) => sum + o.totalAmount, 0);
 
-    // Group orders by month for the chart
-    const monthlyData: Record<string, { revenue: number, orders: number }> = {};
+    // Group orders by day (YYYY-MM-DD)
+    const dailyData: Record<string, { revenue: number, orders: number }> = {};
     
-    // Default to today if no data
-    const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-    monthlyData[today] = { revenue: 0, orders: 0 };
-
-    // Override with real data
     paidOrders.forEach(o => {
-      const date = o.createdAt.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-      if (!monthlyData[date]) monthlyData[date] = { revenue: 0, orders: 0 };
-      monthlyData[date].revenue += o.totalAmount;
-      monthlyData[date].orders += 1;
+      const date = o.createdAt.toISOString().split('T')[0];
+      if (!dailyData[date]) dailyData[date] = { revenue: 0, orders: 0 };
+      dailyData[date].revenue += o.totalAmount;
+      dailyData[date].orders += 1;
     });
 
-    const chartData = Object.entries(monthlyData).map(([date, data]) => ({
+    const chartData = Object.entries(dailyData).map(([date, data]) => ({
       date,
       revenue: data.revenue,
       orders: data.orders
     }));
 
-    return { totalOrders, totalProducts, totalArticles, totalUsers, totalRevenue, chartData, recentActivities };
+    // Generate System Info
+    const sysInfo = {
+      dbStatus: "✅ Terhubung (PostgreSQL)",
+      authStatus: "✅ NextAuth.js Aktif",
+      environment: process.env.NODE_ENV === "production" ? "🚀 Production" : "🔧 Development",
+      nodeVersion: process.version,
+      platform: `${os.type()} ${os.release()} (${os.arch()})`,
+      memory: `${Math.round(os.freemem() / 1024 / 1024 / 1024)}GB Free / ${Math.round(os.totalmem() / 1024 / 1024 / 1024)}GB Total`,
+      cpus: `${os.cpus().length} Cores`,
+    };
+
+    return { totalOrders, totalProducts, totalArticles, totalUsers, totalRevenue, chartData, recentActivities, sysInfo };
   } catch (e) {
     console.error(e);
     return { 
       totalOrders: 0, totalProducts: 0, totalArticles: 0, totalUsers: 0, totalRevenue: 0, 
-      chartData: [], recentActivities: [] 
+      chartData: [], recentActivities: [],
+      sysInfo: { dbStatus: "❌ Error", authStatus: "-", environment: "-", nodeVersion: "-", platform: "-", memory: "-", cpus: "-" }
     };
   }
 }
@@ -107,15 +115,19 @@ export default async function AdminDashboard() {
           <h3 className="font-bold text-gray-800 font-serif mb-4">Informasi Sistem</h3>
           <div className="space-y-3 text-sm">
             {[
-              { label: "Status Database", value: "✅ Terhubung (Supabase)" },
-              { label: "Status Auth", value: "✅ NextAuth.js Aktif" },
-              { label: "Environment", value: "🔧 Development" },
+              { label: "Status Database", value: stats.sysInfo.dbStatus },
+              { label: "Status Auth", value: stats.sysInfo.authStatus },
+              { label: "Environment", value: stats.sysInfo.environment },
+              { label: "Node.js Engine", value: stats.sysInfo.nodeVersion },
+              { label: "Platform OS", value: stats.sysInfo.platform },
+              { label: "Memory (RAM)", value: stats.sysInfo.memory },
+              { label: "Processor", value: stats.sysInfo.cpus },
               { label: "Pengguna Login", value: session?.user?.email ?? "-" },
               { label: "Role", value: session?.user?.role ?? "-" },
             ].map((item, i) => (
               <div key={i} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
                 <span className="text-gray-500">{item.label}</span>
-                <span className="font-medium text-gray-800">{item.value}</span>
+                <span className="font-medium text-gray-800 text-right">{item.value}</span>
               </div>
             ))}
           </div>
